@@ -44,13 +44,27 @@ export default function CourseDetail() {
   const learningOutcomes = (course as any)[`learningOutcomes_${lang}`] || course.learningOutcomes;
   const requirements = (course as any)[`requirements_${lang}`] || course.requirements;
   const priceText = course.price > 0 ? `${course.price.toLocaleString()} DZD` : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
-  const enrollText = lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now";
+  const isBook = (course as any).type === "book" || (course.sections && course.sections.length === 0 && (course as any).fileUrl);
+  const enrollText = isBook
+    ? (lang === "ar" ? "اشترِ الآن" : lang === "fr" ? "Acheter" : "Buy Now")
+    : (lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now");
 
   const handleEnroll = () => {
     if (!user) {
       navigate("/login");
+      return;
+    }
+    if (isBook) {
+      addToCart(course.id);
+      navigate("/cart");
+      return;
+    }
+    const firstLesson = course.sections?.[0]?.lessons?.[0];
+    if (firstLesson) {
+      navigate(`/learn/${id}/${firstLesson.id}`);
     } else {
-      navigate(`/courses/${id}/player`);
+      navigate(`/cart`);
+      addToCart(course.id);
     }
   };
 
