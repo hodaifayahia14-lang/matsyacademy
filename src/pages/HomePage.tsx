@@ -9,6 +9,8 @@ import {
 import { useState, useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 import { mockCourses, mockCategories } from "@/data/mockData";
+import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
+import heroImage from "@/assets/hero-graduation.jpg";
 
 const iconMap: Record<string, React.ElementType> = {
   Shield, BookOpen, Award, Zap,
