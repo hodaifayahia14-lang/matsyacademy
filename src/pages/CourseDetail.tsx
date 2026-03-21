@@ -16,6 +16,7 @@ export default function CourseDetail() {
   const { id } = useParams();
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const { addToCart, isInCart } = useCart();
   const navigate = useNavigate();
   const lang = i18n.language as "en" | "fr" | "ar";
   const course = mockCourses.find((c) => c.id === id);
