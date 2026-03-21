@@ -20,6 +20,9 @@ import Instructions from "@/pages/Instructions";
 import Instructors from "@/pages/Instructors";
 import Blog from "@/pages/Blog";
 import Contact from "@/pages/Contact";
+import BlogDetail from "@/pages/BlogDetail";
+import Terms from "@/pages/Terms";
+import CoursePlayer from "@/pages/CoursePlayer";
 import StudentDashboard from "@/pages/dashboard/student/StudentDashboard";
 import InstructorDashboard from "@/pages/dashboard/instructor/InstructorDashboard";
 import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard";
@@ -35,6 +38,9 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            {/* Course Player — full-screen, no Navbar/Footer */}
+            <Route path="/learn/:courseId/:lessonId" element={<CoursePlayer />} />
+
             {/* Dashboard routes — no global Navbar/Footer */}
             <Route path="/dashboard/student/*" element={
               <ProtectedRoute requiredRole="student"><StudentDashboard /></ProtectedRoute>
@@ -65,6 +71,8 @@ const App = () => (
                     <Route path="/instructors" element={<Instructors />} />
                     <Route path="/blog" element={<Blog />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/blog/:id" element={<BlogDetail />} />
+                    <Route path="/terms" element={<Terms />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>

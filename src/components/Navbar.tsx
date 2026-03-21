@@ -150,11 +150,16 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/contact">
-              <Button size="sm" className="gap-1">
-                {t("navbar.contactUs")} <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link to="/login">
+                <Button variant="ghost" size="sm">{t("navbar.login")}</Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm" className="gap-1">
+                  {t("navbar.signUp")} <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
 
