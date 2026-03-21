@@ -31,12 +31,18 @@ export default function CourseCard({ course }: { course: Course }) {
   const handleEnroll = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!user) {
-      navigate("/login");
-    } else {
-      navigate(`/courses/${course.id}`);
-    }
+    if (!user) { navigate("/login"); return; }
+    navigate(`/courses/${course.id}`);
   };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) { navigate("/login"); return; }
+    addToCart(course.id);
+  };
+
+  const inCart = isInCart(course.id);
 
   const priceFormatted = course.price > 0
     ? `${course.price.toLocaleString()} ${lang === "ar" ? "د.ج" : "DZD"}`
