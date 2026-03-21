@@ -1,42 +1,36 @@
 
-Goal: fix “Add to cart” so products are actually inserted and visible in `/cart`.
 
-Root cause (confirmed from network logs):
-- Cart insert sends `course_id: "course-1"` / `"course-2"`.
-- `cart_items.course_id` is UUID and references `courses.id`.
-- Storefront pages still use `mockCourses` (string IDs), while cart/checkout use backend tables (UUID IDs).  
-So the storefront and cart are out of sync.
+# Fix CourseDetail: Mobile Responsiveness & Scroll-to-Top
 
-Implementation plan:
+## Problems
+1. **No scroll-to-top on navigation**: When clicking a course from the bottom of a page, the new page stays scrolled down.
+2. **Not responsive on mobile (390px viewport)**: The sidebar stacks below content via `lg:grid-cols-3` but several elements are cramped — tabs overflow, breadcrumb wraps poorly, and the aspect-video takes too much space.
 
-1) Unify storefront product source to backend (published products)
-- Replace `mockCourses` usage in:
-  - `src/pages/HomePage.tsx`
-  - `src/pages/CourseCatalog.tsx`
-- Fetch published `courses` (+ category names) from backend and render those items.
-- Keep UI design intact, but card data must use real UUID IDs from `courses.id`.
+## Changes — `src/pages/CourseDetail.tsx`
 
-2) Update course detail page to backend-first
-- In `src/pages/CourseDetail.tsx`, load product by route `id` from backend using `.maybeSingle()` (not `.single()`).
-- Load sections/lessons only when product type is `course`.
-- Keep a temporary legacy fallback for old mock URLs (like `/courses/course-1`) so old links don’t hard-fail during transition.
+### 1. Scroll to top on mount/route change
+Add a `useEffect` that scrolls to top when `id` changes:
+```ts
+useEffect(() => { window.scrollTo(0, 0); }, [id]);
+```
 
-3) Harden cart insert logic
-- In `src/contexts/CartContext.tsx`:
-  - Validate `courseId` format before insert (UUID guard).
-  - Improve error feedback from insert failures (show backend message in toast for debugging instead of generic failure).
-  - Keep existing duplicate handling (`23505`).
+### 2. Mobile-responsive tab bar
+Change the tab bar from `flex gap-1` (4 tabs crammed in 390px) to a horizontally scrollable strip:
+- Add `overflow-x-auto` and `flex-nowrap` to the tab container
+- Use `whitespace-nowrap` and `min-w-fit` on each tab button so text doesn't wrap
+- Reduce padding on small screens: `px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm`
 
-4) Keep Add-to-cart buttons mapped to real IDs
-- `src/components/CourseCard.tsx` and `src/pages/CourseDetail.tsx` should pass backend `course.id` (UUID) to `addToCart`.
-- Ensure book and course CTAs both use the same valid backend product ID path.
+### 3. Breadcrumb truncation
+Add `truncate max-w-[150px] sm:max-w-none` on the course title span in the breadcrumb so it doesn't wrap on mobile.
 
-5) Verify end-to-end flow
-- From Home and Catalog: click Add to Cart on a course and a book.
-- Confirm successful row creation in `cart_items` and item visibility in `/cart`.
-- Confirm checkout still reads joined `courses` data and proceeds normally.
+### 4. Reduce vertical spacing on mobile
+- Container padding: `py-4 sm:py-8`
+- Heading size: `text-xl sm:text-2xl lg:text-3xl`
+- Sidebar card: reduce padding on mobile `p-4 sm:p-6`
 
-Technical notes:
-- No schema migration is required for this fix.
-- This resolves the exact UUID mismatch causing the current 400 errors.
-- As a side benefit, newly created admin/instructor products will appear in storefront and become purchasable immediately.
+### 5. Instructor tab layout
+The instructor card uses `flex items-start gap-6` with a large avatar — on mobile, stack vertically: `flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-6` and center text on mobile.
+
+## File
+- `src/pages/CourseDetail.tsx` — all changes in this single file
+
