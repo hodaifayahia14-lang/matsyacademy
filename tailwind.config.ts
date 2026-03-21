@@ -60,15 +60,6 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        gold: {
-          DEFAULT: "hsl(var(--gold))",
-          foreground: "hsl(var(--gold-foreground))",
-          light: "hsl(var(--gold-light))",
-        },
-        crimson: {
-          DEFAULT: "hsl(var(--crimson))",
-          foreground: "hsl(var(--crimson-foreground))",
-        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -102,27 +93,12 @@ export default {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(-50%)" },
         },
-        shimmer: {
-          "0%": { backgroundPosition: "-200% center" },
-          "100%": { backgroundPosition: "200% center" },
-        },
-        "bounce-gentle": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-8px)" },
-        },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-12px)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out forwards",
         "scroll-left": "scroll-left 30s linear infinite",
-        shimmer: "shimmer 3s linear infinite",
-        "bounce-gentle": "bounce-gentle 2s ease-in-out infinite",
-        float: "float 3s ease-in-out infinite",
       },
     },
   },
