@@ -117,21 +117,24 @@ export default function CreateCourse() {
       } as any).select().single();
       if (error) throw error;
 
-      for (let si = 0; si < sections.length; si++) {
-        const sec = sections[si];
-        if (!sec.title) continue;
-        const { data: sectionData, error: secErr } = await supabase.from("sections").insert({
-          course_id: course.id, title: sec.title, order: si,
-        }).select().single();
-        if (secErr) throw secErr;
-        for (let li = 0; li < sec.lessons.length; li++) {
-          const lesson = sec.lessons[li];
-          if (!lesson.title) continue;
-          await supabase.from("lessons").insert({
-            section_id: sectionData.id, title: lesson.title,
-            type: lesson.type as any, duration_minutes: lesson.duration,
-            order: li, content: lesson.content || null,
-          });
+      // Only create sections/lessons for courses, not books
+      if (productType === "course") {
+        for (let si = 0; si < sections.length; si++) {
+          const sec = sections[si];
+          if (!sec.title) continue;
+          const { data: sectionData, error: secErr } = await supabase.from("sections").insert({
+            course_id: course.id, title: sec.title, order: si,
+          }).select().single();
+          if (secErr) throw secErr;
+          for (let li = 0; li < sec.lessons.length; li++) {
+            const lesson = sec.lessons[li];
+            if (!lesson.title) continue;
+            await supabase.from("lessons").insert({
+              section_id: sectionData.id, title: lesson.title,
+              type: lesson.type as any, duration_minutes: lesson.duration,
+              order: li, content: lesson.content || null,
+            });
+          }
         }
       }
 
