@@ -10,10 +10,10 @@ import { toast } from "@/components/ui/sonner";
 import { Facebook, Twitter, Linkedin, Youtube, Save } from "lucide-react";
 
 const socialFields = [
-  { key: "social_facebook", label: "Facebook", icon: Facebook, placeholder: "https://facebook.com/matsyacademy" },
-  { key: "social_twitter", label: "Twitter / X", icon: Twitter, placeholder: "https://x.com/matsyacademy" },
-  { key: "social_linkedin", label: "LinkedIn", icon: Linkedin, placeholder: "https://linkedin.com/company/matsyacademy" },
-  { key: "social_youtube", label: "YouTube", icon: Youtube, placeholder: "https://youtube.com/@matsyacademy" },
+  { key: "social_facebook", label: "Facebook", icon: Facebook, placeholder: "https://facebook.com/maisyacademy" },
+  { key: "social_twitter", label: "Twitter / X", icon: Twitter, placeholder: "https://x.com/maisyacademy" },
+  { key: "social_linkedin", label: "LinkedIn", icon: Linkedin, placeholder: "https://linkedin.com/company/maisyacademy" },
+  { key: "social_youtube", label: "YouTube", icon: Youtube, placeholder: "https://youtube.com/@maisyacademy" },
 ];
 
 export default function PlatformSettings() {

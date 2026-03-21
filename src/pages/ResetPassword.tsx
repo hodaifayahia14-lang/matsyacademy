@@ -46,7 +46,7 @@ export default function ResetPassword() {
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <span className="mx-auto mb-4 font-display text-2xl font-bold text-primary">Matsy<span className="text-foreground"> Academy</span></span>
+          <span className="mx-auto mb-4 font-display text-2xl font-bold text-primary">Maisy<span className="text-foreground"> Academy</span></span>
           <CardTitle className="text-2xl">{t("auth.setNewPassword")}</CardTitle>
           <CardDescription>{t("auth.newPasswordDesc")}</CardDescription>
         </CardHeader>

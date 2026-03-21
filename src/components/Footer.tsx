@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
-import matsyLogo from "@/assets/matsy-logo.png";
+import maisyLogo from "@/assets/maisy-logo.png";
 
 const socialConfig = [
   { key: "social_facebook", icon: Facebook },
@@ -48,9 +48,9 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link to="/" className="mb-4 flex items-center gap-2">
-              <img src={matsyLogo} alt="Matsy Academy" className="h-10 w-10 rounded-lg object-contain" />
+              <img src={maisyLogo} alt="Maisy Academy" className="h-10 w-10 rounded-lg object-contain" />
               <span className="font-display text-xl font-bold">
-                <span className="text-accent">Matsy</span>
+                <span className="text-accent">Maisy</span>
                 <span className="text-foreground"> Academy</span>
               </span>
             </Link>
@@ -86,7 +86,7 @@ export default function Footer() {
           ))}
         </div>
         <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Matsy Academy — أكاديمية مايسي للتدريب و التطوير
+          © {new Date().getFullYear()} Maisy Academy — أكاديمية مايسي للتدريب و التطوير
         </div>
       </div>
     </footer>

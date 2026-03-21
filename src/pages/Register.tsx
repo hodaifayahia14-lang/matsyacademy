@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import matsyLogo from "@/assets/matsy-logo.png";
+import maisyLogo from "@/assets/maisy-logo.png";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -55,7 +55,7 @@ export default function Register() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="mx-auto mb-4">
-            <img src={matsyLogo} alt="Matsy Academy" className="mx-auto h-16 w-16 rounded-xl object-contain" />
+            <img src={maisyLogo} alt="Maisy Academy" className="mx-auto h-16 w-16 rounded-xl object-contain" />
           </Link>
           <CardTitle className="text-2xl">{t("auth.createAccount")}</CardTitle>
           <CardDescription>{t("auth.startJourney")}</CardDescription>

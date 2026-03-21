@@ -50,7 +50,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">{t("contact.email")}</h3>
-                <p className="text-sm text-muted-foreground">info@matsyacademy.com</p>
+                <p className="text-sm text-muted-foreground">info@maisyacademy.com</p>
               </div>
             </div>
           </div>

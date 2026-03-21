@@ -94,7 +94,7 @@ Deno.serve(async (req) => {
     answers.push({
       question_id: insertedQuestions[0].id,
       user_id: userId,
-      body: "Focus on these key areas: 1) HSE regulations and Algerian labor laws, 2) Risk assessment methodologies, 3) Fire safety and emergency procedures, 4) PPE standards. The Matsy Academy course covers all these topics comprehensively. I studied for about 3 months and passed on my first try!",
+      body: "Focus on these key areas: 1) HSE regulations and Algerian labor laws, 2) Risk assessment methodologies, 3) Fire safety and emergency procedures, 4) PPE standards. The Maisy Academy course covers all these topics comprehensively. I studied for about 3 months and passed on my first try!",
       is_accepted: true,
     });
     answers.push({

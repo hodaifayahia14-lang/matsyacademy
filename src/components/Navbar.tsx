@@ -11,7 +11,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import matsyLogo from "@/assets/matsy-logo.png";
+import maisyLogo from "@/assets/maisy-logo.png";
 
 const categoryKeys = [
   { labelKey: "navbar.cat.hse", to: "/courses?category=HSE+Safety" },
@@ -63,9 +63,9 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img src={matsyLogo} alt="Matsy Academy" className="h-9 w-9 rounded-lg object-contain" />
+          <img src={maisyLogo} alt="Maisy Academy" className="h-9 w-9 rounded-lg object-contain" />
           <span className="font-display text-xl font-bold">
-            <span className="text-accent">Matsy</span>
+            <span className="text-accent">Maisy</span>
             <span className="text-foreground"> Academy</span>
           </span>
         </Link>

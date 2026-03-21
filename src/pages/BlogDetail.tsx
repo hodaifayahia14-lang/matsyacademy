@@ -59,7 +59,7 @@ export default function BlogDetail() {
         <h1 className="font-display text-3xl font-bold md:text-4xl">{title}</h1>
 
         <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1"><User className="h-4 w-4" /> {(post.profiles as any)?.name || "Matsy Academy"}</span>
+          <span className="flex items-center gap-1"><User className="h-4 w-4" /> {(post.profiles as any)?.name || "Maisy Academy"}</span>
           <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> {post.published_at ? new Date(post.published_at).toLocaleDateString() : ""}</span>
         </div>
 
