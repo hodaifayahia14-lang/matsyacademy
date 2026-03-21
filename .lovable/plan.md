@@ -1,36 +1,61 @@
 
 
-# Fix CourseDetail: Mobile Responsiveness & Scroll-to-Top
+# Seed Complete Maisy Academy Course Catalog (12 Courses, 4 Categories)
 
-## Problems
-1. **No scroll-to-top on navigation**: When clicking a course from the bottom of a page, the new page stays scrolled down.
-2. **Not responsive on mobile (390px viewport)**: The sidebar stacks below content via `lg:grid-cols-3` but several elements are cramped — tabs overflow, breadcrumb wraps poorly, and the aspect-video takes too much space.
+## Overview
+Replace existing 3 categories with the 4 real Maisy Academy categories, then seed all 12 courses with trilingual titles, descriptions, cover images, and proper pricing.
 
-## Changes — `src/pages/CourseDetail.tsx`
+## Step 1: Update Categories in Database
+Delete old categories and insert the 4 real ones:
 
-### 1. Scroll to top on mount/route change
-Add a `useEffect` that scrolls to top when `id` changes:
-```ts
-useEffect(() => { window.scrollTo(0, 0); }, [id]);
-```
+| Slug | name_en | name_fr | name_ar |
+|------|---------|---------|---------|
+| body-care | Body Care | Soins Corporels | العناية الجسدية |
+| early-childhood | Early Childhood Education | Éducation de la Petite Enfance | التعليم وتربية الأطفال |
+| hse-safety | Workplace Safety (HSE) | Sécurité HSE | الأمن والوقاية |
+| religious-guidance | Religious Guidance | Guidage Religieux | الإرشاد الديني |
 
-### 2. Mobile-responsive tab bar
-Change the tab bar from `flex gap-1` (4 tabs crammed in 390px) to a horizontally scrollable strip:
-- Add `overflow-x-auto` and `flex-nowrap` to the tab container
-- Use `whitespace-nowrap` and `min-w-fit` on each tab button so text doesn't wrap
-- Reduce padding on small screens: `px-3 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm`
+## Step 2: Insert 12 Courses
+Using the existing user profile as `instructor_id`, insert all 12 courses with:
+- Trilingual titles (stored in `title` as Arabic primary)
+- Descriptions in Arabic
+- Cover images from Unsplash (relevant professional photos)
+- Prices in DZD (realistic range 5000-25000)
+- Proper `category_id` references
+- `status: 'published'`, `type: 'course'`
+- Learning outcomes, requirements, tags
+- Badges info in description field
 
-### 3. Breadcrumb truncation
-Add `truncate max-w-[150px] sm:max-w-none` on the course title span in the breadcrumb so it doesn't wrap on mobile.
+Courses 4 and 5 (camps/bundles) will have higher prices to reflect bundled value.
 
-### 4. Reduce vertical spacing on mobile
-- Container padding: `py-4 sm:py-8`
-- Heading size: `text-xl sm:text-2xl lg:text-3xl`
-- Sidebar card: reduce padding on mobile `p-4 sm:p-6`
+## Step 3: Update Navbar Category Links
+Update `src/components/Navbar.tsx` category dropdown links to match new category names.
 
-### 5. Instructor tab layout
-The instructor card uses `flex items-start gap-6` with a large avatar — on mobile, stack vertically: `flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-6` and center text on mobile.
+## Step 4: Add Contact Phone Numbers
+Add WhatsApp/phone numbers to:
+- `src/components/Footer.tsx` — phone section with the 3 numbers
+- `src/pages/HomePage.tsx` — contact strip section near bottom
+- `src/components/CourseCard.tsx` — small WhatsApp icon linking to primary number
 
-## File
-- `src/pages/CourseDetail.tsx` — all changes in this single file
+Phone numbers: 0669 79 95 16, 0554 27 59 94, 0799 10 92 95
+
+## Step 5: Update HomePage Hero Text
+Update subtitle to reflect all 4 categories instead of just HSE + religious.
+
+## Database Operations
+1. Delete existing categories and courses (clean slate for real data)
+2. Insert 4 categories
+3. Insert 12 courses with cover images
+
+## Files to Modify
+- `src/components/Navbar.tsx` — update category links to new names
+- `src/components/Footer.tsx` — add phone numbers
+- `src/pages/HomePage.tsx` — update hero subtitle, add contact section
+- `src/components/CourseCard.tsx` — add WhatsApp link
+
+## Technical Notes
+- Existing courses (web dev, 3 books) will be deleted and replaced with real catalog
+- All course IDs will be new UUIDs from the database
+- The `useCourses` hook already fetches from DB so storefront will auto-update
+- Category filter in CourseCatalog already reads from DB categories
 
