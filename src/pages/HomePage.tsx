@@ -189,7 +189,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link to="/courses">
-                <Button size="lg" variant="outline" className="gap-2 border-white/40 text-white hover:bg-white/10 text-lg px-8 py-6">
+                <Button size="lg" variant="outline" className="gap-2 border-white/40 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 text-lg px-8 py-6">
                   {lang === "ar" ? "استعرض المنتجات" : lang === "fr" ? "Parcourir les Produits" : "Browse Products"}
                 </Button>
               </Link>
