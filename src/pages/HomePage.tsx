@@ -118,8 +118,8 @@ export default function HomePage() {
     { icon: Headphones, title: lang === "ar" ? "دعم مستمر" : lang === "fr" ? "Support Continu" : "Ongoing Support", desc: lang === "ar" ? "فريق دعم متاح لمساعدتك" : lang === "fr" ? "Une équipe de support disponible pour vous aider" : "A support team available to help you" },
   ];
 
-  const courses = activeCat === "All" ? mockCourses : mockCourses.filter((c) => c.category === activeCat);
-  const featuredCourses = activeCat === "All" ? courses : courses;
+  const filteredCourses = activeCat === "All" ? dbCourses : dbCourses.filter((c) => c.category_name === activeCat);
+  const featuredCourses = filteredCourses;
 
   return (
     <div className="overflow-hidden">
