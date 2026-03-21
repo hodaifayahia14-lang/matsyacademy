@@ -265,7 +265,7 @@ export default function CourseDetail() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
-              <div className="rounded-xl border bg-card p-6 shadow-sm">
+              <div className="rounded-xl border bg-card p-4 shadow-sm sm:p-6">
                 <div className="mb-4 text-center">
                   <p className="font-display text-3xl font-bold text-primary">{priceText}</p>
                 </div>
