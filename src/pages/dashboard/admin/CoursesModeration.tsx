@@ -96,7 +96,7 @@ export default function CoursesModeration() {
                 <Badge variant={statusColor(c.status) as any} className="text-xs capitalize">{c.status}</Badge>
               </TableCell>
               <TableCell>
-                <div className="flex gap-1">
+                <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                   {c.status === "pending" && (
                     <>
                       <Button size="sm" onClick={() => updateStatus.mutate({ id: c.id, status: "published" })}>
