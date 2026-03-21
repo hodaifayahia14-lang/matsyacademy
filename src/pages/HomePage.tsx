@@ -127,9 +127,9 @@ export default function HomePage() {
               </div>
               <div className="mt-8 flex items-center gap-3">
                 <div className="flex -space-x-3 rtl:space-x-reverse">
-                  {["AhmedMatsy", "SheikhIbrahim", "SarahBenali", "RachidToumi"].map((seed) => (
-                    <img key={seed} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`} alt=""
-                      className="h-10 w-10 rounded-full border-2 border-background" />
+                  {[32, 75, 44, 52].map((id, idx) => (
+                    <img key={id} src={`https://randomuser.me/api/portraits/${idx === 2 ? 'women' : 'men'}/${id}.jpg`} alt=""
+                      className="h-10 w-10 rounded-full border-2 border-background object-cover" />
                   ))}
                 </div>
                 <div>
