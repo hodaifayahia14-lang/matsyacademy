@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { useState } from "react";
 import { mockCourses, mockReviews } from "@/data/mockData";
 import { motion } from "framer-motion";
@@ -15,6 +16,7 @@ export default function CourseDetail() {
   const { id } = useParams();
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const { addToCart, isInCart } = useCart();
   const navigate = useNavigate();
   const lang = i18n.language as "en" | "fr" | "ar";
   const course = mockCourses.find((c) => c.id === id);
@@ -256,9 +258,16 @@ export default function CourseDetail() {
                 <div className="mb-4 text-center">
                   <p className="font-display text-3xl font-bold text-primary">{priceText}</p>
                 </div>
-                <Button className="mb-3 w-full gap-2" size="lg" onClick={handleEnroll}>
-                  <ShoppingCart className="h-4 w-4" />
+                <Button className="mb-2 w-full gap-2" size="lg" onClick={handleEnroll}>
                   {enrollText}
+                </Button>
+                <Button variant={isInCart(course.id) ? "secondary" : "outline"} className="mb-3 w-full gap-2" size="lg"
+                  onClick={() => { if (!user) navigate("/login"); else addToCart(course.id); }}
+                  disabled={isInCart(course.id)}>
+                  <ShoppingCart className="h-4 w-4" />
+                  {isInCart(course.id)
+                    ? (lang === "ar" ? "في السلة" : "In Cart")
+                    : (lang === "ar" ? "أضف للسلة" : lang === "fr" ? "Ajouter au panier" : "Add to Cart")}
                 </Button>
                 <p className="mb-4 text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
                 <div className="space-y-3 border-t pt-4">

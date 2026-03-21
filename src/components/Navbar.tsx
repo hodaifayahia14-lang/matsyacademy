@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, LogOut, User, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User, Phone, ArrowRight, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -35,6 +36,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user, profile, roles, signOut } = useAuth();
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -131,6 +133,16 @@ export default function Navbar() {
             <Phone className="h-4 w-4" />
             <span className="hidden xl:inline">+213 554 275 994</span>
           </a>
+          <Link to="/cart" className="relative">
+            <Button variant="ghost" size="icon" className="h-9 w-9">
+              <ShoppingCart className="h-4 w-4" />
+              {cartCount > 0 && (
+                <span className="absolute -end-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                  {cartCount}
+                </span>
+              )}
+            </Button>
+          </Link>
           <LanguageSwitcher />
           {user ? (
             <DropdownMenu>

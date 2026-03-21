@@ -1,7 +1,8 @@
-import { Star, Users, BookOpen, Book, GraduationCap } from "lucide-react";
+import { Star, Users, BookOpen, Book, GraduationCap, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import type { Course } from "@/data/mockData";
 
@@ -13,6 +14,7 @@ export default function CourseCard({ course }: { course: Course }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const { user } = useAuth();
+  const { addToCart, isInCart } = useCart();
   const navigate = useNavigate();
 
   const title = getLocalized(course, "title", lang);
@@ -29,12 +31,18 @@ export default function CourseCard({ course }: { course: Course }) {
   const handleEnroll = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!user) {
-      navigate("/login");
-    } else {
-      navigate(`/courses/${course.id}`);
-    }
+    if (!user) { navigate("/login"); return; }
+    navigate(`/courses/${course.id}`);
   };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) { navigate("/login"); return; }
+    addToCart(course.id);
+  };
+
+  const inCart = isInCart(course.id);
 
   const priceFormatted = course.price > 0
     ? `${course.price.toLocaleString()} ${lang === "ar" ? "د.ج" : "DZD"}`
@@ -116,10 +124,16 @@ export default function CourseCard({ course }: { course: Course }) {
           <span className="text-lg font-bold text-primary">{priceFormatted}</span>
         </div>
 
-        <Button size="sm" onClick={handleEnroll}
-          className="w-full gap-1 bg-accent text-accent-foreground hover:bg-accent/90">
-          {enrollText}
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" onClick={handleEnroll}
+            className="flex-1 gap-1 bg-accent text-accent-foreground hover:bg-accent/90">
+            {enrollText}
+          </Button>
+          <Button size="sm" variant={inCart ? "secondary" : "outline"} onClick={handleAddToCart}
+            className="gap-1" disabled={inCart}>
+            <ShoppingCart className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
     </Link>
   );
