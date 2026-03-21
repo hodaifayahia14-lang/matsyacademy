@@ -82,9 +82,9 @@ export default function CoursesModeration() {
         </TableHeader>
         <TableBody>
           {items.map((c: any) => (
-            <TableRow key={c.id}>
+            <TableRow key={c.id} className="cursor-pointer hover:bg-secondary/50" onClick={() => navigate(`/dashboard/admin/courses/${c.id}`)}>
               <TableCell className="max-w-xs">
-                <p className="truncate font-medium">{c.title}</p>
+                <p className="truncate font-medium text-primary hover:underline">{c.title}</p>
               </TableCell>
               <TableCell>
                 <Badge variant="outline" className="text-xs capitalize">{c.type || "course"}</Badge>
