@@ -20,7 +20,7 @@
     "browseCourses": "Find Courses",
     "becomeInstructor": "Become an Instructor"
   },
-  "stats": { "students": "Students", "courses": "Courses", "instructors": "Instructors", "certificates": "Certificates" },
+  "stats": { "students": "Students", "courses": "Courses", "instructors": "Instructors", "certificates": "Certificates", "fields": "Specialization Fields", "accredited": "Accredited" },
   "howItWorks": { "title": "Learn With 200+ World Class Institutions And Educators", "subtitle": "Learning made simple in three steps", "where": "Where I Want", "whereDesc": "Learn from anywhere in the world. All you need is an internet connection.", "when": "When I Want", "whenDesc": "Access your courses 24/7. Study at your own schedule, day or night.", "pace": "At My Own Pace", "paceDesc": "No pressure. Progress through lessons at a speed that suits you." },
   "learningFocused": { "title": "Learning Focused on Your Goals", "subtitle": "Learn from top educators with in-person classes & bonus access to online learning" },
   "featured": { "title": "Explore Top Courses", "subtitle": "Hand-picked by our team", "viewAll": "View All" },

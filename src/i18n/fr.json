@@ -20,7 +20,7 @@
     "browseCourses": "Trouver des cours",
     "becomeInstructor": "Devenir formateur"
   },
-  "stats": { "students": "Étudiants", "courses": "Cours", "instructors": "Formateurs", "certificates": "Certificats" },
+  "stats": { "students": "Étudiants", "courses": "Cours", "instructors": "Formateurs", "certificates": "Certificats", "fields": "Domaines de spécialisation", "accredited": "Agréée" },
   "howItWorks": { "title": "Apprenez avec 200+ institutions et éducateurs de classe mondiale", "subtitle": "Apprendre en toute simplicité en trois étapes", "where": "Où je veux", "whereDesc": "Apprenez de n'importe où dans le monde. Tout ce dont vous avez besoin est une connexion internet.", "when": "Quand je veux", "whenDesc": "Accédez à vos cours 24h/24 et 7j/7. Étudiez selon votre emploi du temps.", "pace": "À mon rythme", "paceDesc": "Aucune pression. Progressez à travers les leçons à la vitesse qui vous convient." },
   "learningFocused": { "title": "Apprentissage axé sur vos objectifs", "subtitle": "Apprenez des meilleurs éducateurs avec des cours en personne et un accès bonus à l'apprentissage en ligne" },
   "featured": { "title": "Explorez les meilleurs cours", "subtitle": "Sélectionnés par notre équipe", "viewAll": "Voir tout" },

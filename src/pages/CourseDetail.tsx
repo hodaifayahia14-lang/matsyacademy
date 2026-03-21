@@ -1,14 +1,19 @@
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ArrowRight } from "lucide-react";
+import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { mockCourses, mockReviews } from "@/data/mockData";
 import { motion } from "framer-motion";
 
+function getLocalized(obj: any, field: string, lang: string): string {
+  return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
+}
+
 export default function CourseDetail() {
   const { id } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language as "en" | "fr" | "ar";
   const course = mockCourses.find((c) => c.id === id);
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
   const [openSections, setOpenSections] = useState<Set<string>>(new Set([course?.sections[0]?.id || ""]));
@@ -24,6 +29,19 @@ export default function CourseDetail() {
     );
   }
 
+  const title = getLocalized(course, "title", lang);
+  const subtitle = getLocalized(course, "subtitle", lang);
+  const description = getLocalized(course, "description", lang);
+  const badge = getLocalized(course, "badge", lang);
+  const format = getLocalized(course, "format", lang);
+  const categoryName = getLocalized(course, "category", lang);
+  const levelName = getLocalized(course, "level", lang);
+  const learningOutcomes = (course as any)[`learningOutcomes_${lang}`] || course.learningOutcomes;
+  const requirements = (course as any)[`requirements_${lang}`] || course.requirements;
+  const whatsappUrl = "https://wa.me/213554275994";
+  const contactText = lang === "ar" ? "اتصل بنا للسعر" : lang === "fr" ? "Contactez-nous pour le prix" : "Contact for Price";
+  const enrollText = lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now";
+
   const toggleSection = (sectionId: string) => {
     setOpenSections((prev) => { const next = new Set(prev); next.has(sectionId) ? next.delete(sectionId) : next.add(sectionId); return next; });
   };
@@ -37,34 +55,40 @@ export default function CourseDetail() {
 
   const tabs = ["overview", "curriculum", "instructor", "reviews"] as const;
   const tabLabels = { overview: t("courseDetail.overview"), curriculum: t("courseDetail.curriculum"), instructor: t("courseDetail.instructor"), reviews: t("courseDetail.reviews") };
-  const oldPrice = course.isFree ? 99 : Math.round(course.price * 1.3);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Breadcrumb */}
       <div className="border-b bg-secondary/30">
         <div className="container py-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-primary">{t("navbar.courses")}</Link>
+            <Link to="/" className="hover:text-primary">{t("navbar.home")}</Link>
             <span>/</span>
-            <Link to="/courses" className="hover:text-primary">{course.category}</Link>
+            <Link to="/courses" className="hover:text-primary">{t("navbar.courses")}</Link>
             <span>/</span>
-            <span className="text-foreground">{course.title}</span>
+            <span className="text-foreground">{title}</span>
           </div>
         </div>
       </div>
 
       <div className="container py-8">
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* Main Content */}
           <div className="lg:col-span-2">
-            {/* Course Header */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="mb-6 aspect-video overflow-hidden rounded-xl bg-secondary">
-                <img src={course.coverImage} alt={course.title} className="h-full w-full object-cover" />
+              <div className="mb-6 aspect-video overflow-hidden rounded-xl bg-secondary relative">
+                <img src={course.coverImage} alt={title} className="h-full w-full object-cover" />
+                {badge && (
+                  <div className="absolute top-4 start-4 rounded-md bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground shadow">
+                    {badge}
+                  </div>
+                )}
               </div>
-              <h1 className="mb-3 font-display text-2xl font-bold text-foreground lg:text-3xl">{course.title}</h1>
-              <p className="mb-4 text-muted-foreground">{course.subtitle}</p>
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{categoryName}</span>
+                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{levelName}</span>
+                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{format}</span>
+              </div>
+              <h1 className="mb-3 font-display text-2xl font-bold text-foreground lg:text-3xl">{title}</h1>
+              <p className="mb-4 text-muted-foreground">{subtitle}</p>
               <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-warning text-warning" />
@@ -72,7 +96,6 @@ export default function CourseDetail() {
                   <span>({course.reviewCount})</span>
                 </div>
                 <div className="flex items-center gap-1"><Users className="h-4 w-4" />{course.studentCount} {t("stats.students").toLowerCase()}</div>
-                <div className="flex items-center gap-1"><Globe className="h-4 w-4" />{course.language}</div>
                 <div className="flex items-center gap-1"><Calendar className="h-4 w-4" />{t("courseDetail.updated")} {course.updatedAt}</div>
               </div>
               <div className="mb-6 flex items-center gap-3">
@@ -84,7 +107,6 @@ export default function CourseDetail() {
               </div>
             </motion.div>
 
-            {/* Tabs */}
             <div className="mb-6 flex gap-1 rounded-lg bg-secondary p-1">
               {tabs.map((tab) => (
                 <button key={tab} onClick={() => setActiveTab(tab)}
@@ -96,23 +118,22 @@ export default function CourseDetail() {
 
             {activeTab === "overview" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-                {/* What you'll learn */}
                 <div className="rounded-xl border bg-primary/5 p-6">
                   <h2 className="mb-4 font-display text-xl font-bold text-foreground">{t("courseDetail.whatYoullLearn")}</h2>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    {course.learningOutcomes.map((o, i) => (
+                    {learningOutcomes.map((o: string, i: number) => (
                       <div key={i} className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" /><span className="text-sm">{o}</span></div>
                     ))}
                   </div>
                 </div>
                 <div>
                   <h2 className="mb-4 font-display text-xl font-bold">{t("courseDetail.description")}</h2>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{course.description}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
                 </div>
                 <div>
                   <h2 className="mb-4 font-display text-xl font-bold">{t("courseDetail.requirements")}</h2>
                   <ul className="space-y-2">
-                    {course.requirements.map((r, i) => (
+                    {requirements.map((r: string, i: number) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground"><div className="h-1.5 w-1.5 rounded-full bg-primary" />{r}</li>
                     ))}
                   </ul>
@@ -165,12 +186,10 @@ export default function CourseDetail() {
                     <h3 className="mb-1 font-display text-xl font-bold">{course.instructor}</h3>
                     <p className="mb-4 text-sm text-muted-foreground">{t("courseDetail.expertInstructor")}</p>
                     <div className="mb-4 flex flex-wrap gap-6 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1"><Star className="h-4 w-4 text-warning" /> 4.8 {t("courseDetail.rating")}</span>
-                      <span className="flex items-center gap-1"><Users className="h-4 w-4" /> 12,450 {t("stats.students")}</span>
-                      <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> 8 {t("stats.courses")}</span>
-                      <span className="flex items-center gap-1"><Award className="h-4 w-4" /> 3 {t("stats.certificates")}</span>
+                      <span className="flex items-center gap-1"><Star className="h-4 w-4 text-warning" /> {course.rating.toFixed(1)} {t("courseDetail.rating")}</span>
+                      <span className="flex items-center gap-1"><Users className="h-4 w-4" /> {course.studentCount} {t("stats.students")}</span>
+                      <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> 3 {t("stats.courses")}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">A passionate educator with over 10 years of experience in the field. Known for clear explanations and practical teaching approach.</p>
                   </div>
                 </div>
               </motion.div>
@@ -212,7 +231,7 @@ export default function CourseDetail() {
                           </div>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">{r.comment}</p>
+                      <p className="text-sm text-muted-foreground">{getLocalized(r, "comment", lang)}</p>
                     </div>
                   ))}
                 </div>
@@ -224,16 +243,19 @@ export default function CourseDetail() {
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
               <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <div className="mb-4 flex items-baseline gap-3">
-                  <span className="font-display text-3xl font-bold text-foreground">
-                    {course.isFree ? t("catalog.free") : `$${course.price.toFixed(0)}`}
-                  </span>
-                  <span className="text-lg text-muted-foreground line-through">${oldPrice}</span>
+                <div className="mb-4">
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 text-lg font-bold text-primary hover:underline">
+                    <MessageCircle className="h-5 w-5" />
+                    {contactText}
+                  </a>
                 </div>
-                <Button className="mb-3 w-full gap-2" size="lg">
-                  {course.isFree ? t("courseDetail.enrollFree") : t("courseDetail.enrollNow")}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  <Button className="mb-3 w-full gap-2" size="lg">
+                    {enrollText}
+                    <MessageCircle className="h-4 w-4" />
+                  </Button>
+                </a>
                 <p className="mb-4 text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
                 <div className="space-y-3 border-t pt-4">
                   {[
@@ -249,8 +271,6 @@ export default function CourseDetail() {
                   ))}
                 </div>
               </div>
-
-              {/* Related instructor */}
               <div className="rounded-xl border bg-card p-5">
                 <div className="flex items-center gap-3">
                   <img src={course.instructorAvatar} alt="" className="h-12 w-12 rounded-full" />

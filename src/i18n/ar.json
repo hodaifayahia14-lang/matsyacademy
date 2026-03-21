@@ -20,7 +20,7 @@
     "browseCourses": "ابحث عن دورات",
     "becomeInstructor": "كن مدرباً"
   },
-  "stats": { "students": "طلاب", "courses": "دورات", "instructors": "مدربون", "certificates": "شهادات" },
+  "stats": { "students": "طلاب", "courses": "دورات", "instructors": "مدربون", "certificates": "شهادات", "fields": "مجال تخصص", "accredited": "معتمدة" },
   "howItWorks": { "title": "تعلم مع أكثر من 200 مؤسسة ومعلم عالمي", "subtitle": "التعلم بسهولة في ثلاث خطوات", "where": "أين أريد", "whereDesc": "تعلم من أي مكان في العالم. كل ما تحتاجه هو اتصال بالإنترنت.", "when": "متى أريد", "whenDesc": "الوصول إلى دوراتك على مدار الساعة.", "pace": "بالسرعة التي تناسبني", "paceDesc": "لا ضغط. تقدم بالسرعة التي تناسبك." },
   "learningFocused": { "title": "تعلم يركز على أهدافك", "subtitle": "تعلم من أفضل المعلمين مع دروس حضورية ووصول إضافي للتعلم عبر الإنترنت" },
   "featured": { "title": "استكشف أفضل الدورات", "subtitle": "مختارة بعناية من فريقنا", "viewAll": "عرض الكل" },

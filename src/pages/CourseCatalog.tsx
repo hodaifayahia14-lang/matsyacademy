@@ -7,52 +7,37 @@ import CourseCard from "@/components/CourseCard";
 import { mockCourses, mockCategories } from "@/data/mockData";
 import { motion } from "framer-motion";
 
-const levels = ["All Levels", "Beginner", "Intermediate", "Advanced"];
-const priceFilters = ["All", "Free", "Paid"];
-const languages = ["All", "English", "French", "Arabic"];
-const sortOptions = ["Newest", "Most Popular", "Highest Rated"];
-const PER_PAGE = 21;
+function getLocalized(obj: any, field: string, lang: string): string {
+  return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
+}
 
 export default function CourseCatalog() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language as "en" | "fr" | "ar";
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [category, setCategory] = useState(searchParams.get("category") || "All");
-  const [level, setLevel] = useState("All Levels");
-  const [price, setPrice] = useState("All");
-  const [language, setLanguage] = useState("All");
-  const [sort, setSort] = useState("Newest");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
 
   const filtered = useMemo(() => {
     let result = [...mockCourses];
-    if (search) result = result.filter((c) => c.title.toLowerCase().includes(search.toLowerCase()));
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((c) =>
+        c.title_en.toLowerCase().includes(q) ||
+        c.title_fr.toLowerCase().includes(q) ||
+        c.title_ar.includes(q)
+      );
+    }
     if (category !== "All") result = result.filter((c) => c.category === category);
-    if (level !== "All Levels") result = result.filter((c) => c.level === level);
-    if (price === "Free") result = result.filter((c) => c.isFree);
-    if (price === "Paid") result = result.filter((c) => !c.isFree);
-    if (language !== "All") result = result.filter((c) => c.language === language);
-    if (sort === "Most Popular") result.sort((a, b) => b.studentCount - a.studentCount);
-    if (sort === "Highest Rated") result.sort((a, b) => b.rating - a.rating);
     return result;
-  }, [search, category, level, price, language, sort]);
+  }, [search, category]);
 
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-  const hasFilters = category !== "All" || level !== "All Levels" || price !== "All" || language !== "All" || search;
+  const hasFilters = category !== "All" || search;
+  const clearFilters = () => { setSearch(""); setCategory("All"); setPage(1); setSearchParams({}); };
 
-  const clearFilters = () => { setSearch(""); setCategory("All"); setLevel("All Levels"); setPrice("All"); setLanguage("All"); setPage(1); setSearchParams({}); };
-
-  const Select = ({ value, onChange, options, label }: { value: string; onChange: (v: string) => void; options: string[]; label: string }) => (
-    <div>
-      <label className="mb-1 block text-xs font-medium text-muted-foreground">{label}</label>
-      <select value={value} onChange={(e) => { onChange(e.target.value); setPage(1); }}
-        className="w-full rounded-lg border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-        {options.map((o) => <option key={o}>{o}</option>)}
-      </select>
-    </div>
-  );
+  const categoryOptions = ["All", ...mockCategories.map((c) => c.name)];
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,15 +58,19 @@ export default function CourseCatalog() {
                 className="w-full rounded-lg border bg-card py-2.5 ps-10 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
-          <Button variant="outline" className="gap-2 md:hidden" onClick={() => setShowFilters(!showFilters)}>
-            <SlidersHorizontal className="h-4 w-4" /> {t("catalog.filters")}
-          </Button>
-          <div className={`grid grid-cols-2 gap-3 md:flex md:gap-3 ${showFilters ? "" : "hidden md:flex"}`}>
-            <Select value={category} onChange={setCategory} options={["All", ...mockCategories.map((c) => c.name)]} label={t("catalog.category")} />
-            <Select value={level} onChange={setLevel} options={levels} label={t("catalog.level")} />
-            <Select value={price} onChange={setPrice} options={priceFilters} label={t("catalog.price")} />
-            <Select value={language} onChange={setLanguage} options={languages} label={t("catalog.language")} />
-            <Select value={sort} onChange={setSort} options={sortOptions} label={t("catalog.sortBy")} />
+          <div className="flex flex-wrap gap-2">
+            {categoryOptions.map((cat) => {
+              const catObj = mockCategories.find((c) => c.name === cat);
+              const label = cat === "All" ? t("catalog.all") : (catObj ? getLocalized(catObj, "name", lang) : cat);
+              return (
+                <button key={cat} onClick={() => { setCategory(cat); setPage(1); }}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                    category === cat ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                  }`}>
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -95,9 +84,9 @@ export default function CourseCatalog() {
 
         <p className="mb-6 text-sm text-muted-foreground">{t("catalog.coursesFound", { count: filtered.length })}</p>
 
-        {paginated.length > 0 ? (
+        {filtered.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {paginated.map((c, i) => (
+            {filtered.map((c, i) => (
               <motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
                 <CourseCard course={c} />
               </motion.div>
@@ -108,17 +97,6 @@ export default function CourseCatalog() {
             <Search className="mx-auto mb-4 h-12 w-12 text-muted-foreground/40" />
             <h3 className="mb-2 font-display text-lg font-semibold">{t("catalog.noResults")}</h3>
             <p className="text-sm text-muted-foreground">{t("catalog.noResultsDesc")}</p>
-          </div>
-        )}
-
-        {totalPages > 1 && (
-          <div className="mt-8 flex items-center justify-center gap-2">
-            <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>{t("catalog.previous")}</Button>
-            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-              const p = i + 1;
-              return <Button key={p} variant={p === page ? "default" : "outline"} size="sm" onClick={() => setPage(p)}>{p}</Button>;
-            })}
-            <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>{t("catalog.next")}</Button>
           </div>
         )}
       </div>
