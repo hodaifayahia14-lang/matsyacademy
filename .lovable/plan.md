@@ -1,135 +1,101 @@
 
 
-# Comprehensive Admin Dashboard + UI/UX Fixes + Content Management
+# Comprehensive UX Enhancement: Course Creation, Ratings, Logo, Dashboard Redirect & Homepage
 
 ## Overview
-Fix RTL sidebar, enhance admin dashboard to a full-featured CMS, add blog management, Q&A moderation, About content management, and fix course enrollment flow.
+Enhance the course creation flow for instructors/admins, add course ratings/comments for signed-in users, redirect to dashboard after login, add the company logo everywhere, create instructor detail pages, and add new homepage sections.
 
-## Phase 1: Fix RTL Sidebar in Dashboard
+## Phase 1: Copy Logo Asset
+Copy `user-uploads://311124902_497028412274741_7980291339042252149_n.jpg` to `src/assets/matsy-logo.png`. Use it in Navbar, Footer, Login/Register pages, and About page.
 
-**File: `src/components/DashboardLayout.tsx`**
-- Detect `dir` from `i18n` and apply `side="right"` on `Sidebar` when RTL
-- The shadcn Sidebar component uses `border-e` (logical) which is correct, but the sidebar itself renders on the left by default. Add `side={isRTL ? "right" : "left"}` prop
+## Phase 2: Enhanced Course Creation Flow (`src/pages/dashboard/instructor/CreateCourse.tsx`)
+Complete redesign of the 6-step wizard into a polished, intuitive experience:
 
-**File: `src/components/ui/sidebar.tsx`**
-- Verify the `Sidebar` component supports a `side` prop — it does (shadcn default). Ensure it's wired through.
+- **Step labels**: Show descriptive names ("Basic Info", "Media", "Description", "Curriculum", "Pricing", "Review") instead of "step1-6"
+- **Progress bar**: Replace numbered circles with a visual progress bar showing step names
+- **Step 1 — Basic Info**: Add description helper text, better placeholders
+- **Step 2 — Media**: Add image preview when URL is entered, drag-drop zone styling, file upload to Supabase Storage (not just URL)
+- **Step 3 — Description**: Add character count, richer layout for outcomes/requirements with drag-to-reorder
+- **Step 4 — Curriculum**: Add drag handle icons, lesson content field (URL for video, text for text), collapsible sections
+- **Step 5 — Pricing**: Show price in DZD, add discount/original price fields, coupon code input
+- **Step 6 — Review**: Full visual preview card showing how course will look, with all details summarized beautifully
+- **Validation**: Prevent advancing to next step if required fields are empty (title, description, at least 1 section)
+- **Auto-save**: Toast confirmation with "Draft auto-saved" as user progresses
 
-## Phase 2: Fix Course Card — Remove WhatsApp, Use Auth Flow
+## Phase 3: Admin Course Creation
+- Add a "Create Course" button and route in `AdminDashboard.tsx` → reuse `CreateCourse` component
+- In `CoursesModeration.tsx`, add a "Create Course/Book" button that navigates to a create form
+- Admin bypasses the "pending" status — can publish directly
 
-**File: `src/components/CourseCard.tsx`**
-- The `handleEnroll` already navigates to `/login` for unauthenticated users — this is correct. Verify no WhatsApp links remain anywhere. The current code looks clean. Check `CourseDetail.tsx` for any remaining WhatsApp links.
+## Phase 4: Instructor Profile Page (Public)
+- **Create** `src/pages/InstructorDetail.tsx` — public page at `/instructors/:id`
+- Shows instructor's avatar, name, bio, courses they teach, student count, rating
+- Fetches from `profiles` table + `courses` where `instructor_id` matches
+- Link from `Instructors.tsx` cards and from course detail instructor tab
 
-**File: `src/pages/CourseDetail.tsx`**
-- Replace any WhatsApp CTA with auth-based enrollment button (navigate to `/login` if not signed in).
+## Phase 5: Instructor Dashboard Profile Enhancement
+- **Modify** `src/pages/dashboard/instructor/Profile.tsx`
+- Add fields: phone, specialization, social links (LinkedIn, Twitter), years of experience, certifications
+- These need new columns in `profiles` table OR a separate `instructor_profiles` table
 
-## Phase 3: Enhanced Admin Dashboard — Full CMS
+**Database migration**: Add columns to `profiles`: `phone text`, `specialization text`, `social_links jsonb DEFAULT '{}'`, `years_experience int DEFAULT 0`
 
-### New sidebar items (AdminDashboard.tsx):
-Add 4 new routes:
-- `/dashboard/admin/qa` — Q&A Moderation
-- `/dashboard/admin/blogs` — Blog Management (CRUD)
-- `/dashboard/admin/about` — About Page Content
-- `/dashboard/admin/enrollments` — Enrollment & Revenue tracking
+## Phase 6: Course Ratings & Comments for Signed-in Users
+- **Modify** `src/pages/CourseDetail.tsx` — add a "Reviews" tab that:
+  - Shows existing reviews from `reviews` table
+  - If user is signed in and enrolled, shows a form to rate (1-5 stars) + comment
+  - Inserts into `reviews` table (RLS already allows students to create)
+- Add star rating component with click-to-rate interaction
 
-### New Admin Pages:
+## Phase 7: Redirect to Dashboard After Login
+- **Modify** `src/pages/Login.tsx` — change `from` default from `/` to the user's dashboard based on roles
+- After successful login, fetch roles then navigate to `/dashboard/student`, `/dashboard/instructor`, or `/dashboard/admin`
+- Same for `Register.tsx` — after signup confirmation, redirect to dashboard
 
-**`src/pages/dashboard/admin/QAModeration.tsx`** (NEW)
-- View all questions, delete inappropriate ones, mark as answered
-- View and moderate answers, accept best answers
-- Search and filter by status
+## Phase 8: Logo Everywhere
+- **Navbar**: Replace text "Matsy" with logo image (32px height) + text
+- **Footer**: Add logo
+- **Login/Register pages**: Show logo above the form
+- **About page**: Show logo in hero section
 
-**`src/pages/dashboard/admin/BlogManagement.tsx`** (NEW)
-- Database migration: create `blog_posts` table (id, title, excerpt, content, cover_image, author_id, status, published_at, created_at)
-- CRUD for blog posts with rich text editing (textarea for now)
-- Publish/unpublish toggle
-- Admin-only RLS policies
+## Phase 9: New Homepage Sections
+Add 2 new sections to `HomePage.tsx`:
 
-**`src/pages/dashboard/admin/AboutManagement.tsx`** (NEW)
-- Edit about page content stored in a `site_content` table (key-value pairs for mission, vision, team, stats)
-- Database migration: create `site_content` table (id, key, value_en, value_fr, value_ar)
-- Admin can update mission text, vision text, stats numbers, team members
+**"How It Works" section** (between stats and courses):
+- 3-step visual: 1) Browse Courses → 2) Enroll & Learn → 3) Get Certified
+- Icons + connecting arrows, animated on scroll
 
-**`src/pages/dashboard/admin/EnrollmentsDashboard.tsx`** (NEW)
-- View all enrollments with student name, course, date, progress
-- Revenue summary from payments table
-- Charts/stats for enrollment trends
+**"Comparison Table — Why Choose Us"** (after Why Choose Us cards):
+- Table comparing Matsy Academy vs. Others
+- Rows: Ministry Certified ✅/❌, Flexible Schedule ✅/❌, Arabic Content ✅/❌, Recognized Certificate ✅/❌, Affordable Pricing ✅/❌
+- Styled with gold checkmarks and crimson crosses
 
-### Enhance Existing Admin Pages:
-
-**`src/pages/dashboard/admin/AdminOverview.tsx`**
-- Add recent enrollments list, recent Q&A activity, pending courses count
-- Add quick-action cards (Approve Courses, View Users, Manage Blogs)
-- Better card design with colored backgrounds and trends
-- Show revenue in DZD not USD
-
-**`src/pages/dashboard/admin/CoursesModeration.tsx`**
-- Show ALL courses (not just pending) with tabs: All / Pending / Published / Draft
-- Add ability to edit course details, change status, delete courses
-- Add course creation (admin can add courses/books directly)
-- Show price, category, student count per course
-
-**`src/pages/dashboard/admin/UsersManagement.tsx`**
-- Add role assignment (promote student to instructor, assign admin)
-- Add user detail view
-- Better table with avatars
-
-## Phase 4: Blog System (Database-Backed)
-
-**Database Migration:**
-```sql
-CREATE TABLE blog_posts (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  author_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
-  status text NOT NULL DEFAULT 'draft',
-  published_at timestamptz,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  title_en text NOT NULL DEFAULT '',
-  title_fr text NOT NULL DEFAULT '',
-  title_ar text NOT NULL DEFAULT '',
-  excerpt_en text NOT NULL DEFAULT '',
-  excerpt_fr text NOT NULL DEFAULT '',
-  excerpt_ar text NOT NULL DEFAULT '',
-  content_en text NOT NULL DEFAULT '',
-  content_fr text NOT NULL DEFAULT '',
-  content_ar text NOT NULL DEFAULT '',
-  cover_image text
-);
--- RLS: public read published, admin full access
-```
-
-**Update `src/pages/Blog.tsx`** — fetch from `blog_posts` table instead of hardcoded array
-**Update `src/pages/BlogDetail.tsx`** — fetch single post from DB
-
-## Phase 5: Update About Page to Use DB Content
-
-**`src/pages/About.tsx`** — optionally fetch from `site_content` table, fallback to current hardcoded content.
-
-## Phase 6: i18n Updates
-
-Add keys for new admin sections:
-- `dashboard.admin.qa`, `dashboard.admin.blogs`, `dashboard.admin.about`, `dashboard.admin.enrollments`
-- `dashboard.admin.allCourses`, `dashboard.admin.published`, `dashboard.admin.draft`
-- Blog management keys
-
-## Database Migrations Summary
-1. `blog_posts` table with trilingual fields + RLS
-2. `site_content` table for editable page content + RLS
+## Phase 10: About Page Enhancement
+- Add logo in hero section
+- Add "How It Works" process steps
+- Replace team avatars with more professional ones (higher quality randomuser IDs)
+- Add a "Partners & Accreditations" section
 
 ## Files to Create
-- `src/pages/dashboard/admin/QAModeration.tsx`
-- `src/pages/dashboard/admin/BlogManagement.tsx`
-- `src/pages/dashboard/admin/AboutManagement.tsx`
-- `src/pages/dashboard/admin/EnrollmentsDashboard.tsx`
+- `src/assets/matsy-logo.png` (copied from upload)
+- `src/pages/InstructorDetail.tsx` — public instructor profile
 
 ## Files to Modify
-- `src/components/DashboardLayout.tsx` — RTL sidebar fix
-- `src/pages/dashboard/admin/AdminDashboard.tsx` — add new routes
-- `src/pages/dashboard/admin/AdminOverview.tsx` — enhanced overview with quick actions
-- `src/pages/dashboard/admin/CoursesModeration.tsx` — full course management with tabs
-- `src/pages/dashboard/admin/UsersManagement.tsx` — role assignment
-- `src/pages/Blog.tsx` — fetch from DB
-- `src/pages/BlogDetail.tsx` — fetch from DB
-- `src/pages/CourseDetail.tsx` — fix any WhatsApp references
-- `src/i18n/en.json`, `fr.json`, `ar.json` — new admin keys
+- `src/pages/dashboard/instructor/CreateCourse.tsx` — complete UX redesign
+- `src/pages/dashboard/instructor/Profile.tsx` — add more fields
+- `src/pages/dashboard/instructor/InstructorDashboard.tsx` — no changes needed
+- `src/pages/dashboard/admin/AdminDashboard.tsx` — add create course route
+- `src/pages/dashboard/admin/CoursesModeration.tsx` — add create button
+- `src/pages/CourseDetail.tsx` — add ratings/comments form
+- `src/pages/Login.tsx` — redirect to dashboard after login
+- `src/pages/Register.tsx` — redirect to dashboard after signup
+- `src/pages/HomePage.tsx` — add "How It Works" + comparison table sections
+- `src/pages/About.tsx` — logo + enhanced design
+- `src/pages/Instructors.tsx` — link cards to `/instructors/:id`
+- `src/components/Navbar.tsx` — add logo image
+- `src/components/Footer.tsx` — add logo image
+- `src/App.tsx` — add `/instructors/:id` route
+
+## Database Migration
+- Add columns to `profiles`: `phone`, `specialization`, `social_links`, `years_experience`
 
