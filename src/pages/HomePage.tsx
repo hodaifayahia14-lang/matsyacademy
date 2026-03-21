@@ -35,10 +35,36 @@ const testimonials = [
 ];
 
 const mentors = [
-  { name: "Dr. Ahmed Matsy", role: "AI & Data Science", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed" },
-  { name: "Sarah Benali", role: "Business Strategy", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
-  { name: "Marc Dupont", role: "Web Development", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marc" },
-  { name: "Fatima Zahra", role: "Digital Marketing", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatima" },
+  { name: "Dr. Ahmed Matsy", role: "AI & Data Science", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor1-DUvt54Og.webp" },
+  { name: "Sarah Benali", role: "Business Strategy", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor2-BbMKFVTw.webp" },
+  { name: "Marc Dupont", role: "Web Development", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor3-BQy7AFDY.webp" },
+  { name: "Fatima Zahra", role: "Digital Marketing", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor4-K1zs78ea.webp" },
+];
+
+const learningFocused = [
+  {
+    title: "Daily Live Classes",
+    desc: "Interact with educators, ask questions, participate in live polls, and clear your doubts",
+    img: "https://eduthink-react.layoutdrop.com/assets/img1-xmBHPqFi.webp",
+  },
+  {
+    title: "Practice and Revise",
+    desc: "Learning extends beyond classes with our practice section, mock tests..",
+    img: "https://eduthink-react.layoutdrop.com/assets/img2-7r17t2mp.webp",
+  },
+  {
+    title: "Learn Anytime",
+    desc: "One subscription gives you access to all live and recorded classes",
+    img: "https://eduthink-react.layoutdrop.com/assets/img3-CJIVSKPx.webp",
+  },
+];
+
+const brandLogos = [
+  "https://eduthink-react.layoutdrop.com/assets/brand1-Dw7bwgPO.svg",
+  "https://eduthink-react.layoutdrop.com/assets/brand2-CTsECryT.svg",
+  "https://eduthink-react.layoutdrop.com/assets/brand3-BTZUW3xl.svg",
+  "https://eduthink-react.layoutdrop.com/assets/brand4-F1NyeVge.svg",
+  "https://eduthink-react.layoutdrop.com/assets/brand5-DJfOcXC5.svg",
 ];
 
 const fadeUp = {
@@ -57,8 +83,8 @@ export default function HomePage() {
   }, []);
 
   const filteredCourses = activeCat === "All"
-    ? mockCourses.slice(0, 6)
-    : mockCourses.filter((c) => c.category === activeCat).slice(0, 6);
+    ? mockCourses.slice(0, 8)
+    : mockCourses.filter((c) => c.category === activeCat).slice(0, 8);
 
   const courseCategories = ["All", ...mockCategories.slice(0, 5).map((c) => c.name)];
 
@@ -106,9 +132,9 @@ export default function HomePage() {
             <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
               <div className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=500&fit=crop"
+                  src="https://eduthink-react.layoutdrop.com/assets/thumbnail1-BQe5AJKF.png"
                   alt="Students learning"
-                  className="rounded-2xl shadow-xl"
+                  className="rounded-2xl"
                 />
                 <div className="absolute -bottom-4 -start-4 rounded-xl bg-primary p-4 text-primary-foreground shadow-lg">
                   <p className="text-2xl font-bold">2,500+</p>
@@ -122,26 +148,10 @@ export default function HomePage() {
 
       {/* Scrolling Marquee */}
       <section className="bg-primary py-4 overflow-hidden">
-        <div className="flex gap-8 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: "fit-content" }}>
-          {[...marqueeItems, ...marqueeItems].map((item, i) => (
-            <span key={i} className="whitespace-nowrap text-sm font-medium text-primary-foreground">{item}</span>
+        <div className="flex gap-12 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: "fit-content" }}>
+          {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
+            <span key={i} className="whitespace-nowrap text-base font-semibold text-primary-foreground">{item}</span>
           ))}
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="py-16">
-        <div className="container">
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {stats.map(({ icon: Icon, value, labelKey }, i) => (
-              <motion.div key={labelKey} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="rounded-xl border bg-card p-6 text-center shadow-sm">
-                <Icon className="mx-auto mb-3 h-8 w-8 text-primary" />
-                <span className="font-display text-2xl font-bold text-foreground">{value}</span>
-                <p className="text-sm text-muted-foreground">{t(labelKey)}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -150,7 +160,7 @@ export default function HomePage() {
         <div className="container">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div className="relative">
-              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&h=400&fit=crop"
+              <img src="https://eduthink-react.layoutdrop.com/assets/pic1-BGHaTECK.webp"
                 alt="Learning" className="rounded-2xl" />
               <button className="absolute inset-0 flex items-center justify-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
@@ -185,37 +195,84 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Explore Top Courses */}
+      {/* Learning Focused on Your Goals */}
       <section className="py-16">
         <div className="container">
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("featured.title")}</h2>
-            <p className="text-muted-foreground">{t("featured.subtitle")}</p>
+          <div className="mb-10 text-center">
+            <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("learningFocused.title")}</h2>
+            <p className="text-muted-foreground">{t("learningFocused.subtitle")}</p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {learningFocused.map((item, i) => (
+              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="group overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                <div className="aspect-video overflow-hidden">
+                  <img src={item.img} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                </div>
+                <div className="p-5">
+                  <h3 className="mb-2 font-display text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Explore Top Courses */}
+      <section className="py-16 bg-secondary/50">
+        <div className="container">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("featured.title")}</h2>
+              <p className="text-muted-foreground">{t("featured.subtitle")}</p>
+            </div>
+            <Link to="/courses">
+              <Button variant="outline" className="gap-2 hidden sm:inline-flex">
+                {t("featured.viewAll")} <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
           {/* Tab filter */}
-          <div className="mb-8 flex flex-wrap justify-center gap-2">
+          <div className="mb-8 flex flex-wrap gap-2">
             {courseCategories.map((cat) => (
               <button key={cat} onClick={() => setActiveCat(cat)}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                  activeCat === cat ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                  activeCat === cat ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary"
                 }`}>
                 {cat === "All" ? t("catalog.all") : cat}
               </button>
             ))}
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {filteredCourses.map((c, i) => (
               <motion.div key={c.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <CourseCard course={c} />
               </motion.div>
             ))}
           </div>
-          <div className="mt-8 text-center">
+          <div className="mt-8 text-center sm:hidden">
             <Link to="/courses">
               <Button variant="outline" className="gap-2">
                 {t("featured.viewAll")} <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="py-16">
+        <div className="container">
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {stats.map(({ icon: Icon, value, labelKey }, i) => (
+              <motion.div key={labelKey} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="rounded-xl border bg-card p-6 text-center shadow-sm">
+                <Icon className="mx-auto mb-3 h-8 w-8 text-primary" />
+                <span className="font-display text-2xl font-bold text-foreground">{value}</span>
+                <p className="text-sm text-muted-foreground">{t(labelKey)}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -253,14 +310,14 @@ export default function HomePage() {
           <div className="grid items-center gap-12 lg:grid-cols-3">
             <div>
               <h2 className="mb-4 font-display text-3xl font-bold text-foreground">
-                Meet our Mentors
+                {t("mentors.title")}
               </h2>
-              <p className="mb-6 text-muted-foreground">Learn from industry experts with years of experience.</p>
+              <p className="mb-6 text-muted-foreground">{t("mentors.subtitle")}</p>
               <div className="space-y-4">
                 {[
-                  { value: "850+", label: t("stats.instructors") },
-                  { value: "50,000+", label: t("stats.students") },
-                  { value: "95%", label: "Satisfaction Rate" },
+                  { value: "1.2 Millions", label: t("stats.students") },
+                  { value: "32.2K", label: t("mentors.classCompleted") },
+                  { value: "99.9%", label: t("mentors.satisfaction") },
                 ].map(({ value, label }) => (
                   <div key={label} className="flex items-center gap-3">
                     <CheckCircle className="h-5 w-5 text-primary" />
@@ -272,10 +329,14 @@ export default function HomePage() {
             <div className="lg:col-span-2 grid grid-cols-2 gap-4 md:grid-cols-4">
               {mentors.map((m, i) => (
                 <motion.div key={m.name} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                  className="group rounded-xl border bg-card p-4 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
-                  <img src={m.avatar} alt={m.name} className="mx-auto mb-3 h-20 w-20 rounded-full border-2 border-primary/20" />
-                  <h3 className="text-sm font-semibold text-foreground">{m.name}</h3>
-                  <p className="text-xs text-muted-foreground">{m.role}</p>
+                  className="group overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                  <div className="aspect-square overflow-hidden">
+                    <img src={m.avatar} alt={m.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                  <div className="p-3 text-center">
+                    <h3 className="text-sm font-semibold text-foreground">{m.name}</h3>
+                    <p className="text-xs text-muted-foreground">{m.role}</p>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -288,6 +349,7 @@ export default function HomePage() {
         <div className="container">
           <div className="mb-8 text-center">
             <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("testimonials.title")}</h2>
+            <p className="text-muted-foreground">{t("testimonials.subtitle")}</p>
           </div>
           <div className="mx-auto max-w-2xl">
             <motion.div key={testIdx} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
@@ -310,6 +372,15 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Brand Logos Marquee */}
+      <section className="py-10 border-t border-b overflow-hidden">
+        <div className="flex gap-16 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: "fit-content" }}>
+          {[...brandLogos, ...brandLogos, ...brandLogos, ...brandLogos].map((logo, i) => (
+            <img key={i} src={logo} alt="Partner" className="h-8 opacity-50 grayscale transition-all hover:opacity-100 hover:grayscale-0" />
+          ))}
         </div>
       </section>
 
