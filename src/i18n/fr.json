@@ -14,7 +14,7 @@
     "signOut": "Déconnexion",
     "contactUs": "Contactez-nous",
     "instructions": "Instructions",
-    "cat": { "hse": "Sécurité HSE", "religious": "Guide Religieux", "certified": "Formation Certifiée" }
+    "cat": { "bodyCare": "Soins Corporels", "earlyChildhood": "Petite Enfance", "hse": "Sécurité HSE", "religious": "Guide Religieux" }
   },
   "hero": {
     "title": "Obtenez 2500+ meilleurs cours en ligne de Maisy Academy",
