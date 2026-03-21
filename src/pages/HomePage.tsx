@@ -438,7 +438,35 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════ CTA BANNER ═══════════════════ */}
+      {/* ═══════════════════ PAYMENT METHODS ═══════════════════ */}
+      <section className="py-16 bg-secondary/30">
+        <div className="container">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="mb-2 font-display text-2xl font-bold text-foreground">
+              {lang === "ar" ? "طرق الدفع المتاحة" : lang === "fr" ? "Méthodes de Paiement" : "Payment Methods"}
+            </h2>
+            <p className="mb-8 text-muted-foreground">
+              {lang === "ar" ? "ادفع بالطريقة التي تناسبك" : lang === "fr" ? "Payez comme vous voulez" : "Pay the way that suits you"}
+            </p>
+            <div className="flex flex-wrap justify-center gap-6">
+              {[
+                { name: "BaridiMob", desc: lang === "ar" ? "بريدي موب" : "BaridiMob", icon: "📱" },
+                { name: "CCP", desc: lang === "ar" ? "الحساب البريدي" : "Poste Algérie", icon: "🏦" },
+                { name: "EDAHABIA", desc: lang === "ar" ? "بطاقة الذهبية" : "Carte EDAHABIA", icon: "💳" },
+              ].map((m) => (
+                <div key={m.name} className="flex items-center gap-3 rounded-xl border bg-card px-6 py-4 shadow-sm">
+                  <span className="text-2xl">{m.icon}</span>
+                  <div className="text-start">
+                    <p className="font-semibold text-foreground">{m.name}</p>
+                    <p className="text-xs text-muted-foreground">{m.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-primary" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px)' }} />
