@@ -1,56 +1,42 @@
 
 
-# Course Player + Design Fixes + Missing Pages Plan
+# Add Test Users (Admin, Student, Instructor)
 
-## What Needs to Be Done
+## What's Needed
 
-1. **Build Course Player page** (`/learn/:courseId/:lessonId`) — the main missing feature
-2. **Fix missing page designs** — several pages linked in the nav (Blog detail `/blog/:id`, Terms `/terms`) have no route/component
-3. **Add Login/SignUp buttons** to navbar when user is NOT logged in (currently only shows "Contact Us")
-4. **Add course hover overlay improvements** — ensure the hover effect works smoothly on course cards
-5. **Complete i18n** — add `coursePlayer.*` and `terms.*` keys to all three language files
+The navbar already shows "Login" and "Sign Up" buttons when a user is not logged in — no changes needed there.
 
-## Phase 1: Course Player Page (`/learn/:courseId/:lessonId`)
+The main task is to **create three test accounts** in the database so you can log in and test each dashboard.
 
-Create `src/pages/CoursePlayer.tsx` with:
-- **Left sidebar**: Collapsible course outline with sections/lessons, progress checkmarks, current lesson highlighted in green
-- **Main area**: Video player (iframe embed for video lessons), text content renderer, or quiz modal
-- **Below player**: Lesson title, "Mark as Complete" button, Notes textarea, Discussion/comments section
-- **Top bar**: Course title, overall progress bar, back to course link
-- **Auto-advance**: After marking complete, navigate to next lesson
-- **Quiz modal**: For quiz-type lessons, show questions one-by-one with MCQ options, submit, show score
-- Uses mock data for now (same `mockCourses` structure)
-- Protected route (requires enrollment — for now just require auth)
+## Plan
 
-Add route in `App.tsx`: `/learn/:courseId/:lessonId` wrapped in the public layout (with Navbar/Footer hidden — full-screen player layout)
+### Create 3 test users via Supabase Auth
 
-## Phase 2: Missing Pages
+Use the database to insert test users directly. Since the `handle_new_user` trigger auto-creates profiles and assigns the "student" role, we need to:
 
-### Blog Detail (`/blog/:id`)
-- Create `src/pages/BlogDetail.tsx` — article view with title, author, date, full content, back link
-- Add route `/blog/:id` in App.tsx
+1. **Create 3 auth users** via the Supabase admin API (edge function or direct SQL)
+2. **Assign roles** — the trigger gives everyone "student" by default, so we add "instructor" and "admin" roles for the other two accounts
 
-### Terms Page (`/terms`)
-- Create `src/pages/Terms.tsx` — static terms of service page
-- Add route `/terms` in App.tsx
+### Test accounts:
 
-## Phase 3: Navbar Fix
-- When user is NOT logged in, show both "Login" and "Sign Up" buttons alongside "Contact Us" (currently only Contact Us shows for unauthenticated users on desktop)
+| Email | Password | Role |
+|---|---|---|
+| `admin@matsy.test` | `Admin123!` | admin |
+| `instructor@matsy.test` | `Instructor123!` | instructor |
+| `student@matsy.test` | `Student123!` | student |
 
-## Phase 4: i18n Updates
+### Implementation
 
-Add new keys to all three files:
-- `coursePlayer.markComplete`, `coursePlayer.notes`, `coursePlayer.notesPlaceholder`, `coursePlayer.nextLesson`, `coursePlayer.backToCourse`, `coursePlayer.quizTitle`, `coursePlayer.submit`, `coursePlayer.score`, `coursePlayer.retry`, `coursePlayer.passed`, `coursePlayer.failed`
-- `terms.title`, `terms.content`
-- `blog.readMore`, `blog.backToBlog`
+1. **Create an edge function** `create-test-users` that uses the Supabase Admin API (`supabase.auth.admin.createUser`) to create all 3 users with confirmed emails
+2. **Call it once** to seed the users
+3. **Delete the edge function** after seeding (one-time use)
 
-## Files to Create
-- `src/pages/CoursePlayer.tsx`
-- `src/pages/BlogDetail.tsx`
-- `src/pages/Terms.tsx`
+Alternatively, use a **database migration** to:
+- Insert users via `auth.users` (not recommended — triggers may not fire correctly)
 
-## Files to Modify
-- `src/App.tsx` — add 3 new routes (CoursePlayer outside Navbar/Footer layout, BlogDetail and Terms inside public layout)
-- `src/components/Navbar.tsx` — show Login/SignUp for unauthenticated desktop users
-- `src/i18n/en.json`, `fr.json`, `ar.json` — add new translation keys
+The **edge function approach** is cleaner since it uses the proper Auth Admin API, ensuring triggers fire and profiles/roles are created correctly. After seeding, we add the extra roles (admin, instructor) to `user_roles`.
+
+### Files
+- **Create**: `supabase/functions/create-test-users/index.ts` — one-time seeder
+- **No other file changes needed** — navbar already has login/signup buttons
 
