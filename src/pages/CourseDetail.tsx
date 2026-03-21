@@ -147,7 +147,7 @@ export default function CourseDetail() {
                 <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{categoryName}</span>
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{levelLabel}</span>
               </div>
-              <h1 className="mb-3 font-display text-2xl font-bold text-foreground lg:text-3xl">{title}</h1>
+              <h1 className="mb-3 font-display text-xl font-bold text-foreground sm:text-2xl lg:text-3xl">{title}</h1>
               <p className="mb-4 text-muted-foreground">{subtitle}</p>
               <div className="mb-6 flex items-center gap-3">
                 {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-10 w-10 rounded-full border-2 border-primary/20" />}
