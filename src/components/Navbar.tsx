@@ -106,10 +106,10 @@ export default function Navbar() {
               {pagesOpen && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
                   className="absolute start-0 top-full w-48 rounded-lg border bg-card p-2 shadow-lg">
-                  {pages.map(({ label, to }) => (
+                  {pageKeys.map(({ labelKey, to }) => (
                     <Link key={to} to={to}
                       className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
-                      {label}
+                      {t(labelKey)}
                     </Link>
                   ))}
                 </motion.div>
