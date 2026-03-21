@@ -143,7 +143,7 @@ export default function HomePage() {
             <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
               <div className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
+                  src={heroImage}
                   alt={lang === "ar" ? "طلاب متخرجون" : "Graduates"}
                   className="rounded-2xl"
                 />
