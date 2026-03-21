@@ -1,136 +1,76 @@
 
 
-# Matsy Academy — Complete Rebrand & Enhancement Plan
+# Redesign to Match EduThink Template + Fix All Languages
 
-## Overview
-Rebrand the entire EduZone LMS to "Matsy Academy" (أكاديمية مايسي للتدريب و التطوير) with a luxurious dark crimson/gold design system, new public pages (About, Q&A, Instructions), and polished dashboard UI.
+## Problem Summary
 
-## Phase 1: Design System — Colors, Typography, CSS Variables
+1. **Design mismatch**: Current app uses dark crimson/gold theme. The EduThink template uses a **white/green** clean modern design with `#1D7D57` (forest green) as primary, white backgrounds, and `#222222` dark text.
+2. **i18n keys broken**: French and Arabic files use `nav.courses`, `nav.login` etc. but components reference `navbar.courses`, `navbar.login` — so FR/AR translations show fallback English text.
+3. **Homepage layout differs**: EduThink has: split hero (text left, people photo right), scrolling marquee stats bar (green), "Learn with 200+" section, "Learning Focused" 3-card section, tabbed courses grid with hover overlay, category cards with green hover, mentor grid, testimonial slider, brand logos marquee.
 
-Update `src/index.css` and `tailwind.config.ts`:
+## Phase 1: Color System Overhaul
 
-**New CSS variables (light = default theme is the dark-luxury look):**
-- `--primary`: crimson #9B1C2E
-- `--primary-gold`: #C9971C
-- `--gold-light`: #E8B84B
-- `--background`: #1E1E1E (dark by default for public pages)
-- `--bg-light`: #F9F5EE (warm white sections)
-- `--card`: #2A2A2A
-- `--foreground`: #F5F0E8 (off-white)
-- `--text-on-light`: #1E1E1E
+Replace the dark crimson/gold CSS variables in `src/index.css` with the EduThink palette:
+- `--background`: white `#FFFFFF`
+- `--foreground`: dark `#222222`
+- `--primary`: green `#1D7D57`
+- `--card`: white with subtle border
+- `--muted-foreground`: gray `#666666`
+- Remove gold/crimson custom utilities, replace with green accents
+- Update `tailwind.config.ts`: remove gold/crimson tokens, add `green` tokens
+- Typography: keep Inter for body, use a bold serif for hero headings (Cormorant Garamond or similar)
 
-**Typography:**
-- Import Playfair Display (headings), Inter (body), Cairo (Arabic body)
-- `font-display: Playfair Display` for headings
-- `font-arabic: Cairo` applied when `lang="ar"`
+## Phase 2: Homepage Rebuild (`src/pages/HomePage.tsx`)
 
-**Tailwind extend:**
-- Add `crimson`, `gold`, `gold-light` color tokens
-- Add `bg-matsy-dark`, `bg-matsy-light` utilities
+Rebuild to match EduThink section by section:
+1. **Hero**: White bg, left-aligned large serif heading ("Get 2500+ Best Online Courses From Matsy Academy"), subtitle, green "Find Courses" button with arrow, instructor avatar stack. Right side: hero image of people (use EduThink's thumbnail URL or a similar stock photo).
+2. **Scrolling stats marquee**: Full-width green bar with star icons + text items (Online Certifications, Top Instructors, 2500+ Online Courses, etc.) scrolling infinitely.
+3. **"Learn With 200+" section**: Two-column — image with video play overlay on left, text + bullet points on right.
+4. **"Learning Focused on Your Goals"**: 3 image cards (Daily Live Classes, Practice and Revise, Learn Anytime) with descriptions.
+5. **"Explore Top Courses"**: Tab filter bar (ALL, categories...), course cards grid with hover effect showing description overlay.
+6. **"Courses & Categories"**: 6 category cards with icons, green hover state that fills the card.
+7. **"Meet our Mentors"**: Stats sidebar + mentor grid with photos.
+8. **Testimonials**: Slider with green accent quote mark, reviewer info.
+9. **Brand logos**: Scrolling marquee of partner logos.
 
-## Phase 2: Rebrand All Components
+## Phase 3: Fix i18n Key Structure
 
-### Navbar (`src/components/Navbar.tsx`)
-- Dark bg (#1E1E1E), gold logo text, crimson accent on active links
-- Replace "EduZone" with "Matsy Academy" / "أكاديمية مايسي" based on language
-- Language switcher shows: عربي / EN / FR
-- Gold icons, crimson hover states
+The critical issue: FR and AR json files use `nav.*` keys but components use `navbar.*`. Fix by updating `fr.json` and `ar.json` to match the `en.json` key structure exactly:
+- Rename `nav.courses` → `navbar.courses`, `nav.login` → `navbar.login`, etc.
+- Rename `categoriesSection.*` → `categories.*`
+- Add all missing keys from `en.json` (about, qa, instructions, dashboard sections, catalog, courseDetail, common)
+- Update `footer.copyright` to remove "EduZone" references
 
-### Footer (`src/components/Footer.tsx`)
-- Dark bg, gold logo, soft gold links, crimson social icons
-- Update copyright to "Matsy Academy"
+## Phase 4: Component Updates
 
-### DashboardLayout (`src/components/DashboardLayout.tsx`)
-- Dark sidebar (#1E1E1E), gold icons/text, crimson active state
-- Gold notification bell, dark top navbar
-- Alternating row colors in tables (#1E1E1E / #252525)
+- **Navbar**: White bg, clean links in dark text, green hover/active states, green "Contact Us" button with arrow, phone number display. Remove gold/crimson styling.
+- **Footer**: Clean white/light bg with green accents, matching EduThink footer style.
+- **CourseCard**: White card, image with category badge, title, rating with stars, price with strikethrough old price, student count, lesson count. Hover shows description overlay.
+- **LanguageSwitcher**: Keep عربي / EN / FR toggle, style with green.
 
-### Login/Register pages
-- Dark background, centered gold logo, crimson buttons with gold border
-- Update all "EduZone" references
+## Phase 5: Auth & Other Pages
 
-### HomePage (`src/pages/HomePage.tsx`)
-- Dark hero with gold heading, crimson CTA buttons
-- Featured courses: infinite auto-scrolling carousel, dark cards with gold borders
-- Testimonials: dark bg, gold quotation marks, auto-playing slider
-- Stats: gold numbers on dark background
-- Newsletter: dark section, gold accents
+- **Login/Register**: Switch from dark bg to clean white/green theme matching EduThink style.
+- **About, QA, Instructions**: Update to white backgrounds with green accents instead of dark theme.
+- **CourseCatalog, CourseDetail**: White theme with green filter accents.
 
-## Phase 3: New Public Pages
+## Phase 6: Dashboard Updates
 
-### About Us (`/about`)
-- Mission/vision on warm white (#F9F5EE) with gold dividers
-- Team cards with gold names, crimson role badges
-- Stats strip (dark bg, gold numbers)
-
-### Q&A Page (`/qa`)
-- Public questions with upvote (gold), answered badge (crimson)
-- Filter: unanswered, popular, recent
-- Requires new `qa_questions` and `qa_answers` tables (migration)
-
-### Instructions Page (`/instructions`)
-- Gold numbered steps, expandable panels (crimson left border, dark bg)
-- Per-user read history and completion tracking
-- Requires new `instructions` and `instruction_progress` tables (migration)
-
-## Phase 4: i18n Updates
-
-Update all three translation files (`en.json`, `fr.json`, `ar.json`):
-- Replace "EduZone" → "Matsy Academy" / "أكاديمية مايسي"
-- Add keys for About, Q&A, Instructions pages
-- Add keys for new nav items
-
-## Phase 5: Database Migrations
-
-### Migration 1: New tables for Q&A and Instructions
-```sql
--- Q&A
-CREATE TABLE qa_questions (id uuid PK, user_id uuid, course_id uuid NULL, title text, body text, upvotes int DEFAULT 0, is_answered boolean DEFAULT false, created_at timestamptz);
-CREATE TABLE qa_answers (id uuid PK, question_id uuid FK, user_id uuid, body text, is_accepted boolean DEFAULT false, created_at timestamptz);
-
--- Instructions
-CREATE TABLE instructions (id uuid PK, title_en text, title_fr text, title_ar text, body_en text, body_fr text, body_ar text, order int, created_at timestamptz);
-CREATE TABLE instruction_progress (id uuid PK, user_id uuid, instruction_id uuid FK, completed boolean DEFAULT false, read_at timestamptz);
-```
-
-### Migration 2: RLS policies
-- Q&A: public read, authenticated create, own update/delete
-- Instructions: public read, admin manage
-- Instruction progress: users manage own
-
-## Phase 6: Dashboard UI Polish
-
-All three dashboards get the Matsy treatment:
-- Dark metric cards (#2A2A2A) with gold border-top accent
-- Gold labels, white numbers
-- Tables: alternating dark rows, gold headers, crimson action buttons
-- Skeleton loaders in dark tones
-- Breadcrumb navigation in soft gold
-- Charts use crimson and gold color scheme
-
-## Phase 7: RTL & Responsive Polish
-
-- Use CSS logical properties (`margin-inline-start`, `padding-inline-end`)
-- Ensure sidebar flips in RTL
-- Test all new pages at mobile breakpoints
-- Collapsible sidebar animation on mobile
-
-## Files to Create
-- `src/pages/About.tsx`
-- `src/pages/QA.tsx`
-- `src/pages/Instructions.tsx`
+- Sidebar: Switch from dark (#1E1E1E) to white bg with green active states.
+- Cards/tables: White backgrounds with green accent borders.
+- Keep existing functionality, just restyle colors.
 
 ## Files to Modify
-- `src/index.css` — complete color/typography overhaul
-- `tailwind.config.ts` — new color tokens, fonts
-- `src/components/Navbar.tsx` — dark theme, rebrand
-- `src/components/Footer.tsx` — dark theme, rebrand
-- `src/components/DashboardLayout.tsx` — dark sidebar theme
-- `src/pages/HomePage.tsx` — dark luxury redesign
-- `src/pages/Login.tsx`, `Register.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx` — rebrand
-- `src/pages/CourseCatalog.tsx`, `CourseDetail.tsx` — new color scheme
-- All dashboard pages (student/instructor/admin) — dark luxury UI
-- `src/i18n/en.json`, `fr.json`, `ar.json` — rebrand + new page keys
-- `src/App.tsx` — add About, Q&A, Instructions routes
-- `src/components/CourseCard.tsx` — dark card styling
+- `src/index.css` — complete color overhaul (dark → light/green)
+- `tailwind.config.ts` — replace gold/crimson with green tokens
+- `src/pages/HomePage.tsx` — full rebuild matching EduThink layout
+- `src/components/Navbar.tsx` — white/green clean style
+- `src/components/Footer.tsx` — light theme
+- `src/components/CourseCard.tsx` — white cards with hover overlay
+- `src/i18n/fr.json` — fix ALL keys to match en.json structure
+- `src/i18n/ar.json` — fix ALL keys to match en.json structure
+- `src/pages/Login.tsx`, `Register.tsx` — green theme
+- `src/pages/About.tsx`, `QA.tsx`, `Instructions.tsx` — green theme
+- `src/components/DashboardLayout.tsx` — white/green sidebar
+- All dashboard pages — restyle to green/white
 
