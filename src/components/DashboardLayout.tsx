@@ -18,7 +18,7 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, LogOut } from "lucide-react";
+import { LogOut, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import type { LucideIcon } from "lucide-react";
@@ -46,38 +46,37 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
     : "U";
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarContent className="flex flex-col">
+    <Sidebar collapsible="icon" className="border-e border-border">
+      <SidebarContent className="flex flex-col bg-background">
         {/* Logo */}
-        <div className="flex h-14 items-center gap-2 border-b px-4">
+        <div className="flex h-14 items-center gap-2 border-b border-border px-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <GraduationCap className="h-4 w-4 text-primary-foreground" />
-            </div>
-            {!collapsed && (
-              <span className="font-display text-lg font-bold">
-                Edu<span className="text-primary">Zone</span>
+            {!collapsed ? (
+              <span className="font-display text-lg font-bold text-gold">
+                Matsy<span className="text-primary"> Academy</span>
               </span>
+            ) : (
+              <span className="font-display text-lg font-bold text-gold">M</span>
             )}
           </Link>
         </div>
 
         {/* User */}
         {!collapsed && (
-          <div className="flex items-center gap-3 border-b px-4 py-3">
+          <div className="flex items-center gap-3 border-b border-border px-4 py-3">
             <Avatar className="h-9 w-9">
               <AvatarImage src={profile?.avatar_url || undefined} />
               <AvatarFallback className="bg-primary text-primary-foreground text-xs">{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{profile?.name || "User"}</p>
+              <p className="truncate text-sm font-medium text-foreground">{profile?.name || "User"}</p>
               <p className="truncate text-xs text-muted-foreground">{profile?.email}</p>
             </div>
           </div>
         )}
 
         <SidebarGroup>
-          <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gold text-xs uppercase tracking-wider">{groupLabel}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -86,10 +85,10 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
                     <NavLink
                       to={item.url}
                       end
-                      className="hover:bg-muted/50"
-                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      className="text-muted-foreground hover:bg-secondary hover:text-gold transition-colors"
+                      activeClassName="bg-primary/20 text-gold border-s-2 border-primary font-medium"
                     >
-                      <item.icon className="mr-2 h-4 w-4" />
+                      <item.icon className="me-2 h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -99,15 +98,15 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="mt-auto border-t p-2">
+        <div className="mt-auto border-t border-border p-2">
           <Button
             variant="ghost"
             size={collapsed ? "icon" : "sm"}
-            className="w-full justify-start text-muted-foreground"
+            className="w-full justify-start text-primary hover:text-primary hover:bg-primary/10"
             onClick={async () => { await signOut(); navigate("/"); }}
           >
             <LogOut className="h-4 w-4" />
-            {!collapsed && <span className="ml-2">Sign Out</span>}
+            {!collapsed && <span className="ms-2">Sign Out</span>}
           </Button>
         </div>
       </SidebarContent>
@@ -121,12 +120,15 @@ export default function DashboardLayout({ items, groupLabel }: DashboardLayoutPr
       <div className="min-h-screen flex w-full">
         <DashboardSidebar items={items} groupLabel={groupLabel} />
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b bg-card/95 backdrop-blur-md px-4">
-            <SidebarTrigger />
+          <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-border bg-background/95 backdrop-blur-md px-4">
+            <SidebarTrigger className="text-gold" />
             <div className="flex-1" />
+            <Button variant="ghost" size="icon" className="text-gold hover:text-gold-light">
+              <Bell className="h-4 w-4" />
+            </Button>
             <LanguageSwitcher />
           </header>
-          <main className="flex-1 p-4 md:p-6">
+          <main className="flex-1 p-4 md:p-6 bg-background">
             <Outlet />
           </main>
         </div>
