@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, LogOut, User, Phone, ArrowRight, ShoppingCart } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -54,8 +54,8 @@ export default function Navbar() {
   return (
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
       scrolled
-        ? "bg-background/95 backdrop-blur-md shadow-header border-b border-border"
-        : "bg-transparent"
+        ? "bg-card/95 backdrop-blur-md shadow-header border-b border-border"
+        : "bg-card/80 backdrop-blur-sm"
     }`}>
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
@@ -161,7 +161,7 @@ export default function Navbar() {
                 <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent">{t("navbar.login")}</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="gap-1 bg-primary hover:bg-primary/90 border border-accent/30 shadow-lg shadow-primary/20">
+                <Button size="sm" className="gap-1 bg-primary hover:bg-primary/90 shadow-sm">
                   {t("navbar.signUp")} <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
@@ -179,7 +179,7 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-border bg-background lg:hidden">
+            className="overflow-hidden border-t border-border bg-card lg:hidden">
             <div className="container flex flex-col gap-2 py-4">
               <Link to="/" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.home")}</Link>
               <Link to="/courses" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.courses")}</Link>
