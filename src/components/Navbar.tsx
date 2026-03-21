@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, Search, LogOut, User, Phone } from "lucide-react";
+import { Menu, X, ChevronDown, Search, LogOut, User, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,10 +16,19 @@ const categories = [
   "Science", "Marketing", "Design", "Cooking", "Education", "Sport",
 ];
 
+const pages = [
+  { label: "About Us", to: "/about" },
+  { label: "Q&A", to: "/qa" },
+  { label: "Instructions", to: "/instructions" },
+  { label: "Blog", to: "/blog" },
+  { label: "Contact Us", to: "/contact" },
+];
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
+  const [pagesOpen, setPagesOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -52,14 +61,18 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-1 md:flex">
-          <Link to="/courses">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.courses")}</Button>
+        <nav className="hidden items-center gap-1 lg:flex">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.home")}</Button>
           </Link>
+
+          {/* Courses dropdown */}
           <div className="relative" onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">
-              {t("navbar.categories")} <ChevronDown className="ms-1 h-3 w-3" />
-            </Button>
+            <Link to="/courses">
+              <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">
+                {t("navbar.courses")} <ChevronDown className="ms-1 h-3 w-3" />
+              </Button>
+            </Link>
             <AnimatePresence>
               {catOpen && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
@@ -74,20 +87,43 @@ export default function Navbar() {
               )}
             </AnimatePresence>
           </div>
-          <Link to="/about">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.about")}</Button>
+
+          <Link to="/instructors">
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.instructors")}</Button>
           </Link>
-          <Link to="/qa">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.qa")}</Button>
+
+          <Link to="/blog">
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.blog")}</Button>
           </Link>
+
+          {/* Pages dropdown */}
+          <div className="relative" onMouseEnter={() => setPagesOpen(true)} onMouseLeave={() => setPagesOpen(false)}>
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">
+              {t("navbar.pages")} <ChevronDown className="ms-1 h-3 w-3" />
+            </Button>
+            <AnimatePresence>
+              {pagesOpen && (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
+                  className="absolute start-0 top-full w-48 rounded-lg border bg-card p-2 shadow-lg">
+                  {pages.map(({ label, to }) => (
+                    <Link key={to} to={to}
+                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
+                      {label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </nav>
 
         {/* Right Actions */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Phone className="h-4 w-4" />
+            <span>+01 123 456 7890</span>
+          </div>
           <LanguageSwitcher />
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-            <Search className="h-4 w-4" />
-          </Button>
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -114,19 +150,16 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm">{t("navbar.login")}</Button>
-              </Link>
-              <Link to="/register">
-                <Button size="sm">{t("navbar.signUp")}</Button>
-              </Link>
-            </>
+            <Link to="/contact">
+              <Button size="sm" className="gap-1">
+                {t("navbar.contactUs")} <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
           )}
         </div>
 
         {/* Mobile Toggle */}
-        <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
       </div>
@@ -135,11 +168,16 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t bg-background md:hidden">
+            className="overflow-hidden border-t bg-background lg:hidden">
             <div className="container flex flex-col gap-2 py-4">
+              <Link to="/" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.home")}</Link>
               <Link to="/courses" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.courses")}</Link>
+              <Link to="/instructors" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.instructors")}</Link>
+              <Link to="/blog" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.blog")}</Link>
               <Link to="/about" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.about")}</Link>
               <Link to="/qa" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.qa")}</Link>
+              <Link to="/contact" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.contactUs")}</Link>
+              <LanguageSwitcher />
               {user ? (
                 <>
                   <Link to={dashboardPath} className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.dashboard")}</Link>
