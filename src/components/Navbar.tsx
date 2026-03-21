@@ -1,8 +1,17 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, GraduationCap, Search } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, ChevronDown, GraduationCap, Search, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const categories = [
   "IT & Software", "Business", "Languages", "Health", "Law", "Arts",
@@ -14,6 +23,8 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, roles, signOut } = useAuth();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -24,6 +35,21 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  const dashboardPath = roles.includes("admin")
+    ? "/dashboard/admin"
+    : roles.includes("instructor")
+    ? "/dashboard/instructor"
+    : "/dashboard/student";
+
+  const initials = profile?.name
+    ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
 
   return (
     <header
@@ -81,12 +107,43 @@ export default function Navbar() {
           <Button variant="ghost" size="icon" className="text-muted-foreground">
             <Search className="h-4 w-4" />
           </Button>
-          <Link to="/login">
-            <Button variant="ghost" size="sm">Log In</Button>
-          </Link>
-          <Link to="/register">
-            <Button size="sm">Sign Up</Button>
-          </Link>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={profile?.avatar_url || undefined} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium">{profile?.name || "User"}</p>
+                  <p className="text-xs text-muted-foreground">{profile?.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate(dashboardPath)}>
+                  <User className="mr-2 h-4 w-4" /> Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" size="sm">Log In</Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm">Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -111,10 +168,19 @@ export default function Navbar() {
           >
             <div className="container flex flex-col gap-2 py-4">
               <Link to="/courses" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">Course Catalog</Link>
-              <Link to="/login" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">Log In</Link>
-              <Link to="/register">
-                <Button className="w-full" size="sm">Sign Up</Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to={dashboardPath} className="rounded-md px-3 py-2 text-sm hover:bg-secondary">Dashboard</Link>
+                  <button onClick={handleSignOut} className="rounded-md px-3 py-2 text-left text-sm hover:bg-secondary">Sign Out</button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">Log In</Link>
+                  <Link to="/register">
+                    <Button className="w-full" size="sm">Sign Up</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}
