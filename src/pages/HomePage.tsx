@@ -44,38 +44,27 @@ export default function HomePage() {
     ? ["⭐ Formation Certifiée", "⭐ Cours HSE", "⭐ Guide Hajj & Omra", "⭐ +500 Étudiants", "⭐ Certificats Reconnus", "⭐ Formation en Ligne"]
     : ["⭐ Certified Training", "⭐ HSE Courses", "⭐ Hajj & Umrah Guide", "⭐ +500 Students", "⭐ Recognized Certificates", "⭐ Online Training"];
 
-  const testimonials = [
-    {
-      name: "Karim Bouzid",
-      role: lang === "ar" ? "متخصص في السلامة" : lang === "fr" ? "Spécialiste Sécurité" : "Safety Specialist",
-      text: lang === "ar" ? "أكاديمية مايسي غيرت مساري المهني. الدورات عملية والمدربون من أعلى مستوى."
-        : lang === "fr" ? "Matsy Academy a transformé ma carrière. Les cours sont pratiques et les formateurs excellents."
-        : "Matsy Academy transformed my career. The courses are practical and the instructors are top-notch.",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Karim", rating: 5,
-    },
-    {
-      name: "Amina Belhadj",
-      role: lang === "ar" ? "مفتشة أمن" : lang === "fr" ? "Inspectrice Sécurité" : "Safety Inspector",
-      text: lang === "ar" ? "أكملت دورة التفتيش الأمني. المنصة سهلة الاستخدام والمحتوى دائماً محدث."
-        : lang === "fr" ? "J'ai terminé la formation d'inspection. La plateforme est intuitive et le contenu toujours à jour."
-        : "I completed the safety inspection course. The platform is intuitive and content always up to date.",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Amina", rating: 5,
-    },
-    {
-      name: "Youcef Hamdi",
-      role: lang === "ar" ? "مرشد حج وعمرة" : lang === "fr" ? "Guide Hajj" : "Hajj Guide",
-      text: lang === "ar" ? "دورة مرشد الحج والعمرة كانت شاملة ومفيدة جداً. أنصح بها لكل من يريد العمل في هذا المجال."
-        : lang === "fr" ? "Le cours de guide du Hajj était incroyablement complet. Très recommandé !"
-        : "The Hajj guide course was incredibly comprehensive. Highly recommended!",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Youcef", rating: 5,
-    },
+  const testimonials: Testimonial[] = [
+    { name: "Karim Bouzid", role: lang === "ar" ? "متخصص في السلامة" : lang === "fr" ? "Spécialiste Sécurité" : "Safety Specialist", text: lang === "ar" ? "أكاديمية مايسي غيرت مساري المهني. الدورات عملية والمدربون من أعلى مستوى." : lang === "fr" ? "Matsy Academy a transformé ma carrière. Les cours sont pratiques et les formateurs excellents." : "Matsy Academy transformed my career. The courses are practical and the instructors are top-notch.", image: "https://randomuser.me/api/portraits/men/11.jpg", rating: 5 },
+    { name: "Amina Belhadj", role: lang === "ar" ? "مفتشة أمن" : lang === "fr" ? "Inspectrice Sécurité" : "Safety Inspector", text: lang === "ar" ? "أكملت دورة التفتيش الأمني. المنصة سهلة الاستخدام والمحتوى دائماً محدث." : lang === "fr" ? "J'ai terminé la formation d'inspection. La plateforme est intuitive et le contenu toujours à jour." : "I completed the safety inspection course. The platform is intuitive and content always up to date.", image: "https://randomuser.me/api/portraits/women/21.jpg", rating: 5 },
+    { name: "Youcef Hamdi", role: lang === "ar" ? "مرشد حج وعمرة" : lang === "fr" ? "Guide Hajj" : "Hajj Guide", text: lang === "ar" ? "دورة مرشد الحج والعمرة كانت شاملة ومفيدة جداً. أنصح بها لكل من يريد العمل في هذا المجال." : lang === "fr" ? "Le cours de guide du Hajj était incroyablement complet. Très recommandé !" : "The Hajj guide course was incredibly comprehensive. Highly recommended!", image: "https://randomuser.me/api/portraits/men/45.jpg", rating: 5 },
+    { name: "Fatima Zerhouni", role: lang === "ar" ? "مديرة الجودة" : lang === "fr" ? "Responsable Qualité" : "Quality Manager", text: lang === "ar" ? "منصة رائعة مع دورات منظمة بشكل جيد. تعلمت الكثير عن التفتيش الأمني." : lang === "fr" ? "Excellente plateforme avec des cours bien structurés. J'ai beaucoup appris sur l'inspection de sécurité." : "Great platform with well-structured courses. I learned a lot about safety inspection.", image: "https://randomuser.me/api/portraits/women/33.jpg", rating: 5 },
+    { name: "Mohamed Saidi", role: lang === "ar" ? "مهندس سلامة" : lang === "fr" ? "Ingénieur Sécurité" : "Safety Engineer", text: lang === "ar" ? "الدكتور أحمد مايسي مدرب استثنائي. دورة السلامة غيرت مساري المهني." : lang === "fr" ? "Dr. Ahmed Matsy est un formateur exceptionnel. Le cours de sécurité a changé ma carrière." : "Dr. Ahmed Matsy is an exceptional instructor. The safety course changed my career.", image: "https://randomuser.me/api/portraits/men/22.jpg", rating: 5 },
+    { name: "Nadia Boudiaf", role: lang === "ar" ? "طالبة" : lang === "fr" ? "Étudiante" : "Student", text: lang === "ar" ? "المحتوى التعليمي ممتاز والشهادة معتمدة من وزارة التكوين المهني." : lang === "fr" ? "Le contenu éducatif est excellent et le certificat est reconnu par le Ministère de la Formation." : "The educational content is excellent and the certificate is recognized by the Ministry.", image: "https://randomuser.me/api/portraits/women/56.jpg", rating: 5 },
+    { name: "Hassan Mebarki", role: lang === "ar" ? "مشرف أمن" : lang === "fr" ? "Superviseur Sécurité" : "Safety Supervisor", text: lang === "ar" ? "أفضل منصة تعليمية عربية في مجال السلامة والصحة المهنية." : lang === "fr" ? "La meilleure plateforme éducative arabe dans le domaine de la sécurité et santé au travail." : "The best Arabic educational platform in workplace safety and health.", image: "https://randomuser.me/api/portraits/men/67.jpg", rating: 5 },
+    { name: "Salima Kaddour", role: lang === "ar" ? "مرشدة دينية" : lang === "fr" ? "Guide Religieuse" : "Religious Guide", text: lang === "ar" ? "دورة مرشد الحج والعمرة ساعدتني كثيراً في تطوير مهاراتي المهنية." : lang === "fr" ? "Le cours de guide du Hajj m'a beaucoup aidé à développer mes compétences professionnelles." : "The Hajj guide course helped me greatly develop my professional skills.", image: "https://randomuser.me/api/portraits/women/68.jpg", rating: 5 },
+    { name: "Rachid Benmoussa", role: lang === "ar" ? "عون أمن" : lang === "fr" ? "Agent de Sécurité" : "Safety Agent", text: lang === "ar" ? "حصلت على شهادة عون أمن ووقاية بفضل هذه الأكاديمية الرائعة." : lang === "fr" ? "J'ai obtenu mon certificat d'agent de sécurité grâce à cette formidable académie." : "I earned my safety agent certificate thanks to this amazing academy.", image: "https://randomuser.me/api/portraits/men/36.jpg", rating: 5 },
   ];
 
+  const firstColumn = testimonials.slice(0, 3);
+  const secondColumn = testimonials.slice(3, 6);
+  const thirdColumn = testimonials.slice(6, 9);
+
   const mentors = [
-    { name: "Dr. Ahmed Matsy", role: lang === "ar" ? "خبير السلامة والصحة المهنية" : lang === "fr" ? "Expert HSE" : "HSE Expert", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AhmedMatsy" },
-    { name: "Sheikh Ibrahim Khalil", role: lang === "ar" ? "مرشد ديني" : lang === "fr" ? "Guide Religieux" : "Religious Guide", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SheikhIbrahim" },
-    { name: "Mme. Sarah Benali", role: lang === "ar" ? "مستشارة تعليمية" : lang === "fr" ? "Conseillère Éducative" : "Education Advisor", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SarahBenali" },
-    { name: "M. Rachid Toumi", role: lang === "ar" ? "مفتش أمن معتمد" : lang === "fr" ? "Inspecteur HSE Certifié" : "Certified HSE Inspector", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=RachidToumi" },
+    { name: "Dr. Ahmed Matsy", role: lang === "ar" ? "خبير السلامة والصحة المهنية" : lang === "fr" ? "Expert HSE" : "HSE Expert", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+    { name: "Sheikh Ibrahim Khalil", role: lang === "ar" ? "مرشد ديني" : lang === "fr" ? "Guide Religieux" : "Religious Guide", avatar: "https://randomuser.me/api/portraits/men/75.jpg" },
+    { name: "Mme. Sarah Benali", role: lang === "ar" ? "مستشارة تعليمية" : lang === "fr" ? "Conseillère Éducative" : "Education Advisor", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
+    { name: "M. Rachid Toumi", role: lang === "ar" ? "مفتش أمن معتمد" : lang === "fr" ? "Inspecteur HSE Certifié" : "Certified HSE Inspector", avatar: "https://randomuser.me/api/portraits/men/52.jpg" },
   ];
 
   const learningFocused = [
