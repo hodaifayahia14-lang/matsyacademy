@@ -123,9 +123,28 @@ export default function HomePage() {
     <div className="overflow-hidden">
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section className="relative min-h-[90vh] flex items-center">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+        <div className="absolute inset-0 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentSlide}
+              src={heroSlides[currentSlide]}
+              alt=""
+              className="h-full w-full object-cover"
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+            />
+          </AnimatePresence>
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/35" />
+        </div>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-24 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+          {heroSlides.map((_, i) => (
+            <button key={i} onClick={() => setCurrentSlide(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${i === currentSlide ? "w-8 bg-accent" : "w-2 bg-white/40"}`} />
+          ))}
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
