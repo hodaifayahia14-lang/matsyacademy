@@ -136,8 +136,8 @@ export default function CourseDetail() {
         </div>
       </div>
 
-      <div className="container py-8">
-        <div className="grid gap-8 lg:grid-cols-3">
+      <div className="container py-4 sm:py-8">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="mb-6 aspect-video overflow-hidden rounded-xl bg-secondary relative">
