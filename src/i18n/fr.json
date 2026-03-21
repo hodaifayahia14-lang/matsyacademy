@@ -12,7 +12,9 @@
     "signUp": "Inscription",
     "dashboard": "Tableau de bord",
     "signOut": "Déconnexion",
-    "contactUs": "Contactez-nous"
+    "contactUs": "Contactez-nous",
+    "instructions": "Instructions",
+    "cat": { "hse": "Sécurité HSE", "religious": "Guide Religieux", "certified": "Formation Certifiée" }
   },
   "hero": {
     "title": "Obtenez 2500+ meilleurs cours en ligne de Matsy Academy",
