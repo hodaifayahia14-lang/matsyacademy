@@ -14,6 +14,9 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
+import About from "@/pages/About";
+import QA from "@/pages/QA";
+import Instructions from "@/pages/Instructions";
 import StudentDashboard from "@/pages/dashboard/student/StudentDashboard";
 import InstructorDashboard from "@/pages/dashboard/instructor/InstructorDashboard";
 import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard";
@@ -53,6 +56,9 @@ const App = () => (
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/qa" element={<QA />} />
+                    <Route path="/instructions" element={<Instructions />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>
