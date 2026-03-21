@@ -8,7 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, icons } from "lucide-react";
+import IconPicker from "@/components/IconPicker";
 
 export default function CategoriesManagement() {
   const { t, i18n } = useTranslation();
@@ -104,7 +105,7 @@ export default function CategoriesManagement() {
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">{t("dashboard.admin.categoryIcon")}</label>
-                <Input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="e.g. Shield, BookOpen, Award" />
+                <IconPicker value={icon} onChange={setIcon} />
               </div>
               <Button onClick={() => saveMutation.mutate()} disabled={!nameEn} className="w-full">{t("common.save")}</Button>
             </div>
@@ -130,7 +131,9 @@ export default function CategoriesManagement() {
                 <TableCell className="text-muted-foreground text-sm">{cat.name_en || cat.name}</TableCell>
                 <TableCell className="text-muted-foreground text-sm">{cat.name_fr || "—"}</TableCell>
                 <TableCell className="text-muted-foreground text-sm" dir="rtl">{cat.name_ar || "—"}</TableCell>
-                <TableCell className="text-muted-foreground text-sm">{cat.icon || "—"}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">
+                  {cat.icon && icons[cat.icon] ? (() => { const I = icons[cat.icon]; return <span className="inline-flex items-center gap-1"><I className="h-4 w-4" /> {cat.icon}</span>; })() : "—"}
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button size="sm" variant="ghost" onClick={() => startEdit(cat)}><Pencil className="h-4 w-4" /></Button>
