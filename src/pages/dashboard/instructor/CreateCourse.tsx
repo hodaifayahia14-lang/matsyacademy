@@ -163,10 +163,26 @@ export default function CreateCourse() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="mb-2 font-display text-2xl font-bold">{t("dashboard.instructor.createCourse")}</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        {lang === "ar" ? "أنشئ دورة جديدة خطوة بخطوة" : lang === "fr" ? "Créez un cours étape par étape" : "Create a new course step by step"}
+      <h1 className="mb-2 font-display text-2xl font-bold">
+        {productType === "book" ? (lang === "ar" ? "إضافة كتاب جديد" : lang === "fr" ? "Ajouter un Livre" : "Add New Book") : t("dashboard.instructor.createCourse")}
+      </h1>
+      <p className="mb-4 text-sm text-muted-foreground">
+        {lang === "ar" ? "أنشئ محتوى جديد خطوة بخطوة" : lang === "fr" ? "Créez du contenu étape par étape" : "Create new content step by step"}
       </p>
+
+      {/* Product Type Selector */}
+      <div className="mb-6 flex gap-3">
+        <button onClick={() => setProductType("course")}
+          className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${productType === "course" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30"}`}>
+          <GraduationCap className="h-4 w-4" />
+          {lang === "ar" ? "دورة تدريبية" : lang === "fr" ? "Cours" : "Course"}
+        </button>
+        <button onClick={() => setProductType("book")}
+          className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${productType === "book" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30"}`}>
+          <BookOpen className="h-4 w-4" />
+          {lang === "ar" ? "كتاب" : lang === "fr" ? "Livre" : "Book"}
+        </button>
+      </div>
 
       {/* Progress */}
       <div className="mb-8">
