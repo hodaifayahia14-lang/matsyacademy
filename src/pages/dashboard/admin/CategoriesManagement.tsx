@@ -105,7 +105,8 @@ export default function CategoriesManagement() {
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">{t("dashboard.admin.categoryIcon")}</label>
-                <Input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="e.g. Shield, BookOpen, Award" />
+                <IconPicker value={icon} onChange={setIcon} />
+              </div>
               </div>
               <Button onClick={() => saveMutation.mutate()} disabled={!nameEn} className="w-full">{t("common.save")}</Button>
             </div>
