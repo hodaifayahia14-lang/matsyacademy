@@ -94,7 +94,7 @@ export default function HomePage() {
     ? mockCourses
     : mockCourses.filter((c) => c.category === activeCat);
 
-  const courseCategories = ["All", ...mockCategories.map((c) => c.name)];
+  
 
   return (
     <div>
