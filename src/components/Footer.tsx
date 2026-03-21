@@ -26,12 +26,12 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t bg-background">
+    <footer className="border-t border-border bg-secondary">
       <div className="container py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link to="/" className="mb-4 flex items-center gap-2">
-              <span className="font-display text-xl font-bold text-primary">
+              <span className="font-display text-xl font-bold text-gold">
                 Matsy<span className="text-foreground"> Academy</span>
               </span>
             </Link>
@@ -39,7 +39,7 @@ export default function Footer() {
             <div className="flex gap-3">
               {socials.map(({ icon: Icon, href }, i) => (
                 <a key={i} href={href}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground">
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-gold hover:text-gold-foreground">
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
@@ -51,14 +51,14 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map(({ label, to }) => (
                   <li key={label}>
-                    <Link to={to} className="text-sm text-muted-foreground transition-colors hover:text-primary">{label}</Link>
+                    <Link to={to} className="text-sm text-muted-foreground transition-colors hover:text-gold">{label}</Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div className="mt-10 border-t pt-6 text-center text-xs text-muted-foreground">
+        <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} Matsy Academy — أكاديمية مايسي للتدريب و التطوير
         </div>
       </div>

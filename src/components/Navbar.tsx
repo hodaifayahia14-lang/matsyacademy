@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, Search, LogOut, User, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, Phone, ArrowRight, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -52,11 +52,11 @@ export default function Navbar() {
     ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : "U";
 
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${scrolled ? "bg-background/95 backdrop-blur-md shadow-header" : "bg-background"}`}>
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${scrolled ? "bg-background/95 backdrop-blur-md shadow-header" : "bg-background/80 backdrop-blur-sm"}`}>
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-xl font-bold text-primary">
+          <span className="font-display text-xl font-bold text-gold">
             Matsy<span className="text-foreground"> Academy</span>
           </span>
         </Link>
@@ -64,13 +64,13 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 lg:flex">
           <Link to="/">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.home")}</Button>
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-gold">{t("navbar.home")}</Button>
           </Link>
 
           {/* Courses dropdown */}
           <div className="relative" onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
             <Link to="/courses">
-              <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">
+              <Button variant="ghost" size="sm" className="text-foreground hover:text-gold">
                 {t("navbar.courses")} <ChevronDown className="ms-1 h-3 w-3" />
               </Button>
             </Link>
@@ -80,7 +80,7 @@ export default function Navbar() {
                   className="absolute start-0 top-full w-56 rounded-lg border bg-card p-2 shadow-lg">
                   {categoryKeys.map(({ labelKey, to }) => (
                     <Link key={to} to={to}
-                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
+                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-gold">
                       {t(labelKey)}
                     </Link>
                   ))}
@@ -90,16 +90,16 @@ export default function Navbar() {
           </div>
 
           <Link to="/instructors">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.instructors")}</Button>
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-gold">{t("navbar.instructors")}</Button>
           </Link>
 
           <Link to="/blog">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.blog")}</Button>
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-gold">{t("navbar.blog")}</Button>
           </Link>
 
           {/* Pages dropdown */}
           <div className="relative" onMouseEnter={() => setPagesOpen(true)} onMouseLeave={() => setPagesOpen(false)}>
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">
+            <Button variant="ghost" size="sm" className="text-foreground hover:text-gold">
               {t("navbar.pages")} <ChevronDown className="ms-1 h-3 w-3" />
             </Button>
             <AnimatePresence>
@@ -108,7 +108,7 @@ export default function Navbar() {
                   className="absolute start-0 top-full w-48 rounded-lg border bg-card p-2 shadow-lg">
                   {pageKeys.map(({ labelKey, to }) => (
                     <Link key={to} to={to}
-                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
+                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-gold">
                       {t(labelKey)}
                     </Link>
                   ))}
@@ -120,9 +120,9 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden items-center gap-3 lg:flex">
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1 text-sm text-gold">
             <Phone className="h-4 w-4" />
-            <span>+01 123 456 7890</span>
+            <span>+213 554 275 994</span>
           </div>
           <LanguageSwitcher />
           {user ? (
@@ -153,10 +153,10 @@ export default function Navbar() {
           ) : (
             <div className="flex items-center gap-2">
               <Link to="/login">
-                <Button variant="ghost" size="sm">{t("navbar.login")}</Button>
+                <Button variant="ghost" size="sm" className="text-foreground hover:text-gold">{t("navbar.login")}</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="gap-1">
+                <Button size="sm" className="gap-1 border border-gold bg-primary hover:shadow-[0_0_15px_hsl(var(--gold)/0.3)] transition-all">
                   {t("navbar.signUp")} <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
