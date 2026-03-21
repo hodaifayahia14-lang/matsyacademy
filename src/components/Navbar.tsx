@@ -78,10 +78,10 @@ export default function Navbar() {
               {catOpen && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
                   className="absolute start-0 top-full w-56 rounded-lg border bg-card p-2 shadow-lg">
-                  {categories.map((c) => (
-                    <Link key={c} to={`/courses?category=${encodeURIComponent(c)}`}
+                  {categoryKeys.map(({ labelKey, to }) => (
+                    <Link key={to} to={to}
                       className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
-                      {c}
+                      {t(labelKey)}
                     </Link>
                   ))}
                 </motion.div>
