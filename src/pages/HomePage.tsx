@@ -260,7 +260,7 @@ export default function HomePage() {
 
           {/* Category filters */}
           <div className="mb-10 flex flex-wrap justify-center gap-3">
-            {[{ name: "All", name_en: "All", name_fr: "Tous", name_ar: "الكل" }, ...mockCategories].map((cat) => {
+            {[{ name: "All", name_en: "All", name_fr: "Tous", name_ar: "الكل" }, ...dbCategories].map((cat: any) => {
               const catLabel = getLocalized(cat, "name", lang);
               return (
                 <button key={cat.name} onClick={() => setActiveCat(cat.name)}
