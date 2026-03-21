@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CartProvider } from "@/contexts/CartContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -24,6 +25,9 @@ import Contact from "@/pages/Contact";
 import BlogDetail from "@/pages/BlogDetail";
 import Terms from "@/pages/Terms";
 import CoursePlayer from "@/pages/CoursePlayer";
+import Cart from "@/pages/Cart";
+import Checkout from "@/pages/Checkout";
+import ThankYou from "@/pages/ThankYou";
 import StudentDashboard from "@/pages/dashboard/student/StudentDashboard";
 import InstructorDashboard from "@/pages/dashboard/instructor/InstructorDashboard";
 import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard";
@@ -38,50 +42,55 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            {/* Course Player — full-screen, no Navbar/Footer */}
-            <Route path="/learn/:courseId/:lessonId" element={<CoursePlayer />} />
+          <CartProvider>
+            <Routes>
+              {/* Course Player — full-screen, no Navbar/Footer */}
+              <Route path="/learn/:courseId/:lessonId" element={<CoursePlayer />} />
 
-            {/* Dashboard routes — no global Navbar/Footer */}
-            <Route path="/dashboard/student/*" element={
-              <ProtectedRoute requiredRole="student"><StudentDashboard /></ProtectedRoute>
-            } />
-            <Route path="/dashboard/instructor/*" element={
-              <ProtectedRoute requiredRole="instructor"><InstructorDashboard /></ProtectedRoute>
-            } />
-            <Route path="/dashboard/admin/*" element={
-              <ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>
-            } />
+              {/* Dashboard routes — no global Navbar/Footer */}
+              <Route path="/dashboard/student/*" element={
+                <ProtectedRoute requiredRole="student"><StudentDashboard /></ProtectedRoute>
+              } />
+              <Route path="/dashboard/instructor/*" element={
+                <ProtectedRoute requiredRole="instructor"><InstructorDashboard /></ProtectedRoute>
+              } />
+              <Route path="/dashboard/admin/*" element={
+                <ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>
+              } />
 
-            {/* Public routes with Navbar/Footer */}
-            <Route path="*" element={
-              <div className="flex min-h-screen flex-col">
-                <Navbar />
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/courses" element={<CourseCatalog />} />
-                    <Route path="/courses/:id" element={<CourseDetail />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/qa" element={<QA />} />
-                    <Route path="/instructions" element={<Instructions />} />
-                    <Route path="/instructors" element={<Instructors />} />
-                    <Route path="/instructors/:id" element={<InstructorDetail />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/blog/:id" element={<BlogDetail />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
-                <Footer />
-              </div>
-            } />
-          </Routes>
+              {/* Public routes with Navbar/Footer */}
+              <Route path="*" element={
+                <div className="flex min-h-screen flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/courses" element={<CourseCatalog />} />
+                      <Route path="/courses/:id" element={<CourseDetail />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/forgot-password" element={<ForgotPassword />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/qa" element={<QA />} />
+                      <Route path="/instructions" element={<Instructions />} />
+                      <Route path="/instructors" element={<Instructors />} />
+                      <Route path="/instructors/:id" element={<InstructorDetail />} />
+                      <Route path="/blog" element={<Blog />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/blog/:id" element={<BlogDetail />} />
+                      <Route path="/terms" element={<Terms />} />
+                      <Route path="/cart" element={<Cart />} />
+                      <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/thank-you" element={<ThankYou />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </main>
+                  <Footer />
+                </div>
+              } />
+            </Routes>
+          </CartProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

@@ -133,6 +133,16 @@ export default function Navbar() {
             <Phone className="h-4 w-4" />
             <span className="hidden xl:inline">+213 554 275 994</span>
           </a>
+          <Link to="/cart" className="relative">
+            <Button variant="ghost" size="icon" className="h-9 w-9">
+              <ShoppingCart className="h-4 w-4" />
+              {cartCount > 0 && (
+                <span className="absolute -end-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                  {cartCount}
+                </span>
+              )}
+            </Button>
+          </Link>
           <LanguageSwitcher />
           {user ? (
             <DropdownMenu>
