@@ -32,6 +32,8 @@ export default function CourseDetail() {
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
 
+  useEffect(() => { window.scrollTo(0, 0); }, [id]);
+
   useEffect(() => {
     if (!course || course.type === "book") return;
     supabase
@@ -125,17 +127,17 @@ export default function CourseDetail() {
       <div className="border-b bg-secondary/30">
         <div className="container py-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-primary">{t("navbar.home")}</Link>
+            <Link to="/" className="hover:text-primary shrink-0">{t("navbar.home")}</Link>
             <span>/</span>
-            <Link to="/courses" className="hover:text-primary">{t("navbar.courses")}</Link>
+            <Link to="/courses" className="hover:text-primary shrink-0">{t("navbar.courses")}</Link>
             <span>/</span>
-            <span className="text-foreground">{title}</span>
+            <span className="text-foreground truncate max-w-[150px] sm:max-w-none">{title}</span>
           </div>
         </div>
       </div>
 
-      <div className="container py-8">
-        <div className="grid gap-8 lg:grid-cols-3">
+      <div className="container py-4 sm:py-8">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="mb-6 aspect-video overflow-hidden rounded-xl bg-secondary relative">
@@ -145,7 +147,7 @@ export default function CourseDetail() {
                 <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{categoryName}</span>
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{levelLabel}</span>
               </div>
-              <h1 className="mb-3 font-display text-2xl font-bold text-foreground lg:text-3xl">{title}</h1>
+              <h1 className="mb-3 font-display text-xl font-bold text-foreground sm:text-2xl lg:text-3xl">{title}</h1>
               <p className="mb-4 text-muted-foreground">{subtitle}</p>
               <div className="mb-6 flex items-center gap-3">
                 {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-10 w-10 rounded-full border-2 border-primary/20" />}
@@ -156,10 +158,10 @@ export default function CourseDetail() {
               </div>
             </motion.div>
 
-            <div className="mb-6 flex gap-1 rounded-lg bg-secondary p-1">
+            <div className="mb-6 flex gap-1 rounded-lg bg-secondary p-1 overflow-x-auto">
               {tabs.map((tab) => (
                 <button key={tab} onClick={() => setActiveTab(tab)}
-                  className={`flex-1 rounded-md px-4 py-2.5 text-sm font-medium capitalize transition-colors ${activeTab === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+                  className={`flex-1 min-w-fit whitespace-nowrap rounded-md px-3 py-2 text-xs font-medium capitalize transition-colors sm:px-4 sm:py-2.5 sm:text-sm ${activeTab === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
                   {tabLabels[tab]}
                 </button>
               ))}
@@ -241,10 +243,10 @@ export default function CourseDetail() {
 
             {activeTab === "instructor" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="flex items-start gap-6 rounded-xl border p-6">
-                  {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-24 w-24 rounded-full border-2 border-primary/20" />}
-                  <div className="flex-1">
-                    <h3 className="mb-1 font-display text-xl font-bold">{course.instructor_name}</h3>
+                <div className="flex flex-col items-center gap-4 rounded-xl border p-4 sm:flex-row sm:items-start sm:gap-6 sm:p-6">
+                  {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-20 w-20 rounded-full border-2 border-primary/20 sm:h-24 sm:w-24" />}
+                  <div className="flex-1 text-center sm:text-start">
+                    <h3 className="mb-1 font-display text-lg font-bold sm:text-xl">{course.instructor_name}</h3>
                     <p className="mb-4 text-sm text-muted-foreground">{t("courseDetail.expertInstructor")}</p>
                   </div>
                 </div>
@@ -263,7 +265,7 @@ export default function CourseDetail() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
-              <div className="rounded-xl border bg-card p-6 shadow-sm">
+              <div className="rounded-xl border bg-card p-4 shadow-sm sm:p-6">
                 <div className="mb-4 text-center">
                   <p className="font-display text-3xl font-bold text-primary">{priceText}</p>
                 </div>
