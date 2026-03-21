@@ -4,12 +4,20 @@ import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCirc
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { useState } from "react";
-import { mockCourses, mockReviews } from "@/data/mockData";
+import { useState, useEffect } from "react";
+import { useCourseDetail } from "@/hooks/useCourses";
+import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
+}
+
+interface SectionData {
+  id: string;
+  title: string;
+  order: number;
+  lessons: { id: string; title: string; type: string; duration_minutes: number; is_preview: boolean }[];
 }
 
 export default function CourseDetail() {
@@ -19,9 +27,37 @@ export default function CourseDetail() {
   const { addToCart, isInCart } = useCart();
   const navigate = useNavigate();
   const lang = i18n.language as "en" | "fr" | "ar";
-  const course = mockCourses.find((c) => c.id === id);
+  const { course, loading } = useCourseDetail(id);
+  const [sections, setSections] = useState<SectionData[]>([]);
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
-  const [openSections, setOpenSections] = useState<Set<string>>(new Set([course?.sections[0]?.id || ""]));
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!course || course.type === "book") return;
+    supabase
+      .from("sections")
+      .select("id, title, order, lessons(id, title, type, duration_minutes, is_preview, order)")
+      .eq("course_id", course.id)
+      .order("order")
+      .then(({ data }) => {
+        if (data) {
+          const sorted = (data as any[]).map(s => ({
+            ...s,
+            lessons: (s.lessons || []).sort((a: any, b: any) => a.order - b.order),
+          }));
+          setSections(sorted);
+          if (sorted[0]) setOpenSections(new Set([sorted[0].id]));
+        }
+      });
+  }, [course]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="text-muted-foreground">{lang === "ar" ? "جاري التحميل..." : "Loading..."}</div>
+      </div>
+    );
+  }
 
   if (!course) {
     return (
@@ -34,37 +70,36 @@ export default function CourseDetail() {
     );
   }
 
-  const title = getLocalized(course, "title", lang);
-  const subtitle = getLocalized(course, "subtitle", lang);
-  const description = getLocalized(course, "description", lang);
-  const badge = getLocalized(course, "badge", lang);
-  const format = getLocalized(course, "format", lang);
-  const categoryName = getLocalized(course, "category", lang);
-  const levelName = getLocalized(course, "level", lang);
-  const learningOutcomes = (course as any)[`learningOutcomes_${lang}`] || course.learningOutcomes;
-  const requirements = (course as any)[`requirements_${lang}`] || course.requirements;
-  const priceText = course.price > 0 ? `${course.price.toLocaleString()} DZD` : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
-  const isBook = (course as any).type === "book" || (course.sections && course.sections.length === 0 && (course as any).fileUrl);
+  const title = course.title;
+  const subtitle = course.subtitle || "";
+  const description = course.description || "";
+  const categoryName = getLocalized(course, "category_name", lang);
+  const isBook = course.type === "book";
+  const priceText = Number(course.price) > 0 ? `${Number(course.price).toLocaleString()} DZD` : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
+
+  const levelLabel = course.level === "beginner"
+    ? (lang === "ar" ? "مبتدئ" : lang === "fr" ? "Débutant" : "Beginner")
+    : course.level === "intermediate"
+    ? (lang === "ar" ? "متوسط" : lang === "fr" ? "Intermédiaire" : "Intermediate")
+    : (lang === "ar" ? "متقدم" : lang === "fr" ? "Avancé" : "Advanced");
+
   const enrollText = isBook
     ? (lang === "ar" ? "اشترِ الآن" : lang === "fr" ? "Acheter" : "Buy Now")
     : (lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now");
 
   const handleEnroll = () => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user) { navigate("/login"); return; }
     if (isBook) {
       addToCart(course.id);
       navigate("/cart");
       return;
     }
-    const firstLesson = course.sections?.[0]?.lessons?.[0];
+    const firstLesson = sections[0]?.lessons?.[0];
     if (firstLesson) {
       navigate(`/learn/${id}/${firstLesson.id}`);
     } else {
-      navigate(`/cart`);
       addToCart(course.id);
+      navigate("/cart");
     }
   };
 
@@ -72,7 +107,7 @@ export default function CourseDetail() {
     setOpenSections((prev) => { const next = new Set(prev); next.has(sectionId) ? next.delete(sectionId) : next.add(sectionId); return next; });
   };
 
-  const totalLessons = course.sections.reduce((acc, s) => acc + s.lessons.length, 0);
+  const totalLessons = sections.reduce((acc, s) => acc + s.lessons.length, 0);
   const lessonIcon = (type: string) => {
     if (type === "video") return <Play className="h-4 w-4 text-primary" />;
     if (type === "quiz") return <HelpCircle className="h-4 w-4 text-warning" />;
@@ -81,6 +116,9 @@ export default function CourseDetail() {
 
   const tabs = ["overview", "curriculum", "instructor", "reviews"] as const;
   const tabLabels = { overview: t("courseDetail.overview"), curriculum: t("courseDetail.curriculum"), instructor: t("courseDetail.instructor"), reviews: t("courseDetail.reviews") };
+
+  const learningOutcomes = course.learning_outcomes || [];
+  const requirements = course.requirements || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,34 +139,19 @@ export default function CourseDetail() {
           <div className="lg:col-span-2">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="mb-6 aspect-video overflow-hidden rounded-xl bg-secondary relative">
-                <img src={course.coverImage} alt={title} className="h-full w-full object-cover" />
-                {badge && (
-                  <div className="absolute top-4 start-4 rounded-md bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground shadow">
-                    {badge}
-                  </div>
-                )}
+                <img src={course.cover_image || "/placeholder.svg"} alt={title} className="h-full w-full object-cover" />
               </div>
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{categoryName}</span>
-                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{levelName}</span>
-                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{format}</span>
+                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{levelLabel}</span>
               </div>
               <h1 className="mb-3 font-display text-2xl font-bold text-foreground lg:text-3xl">{title}</h1>
               <p className="mb-4 text-muted-foreground">{subtitle}</p>
-              <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-warning text-warning" />
-                  <span className="font-semibold text-foreground">{course.rating.toFixed(1)}</span>
-                  <span>({course.reviewCount})</span>
-                </div>
-                <div className="flex items-center gap-1"><Users className="h-4 w-4" />{course.studentCount} {t("stats.students").toLowerCase()}</div>
-                <div className="flex items-center gap-1"><Calendar className="h-4 w-4" />{t("courseDetail.updated")} {course.updatedAt}</div>
-              </div>
               <div className="mb-6 flex items-center gap-3">
-                <img src={course.instructorAvatar} alt="" className="h-10 w-10 rounded-full border-2 border-primary/20" />
+                {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-10 w-10 rounded-full border-2 border-primary/20" />}
                 <div>
                   <span className="text-xs text-muted-foreground">{t("courseDetail.instructor")}</span>
-                  <p className="text-sm font-semibold text-foreground">{course.instructor}</p>
+                  <p className="text-sm font-semibold text-foreground">{course.instructor_name}</p>
                 </div>
               </div>
             </motion.div>
@@ -144,78 +167,85 @@ export default function CourseDetail() {
 
             {activeTab === "overview" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-                <div className="rounded-xl border bg-primary/5 p-6">
-                  <h2 className="mb-4 font-display text-xl font-bold text-foreground">{t("courseDetail.whatYoullLearn")}</h2>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {learningOutcomes.map((o: string, i: number) => (
-                      <div key={i} className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" /><span className="text-sm">{o}</span></div>
-                    ))}
+                {learningOutcomes.length > 0 && (
+                  <div className="rounded-xl border bg-primary/5 p-6">
+                    <h2 className="mb-4 font-display text-xl font-bold text-foreground">{t("courseDetail.whatYoullLearn")}</h2>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {learningOutcomes.map((o: string, i: number) => (
+                        <div key={i} className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" /><span className="text-sm">{o}</span></div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
                 <div>
                   <h2 className="mb-4 font-display text-xl font-bold">{t("courseDetail.description")}</h2>
                   <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
                 </div>
-                <div>
-                  <h2 className="mb-4 font-display text-xl font-bold">{t("courseDetail.requirements")}</h2>
-                  <ul className="space-y-2">
-                    {requirements.map((r: string, i: number) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground"><div className="h-1.5 w-1.5 rounded-full bg-primary" />{r}</li>
-                    ))}
-                  </ul>
-                </div>
+                {requirements.length > 0 && (
+                  <div>
+                    <h2 className="mb-4 font-display text-xl font-bold">{t("courseDetail.requirements")}</h2>
+                    <ul className="space-y-2">
+                      {requirements.map((r: string, i: number) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground"><div className="h-1.5 w-1.5 rounded-full bg-primary" />{r}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </motion.div>
             )}
 
             {activeTab === "curriculum" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="mb-4 flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    {course.sections.length} {t("courseDetail.sections")} • {totalLessons} {t("courseDetail.totalLessons")} • {course.duration} {t("courseDetail.total")}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  {course.sections.map((section) => (
-                    <div key={section.id} className="overflow-hidden rounded-lg border">
-                      <button onClick={() => toggleSection(section.id)} className="flex w-full items-center justify-between bg-secondary/50 px-4 py-3.5 text-start hover:bg-secondary transition-colors">
-                        <span className="text-sm font-semibold">{section.title}</span>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>{section.lessons.length} {t("catalog.lessons")}</span>
-                          {openSections.has(section.id) ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                        </div>
-                      </button>
-                      {openSections.has(section.id) && (
-                        <div className="divide-y">
-                          {section.lessons.map((lesson) => (
-                            <div key={lesson.id} className="flex items-center justify-between px-4 py-3 hover:bg-secondary/30 transition-colors">
-                              <div className="flex items-center gap-3">
-                                {lessonIcon(lesson.type)}
-                                <span className="text-sm">{lesson.title}</span>
-                                {lesson.isPreview && <span className="rounded bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium">{t("courseDetail.preview")}</span>}
-                              </div>
-                              <span className="text-xs text-muted-foreground">{lesson.duration}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                {isBook ? (
+                  <div className="py-8 text-center text-muted-foreground">
+                    {lang === "ar" ? `هذا كتاب يحتوي على ${course.page_count || ""} صفحة` : `This is a book with ${course.page_count || ""} pages`}
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-4 flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">
+                        {sections.length} {t("courseDetail.sections")} • {totalLessons} {t("courseDetail.totalLessons")}
+                      </p>
                     </div>
-                  ))}
-                </div>
+                    <div className="space-y-2">
+                      {sections.map((section) => (
+                        <div key={section.id} className="overflow-hidden rounded-lg border">
+                          <button onClick={() => toggleSection(section.id)} className="flex w-full items-center justify-between bg-secondary/50 px-4 py-3.5 text-start hover:bg-secondary transition-colors">
+                            <span className="text-sm font-semibold">{section.title}</span>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span>{section.lessons.length} {t("catalog.lessons")}</span>
+                              {openSections.has(section.id) ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                            </div>
+                          </button>
+                          {openSections.has(section.id) && (
+                            <div className="divide-y">
+                              {section.lessons.map((lesson) => (
+                                <div key={lesson.id} className="flex items-center justify-between px-4 py-3 hover:bg-secondary/30 transition-colors">
+                                  <div className="flex items-center gap-3">
+                                    {lessonIcon(lesson.type)}
+                                    <span className="text-sm">{lesson.title}</span>
+                                    {lesson.is_preview && <span className="rounded bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium">{t("courseDetail.preview")}</span>}
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">{lesson.duration_minutes}m</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </motion.div>
             )}
 
             {activeTab === "instructor" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div className="flex items-start gap-6 rounded-xl border p-6">
-                  <img src={course.instructorAvatar} alt="" className="h-24 w-24 rounded-full border-2 border-primary/20" />
+                  {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-24 w-24 rounded-full border-2 border-primary/20" />}
                   <div className="flex-1">
-                    <h3 className="mb-1 font-display text-xl font-bold">{course.instructor}</h3>
+                    <h3 className="mb-1 font-display text-xl font-bold">{course.instructor_name}</h3>
                     <p className="mb-4 text-sm text-muted-foreground">{t("courseDetail.expertInstructor")}</p>
-                    <div className="mb-4 flex flex-wrap gap-6 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1"><Star className="h-4 w-4 text-warning" /> {course.rating.toFixed(1)} {t("courseDetail.rating")}</span>
-                      <span className="flex items-center gap-1"><Users className="h-4 w-4" /> {course.studentCount} {t("stats.students")}</span>
-                      <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> 3 {t("stats.courses")}</span>
-                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -223,43 +253,8 @@ export default function CourseDetail() {
 
             {activeTab === "reviews" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="mb-8 rounded-xl border p-6">
-                  <div className="flex items-center gap-8">
-                    <div className="text-center">
-                      <p className="font-display text-5xl font-bold text-primary">{course.rating.toFixed(1)}</p>
-                      <div className="mt-1 flex justify-center">{[...Array(5)].map((_, i) => <Star key={i} className={`h-4 w-4 ${i < Math.floor(course.rating) ? "fill-warning text-warning" : "text-muted"}`} />)}</div>
-                      <p className="mt-1 text-xs text-muted-foreground">{course.reviewCount} {t("courseDetail.reviews").toLowerCase()}</p>
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      {[5, 4, 3, 2, 1].map((s) => {
-                        const pct = s === 5 ? 65 : s === 4 ? 22 : s === 3 ? 8 : s === 2 ? 3 : 2;
-                        return (
-                          <div key={s} className="flex items-center gap-2">
-                            <span className="w-3 text-xs font-medium">{s}</span><Star className="h-3 w-3 fill-warning text-warning" />
-                            <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-warning transition-all" style={{ width: `${pct}%` }} /></div>
-                            <span className="w-8 text-end text-xs text-muted-foreground">{pct}%</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  {mockReviews.map((r) => (
-                    <div key={r.id} className="rounded-lg border p-5 transition-colors hover:bg-secondary/30">
-                      <div className="mb-3 flex items-center gap-3">
-                        <img src={r.avatar} alt="" className="h-10 w-10 rounded-full border border-border" />
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold">{r.user}</p>
-                          <div className="flex items-center gap-1">
-                            {[...Array(r.rating)].map((_, i) => <Star key={i} className="h-3 w-3 fill-warning text-warning" />)}
-                            <span className="ms-2 text-xs text-muted-foreground">{r.date}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{getLocalized(r, "comment", lang)}</p>
-                    </div>
-                  ))}
+                <div className="py-8 text-center text-muted-foreground">
+                  {lang === "ar" ? "لا توجد مراجعات حالياً" : "No reviews yet"}
                 </div>
               </motion.div>
             )}
@@ -286,11 +281,10 @@ export default function CourseDetail() {
                 <p className="mb-4 text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
                 <div className="space-y-3 border-t pt-4">
                   {[
-                    { icon: Clock, label: course.duration + " " + t("courseDetail.ofContent") },
-                    { icon: BookOpen, label: `${totalLessons} ${t("catalog.lessons")}` },
+                    ...(isBook && course.page_count ? [{ icon: BookOpen, label: `${course.page_count} ${lang === "ar" ? "صفحة" : "pages"}` }] : []),
+                    ...(!isBook ? [{ icon: BookOpen, label: `${totalLessons} ${t("catalog.lessons")}` }] : []),
                     { icon: Globe, label: course.language },
                     { icon: Shield, label: t("courseDetail.certificate") },
-                    { icon: Users, label: `${course.studentCount} ${t("stats.students")}` },
                   ].map(({ icon: Icon, label }) => (
                     <div key={label} className="flex items-center gap-3 text-sm text-muted-foreground">
                       <Icon className="h-4 w-4 text-primary" />{label}
@@ -300,9 +294,9 @@ export default function CourseDetail() {
               </div>
               <div className="rounded-xl border bg-card p-5">
                 <div className="flex items-center gap-3">
-                  <img src={course.instructorAvatar} alt="" className="h-12 w-12 rounded-full" />
+                  {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-12 w-12 rounded-full" />}
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{course.instructor}</p>
+                    <p className="text-sm font-semibold text-foreground">{course.instructor_name}</p>
                     <p className="text-xs text-muted-foreground">{t("courseDetail.expertInstructor")}</p>
                   </div>
                 </div>
