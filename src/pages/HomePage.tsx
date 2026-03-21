@@ -4,78 +4,101 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Users, BookOpen, Award, GraduationCap, MapPin, Clock, Zap,
-  Star, Mail, Monitor, Briefcase, Languages as LanguagesIcon, Heart, Scale,
-  Palette, Atom, Megaphone, Pencil, ChefHat, BookOpenCheck, Dumbbell, Play, CheckCircle
+  Star, Mail, Shield, Play, CheckCircle, MessageCircle
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 import { mockCourses, mockCategories } from "@/data/mockData";
 
 const iconMap: Record<string, React.ElementType> = {
-  Monitor, Briefcase, Languages: LanguagesIcon, Heart, Scale, Palette,
-  Atom, Megaphone, Pencil, ChefHat, BookOpen: BookOpenCheck, Dumbbell,
+  Shield, BookOpen, Award, Zap,
 };
-
-const stats = [
-  { icon: Users, value: "50,000+", labelKey: "stats.students" },
-  { icon: BookOpen, value: "2,400+", labelKey: "stats.courses" },
-  { icon: GraduationCap, value: "850+", labelKey: "stats.instructors" },
-  { icon: Award, value: "35,000+", labelKey: "stats.certificates" },
-];
-
-const marqueeItems = [
-  "⭐ Online Certifications", "⭐ Top Instructors", "⭐ 2500+ Online Courses",
-  "⭐ 56+ Wonderful Awards", "⭐ 5000+ Membership", "⭐ Expert Mentors",
-];
-
-const testimonials = [
-  { name: "Sophie Laurent", role: "Web Developer", text: "Matsy Academy transformed my career. The courses are practical and the instructors are top-notch.", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie", rating: 5 },
-  { name: "Omar Benali", role: "Marketing Manager", text: "I completed three certifications. The platform is intuitive and content always up to date.", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Omar", rating: 5 },
-  { name: "Claire Moreau", role: "Data Analyst", text: "The Data Science course gave me all the skills I needed to land my dream job. Highly recommended!", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Claire", rating: 5 },
-];
-
-const mentors = [
-  { name: "Dr. Ahmed Matsy", role: "AI & Data Science", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor1-DUvt54Og.webp" },
-  { name: "Sarah Benali", role: "Business Strategy", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor2-BbMKFVTw.webp" },
-  { name: "Marc Dupont", role: "Web Development", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor3-BQy7AFDY.webp" },
-  { name: "Fatima Zahra", role: "Digital Marketing", avatar: "https://eduthink-react.layoutdrop.com/assets/mentor4-K1zs78ea.webp" },
-];
-
-const learningFocused = [
-  {
-    title: "Daily Live Classes",
-    desc: "Interact with educators, ask questions, participate in live polls, and clear your doubts",
-    img: "https://eduthink-react.layoutdrop.com/assets/img1-xmBHPqFi.webp",
-  },
-  {
-    title: "Practice and Revise",
-    desc: "Learning extends beyond classes with our practice section, mock tests..",
-    img: "https://eduthink-react.layoutdrop.com/assets/img2-7r17t2mp.webp",
-  },
-  {
-    title: "Learn Anytime",
-    desc: "One subscription gives you access to all live and recorded classes",
-    img: "https://eduthink-react.layoutdrop.com/assets/img3-CJIVSKPx.webp",
-  },
-];
-
-const brandLogos = [
-  "https://eduthink-react.layoutdrop.com/assets/brand1-Dw7bwgPO.svg",
-  "https://eduthink-react.layoutdrop.com/assets/brand2-CTsECryT.svg",
-  "https://eduthink-react.layoutdrop.com/assets/brand3-BTZUW3xl.svg",
-  "https://eduthink-react.layoutdrop.com/assets/brand4-F1NyeVge.svg",
-  "https://eduthink-react.layoutdrop.com/assets/brand5-DJfOcXC5.svg",
-];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
 };
 
+function getLocalized(obj: any, field: string, lang: string): string {
+  return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
+}
+
 export default function HomePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language as "en" | "fr" | "ar";
   const [testIdx, setTestIdx] = useState(0);
   const [activeCat, setActiveCat] = useState("All");
+
+  const stats = [
+    { icon: Users, value: "+500", labelKey: "stats.students" },
+    { icon: BookOpen, value: "3", labelKey: "stats.courses" },
+    { icon: Shield, value: "2", labelKey: "stats.fields" },
+    { icon: Award, value: "✓", labelKey: "stats.accredited" },
+  ];
+
+  const marqueeItems = lang === "ar"
+    ? ["⭐ تكوين معتمد", "⭐ دورات السلامة والصحة المهنية", "⭐ مرشد الحج والعمرة", "⭐ +500 طالب", "⭐ شهادات معتمدة", "⭐ تكوين عن بعد"]
+    : lang === "fr"
+    ? ["⭐ Formation Certifiée", "⭐ Cours HSE", "⭐ Guide Hajj & Omra", "⭐ +500 Étudiants", "⭐ Certificats Reconnus", "⭐ Formation en Ligne"]
+    : ["⭐ Certified Training", "⭐ HSE Courses", "⭐ Hajj & Umrah Guide", "⭐ +500 Students", "⭐ Recognized Certificates", "⭐ Online Training"];
+
+  const testimonials = [
+    {
+      name: "Karim Bouzid",
+      role: lang === "ar" ? "متخصص في السلامة" : lang === "fr" ? "Spécialiste Sécurité" : "Safety Specialist",
+      text: lang === "ar" ? "أكاديمية مايسي غيرت مساري المهني. الدورات عملية والمدربون من أعلى مستوى."
+        : lang === "fr" ? "Matsy Academy a transformé ma carrière. Les cours sont pratiques et les formateurs excellents."
+        : "Matsy Academy transformed my career. The courses are practical and the instructors are top-notch.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Karim", rating: 5,
+    },
+    {
+      name: "Amina Belhadj",
+      role: lang === "ar" ? "مفتشة أمن" : lang === "fr" ? "Inspectrice Sécurité" : "Safety Inspector",
+      text: lang === "ar" ? "أكملت دورة التفتيش الأمني. المنصة سهلة الاستخدام والمحتوى دائماً محدث."
+        : lang === "fr" ? "J'ai terminé la formation d'inspection. La plateforme est intuitive et le contenu toujours à jour."
+        : "I completed the safety inspection course. The platform is intuitive and content always up to date.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Amina", rating: 5,
+    },
+    {
+      name: "Youcef Hamdi",
+      role: lang === "ar" ? "مرشد حج وعمرة" : lang === "fr" ? "Guide Hajj" : "Hajj Guide",
+      text: lang === "ar" ? "دورة مرشد الحج والعمرة كانت شاملة ومفيدة جداً. أنصح بها لكل من يريد العمل في هذا المجال."
+        : lang === "fr" ? "Le cours de guide du Hajj était incroyablement complet. Très recommandé !"
+        : "The Hajj guide course was incredibly comprehensive. Highly recommended!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Youcef", rating: 5,
+    },
+  ];
+
+  const mentors = [
+    { name: "Dr. Ahmed Matsy", role: lang === "ar" ? "خبير السلامة والصحة المهنية" : lang === "fr" ? "Expert HSE" : "HSE Expert", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AhmedMatsy" },
+    { name: "Sheikh Ibrahim Khalil", role: lang === "ar" ? "مرشد ديني" : lang === "fr" ? "Guide Religieux" : "Religious Guide", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SheikhIbrahim" },
+    { name: "Mme. Sarah Benali", role: lang === "ar" ? "مستشارة تعليمية" : lang === "fr" ? "Conseillère Éducative" : "Education Advisor", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SarahBenali" },
+    { name: "M. Rachid Toumi", role: lang === "ar" ? "مفتش أمن معتمد" : lang === "fr" ? "Inspecteur HSE Certifié" : "Certified HSE Inspector", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=RachidToumi" },
+  ];
+
+  const learningFocused = [
+    {
+      title: lang === "ar" ? "تكوين عن بعد مسجل" : lang === "fr" ? "Formation en Ligne Enregistrée" : "Online Recorded Training",
+      desc: lang === "ar" ? "تعلم في أي وقت يناسبك مع دروس مسجلة عالية الجودة ومحتوى تفاعلي"
+        : lang === "fr" ? "Apprenez à votre rythme avec des cours enregistrés de haute qualité et du contenu interactif"
+        : "Learn at your own pace with high-quality recorded lessons and interactive content",
+      img: "https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=600&h=400&fit=crop",
+    },
+    {
+      title: lang === "ar" ? "دورات السلامة المعتمدة" : lang === "fr" ? "Formations Sécurité Certifiées" : "Certified Safety Training",
+      desc: lang === "ar" ? "احصل على شهادات معتمدة من وزارة التكوين المهني في مجال السلامة والوقاية"
+        : lang === "fr" ? "Obtenez des certificats reconnus par le Ministère de la Formation Professionnelle"
+        : "Get certificates accredited by the Ministry of Vocational Training in safety and prevention",
+      img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop",
+    },
+    {
+      title: lang === "ar" ? "إرشاد ديني متخصص" : lang === "fr" ? "Guidance Religieuse Spécialisée" : "Specialized Religious Guidance",
+      desc: lang === "ar" ? "تعلم فنون الإرشاد الديني وإدارة مجموعات الحجاج والمعتمرين باحترافية"
+        : lang === "fr" ? "Apprenez l'art du guidage religieux et la gestion des groupes de pèlerins"
+        : "Learn the art of religious guidance and professional pilgrim group management",
+      img: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=600&h=400&fit=crop",
+    },
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => setTestIdx((i) => (i + 1) % testimonials.length), 5000);
@@ -83,10 +106,10 @@ export default function HomePage() {
   }, []);
 
   const filteredCourses = activeCat === "All"
-    ? mockCourses.slice(0, 8)
-    : mockCourses.filter((c) => c.category === activeCat).slice(0, 8);
+    ? mockCourses
+    : mockCourses.filter((c) => c.category === activeCat);
 
-  const courseCategories = ["All", ...mockCategories.slice(0, 5).map((c) => c.name)];
+  const courseCategories = ["All", ...mockCategories.map((c) => c.name)];
 
   return (
     <div>
@@ -96,10 +119,12 @@ export default function HomePage() {
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
               <h1 className="mb-6 font-display text-4xl font-bold leading-tight text-foreground md:text-5xl lg:text-6xl">
-                {t("hero.title")}
+                {lang === "ar" ? "أكاديمية مايسي للتدريب والتطوير" : lang === "fr" ? "Matsy Academy — Formation et Développement Professionnel" : "Matsy Academy — Professional Training & Development"}
               </h1>
               <p className="mb-8 max-w-lg text-lg text-muted-foreground">
-                {t("hero.subtitle")}
+                {lang === "ar" ? "منصة تعليمية معتمدة تقدم دورات في السلامة والصحة المهنية والإرشاد الديني. +500 طالب مسجل."
+                  : lang === "fr" ? "Plateforme éducative certifiée proposant des formations en sécurité HSE et guidance religieuse. +500 étudiants inscrits."
+                  : "Certified educational platform offering HSE safety and religious guidance courses. +500 enrolled students."}
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Link to="/courses">
@@ -107,22 +132,22 @@ export default function HomePage() {
                     {t("hero.browseCourses")} <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link to="/register">
-                  <Button size="lg" variant="outline" className="font-semibold">
-                    {t("hero.becomeInstructor")}
+                <a href="https://wa.me/213554275994" target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" variant="outline" className="gap-2 font-semibold">
+                    <MessageCircle className="h-4 w-4" />
+                    {lang === "ar" ? "تواصل معنا" : lang === "fr" ? "Contactez-nous" : "Contact Us"}
                   </Button>
-                </Link>
+                </a>
               </div>
-              {/* Instructor avatars */}
               <div className="mt-8 flex items-center gap-3">
                 <div className="flex -space-x-3 rtl:space-x-reverse">
-                  {["Ahmed", "Sarah", "Marc", "Fatima"].map((seed) => (
+                  {["AhmedMatsy", "SheikhIbrahim", "SarahBenali", "RachidToumi"].map((seed) => (
                     <img key={seed} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`} alt=""
                       className="h-10 w-10 rounded-full border-2 border-background" />
                   ))}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">850+ {t("stats.instructors")}</p>
+                  <p className="text-sm font-semibold text-foreground">+500 {t("stats.students")}</p>
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => <Star key={i} className="h-3 w-3 fill-warning text-warning" />)}
                   </div>
@@ -132,13 +157,13 @@ export default function HomePage() {
             <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
               <div className="relative">
                 <img
-                  src="https://eduthink-react.layoutdrop.com/assets/thumbnail1-BQe5AJKF.png"
-                  alt="Students learning"
+                  src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
+                  alt={lang === "ar" ? "طلاب متخرجون" : "Graduates"}
                   className="rounded-2xl"
                 />
                 <div className="absolute -bottom-4 -start-4 rounded-xl bg-primary p-4 text-primary-foreground shadow-lg">
-                  <p className="text-2xl font-bold">2,500+</p>
-                  <p className="text-sm">{t("stats.courses")}</p>
+                  <p className="text-2xl font-bold">+500</p>
+                  <p className="text-sm">{t("stats.students")}</p>
                 </div>
               </div>
             </motion.div>
@@ -160,8 +185,8 @@ export default function HomePage() {
         <div className="container">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div className="relative">
-              <img src="https://eduthink-react.layoutdrop.com/assets/pic1-BGHaTECK.webp"
-                alt="Learning" className="rounded-2xl" />
+              <img src="https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800&h=600&fit=crop"
+                alt={lang === "ar" ? "التعلم عبر الإنترنت" : "Online Learning"} className="rounded-2xl" />
               <button className="absolute inset-0 flex items-center justify-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
                   <Play className="h-6 w-6" />
@@ -195,7 +220,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Learning Focused on Your Goals */}
+      {/* Learning Focused */}
       <section className="py-16">
         <div className="container">
           <div className="mb-10 text-center">
@@ -233,7 +258,6 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
-          {/* Tab filter */}
           <div className="mb-8 flex flex-wrap gap-2">
             {courseCategories.map((cat) => (
               <button key={cat} onClick={() => setActiveCat(cat)}
@@ -244,7 +268,7 @@ export default function HomePage() {
               </button>
             ))}
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredCourses.map((c, i) => (
               <motion.div key={c.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                 <CourseCard course={c} />
@@ -284,9 +308,10 @@ export default function HomePage() {
             <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("categories.title")}</h2>
             <p className="text-muted-foreground">{t("categories.subtitle")}</p>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {mockCategories.map(({ name, icon, slug, courseCount }, i) => {
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {mockCategories.map(({ name, icon, slug, courseCount, ...rest }, i) => {
               const Icon = iconMap[icon] || BookOpen;
+              const catName = getLocalized(rest, "name", lang) || name;
               return (
                 <motion.div key={slug} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
                   <Link to={`/courses?category=${encodeURIComponent(name)}`}
@@ -294,8 +319,8 @@ export default function HomePage() {
                     <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary-foreground/20">
                       <Icon className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
                     </div>
-                    <h3 className="mb-1 text-sm font-semibold">{name}</h3>
-                    <span className="text-xs text-muted-foreground group-hover:text-primary-foreground/70">{courseCount} courses</span>
+                    <h3 className="mb-1 text-sm font-semibold">{catName}</h3>
+                    <span className="text-xs text-muted-foreground group-hover:text-primary-foreground/70">{courseCount} {t("stats.courses").toLowerCase()}</span>
                   </Link>
                 </motion.div>
               );
@@ -315,9 +340,9 @@ export default function HomePage() {
               <p className="mb-6 text-muted-foreground">{t("mentors.subtitle")}</p>
               <div className="space-y-4">
                 {[
-                  { value: "1.2 Millions", label: t("stats.students") },
-                  { value: "32.2K", label: t("mentors.classCompleted") },
-                  { value: "99.9%", label: t("mentors.satisfaction") },
+                  { value: "+500", label: t("stats.students") },
+                  { value: "3", label: t("stats.courses") },
+                  { value: "99%", label: t("mentors.satisfaction") },
                 ].map(({ value, label }) => (
                   <div key={label} className="flex items-center gap-3">
                     <CheckCircle className="h-5 w-5 text-primary" />
@@ -372,15 +397,6 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Brand Logos Marquee */}
-      <section className="py-10 border-t border-b overflow-hidden">
-        <div className="flex gap-16 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: "fit-content" }}>
-          {[...brandLogos, ...brandLogos, ...brandLogos, ...brandLogos].map((logo, i) => (
-            <img key={i} src={logo} alt="Partner" className="h-8 opacity-50 grayscale transition-all hover:opacity-100 hover:grayscale-0" />
-          ))}
         </div>
       </section>
 
