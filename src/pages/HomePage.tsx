@@ -360,30 +360,14 @@ export default function HomePage() {
       {/* Testimonials */}
       <section className="py-16 bg-secondary/50">
         <div className="container">
-          <div className="mb-8 text-center">
+          <div className="mb-10 text-center">
             <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("testimonials.title")}</h2>
             <p className="text-muted-foreground">{t("testimonials.subtitle")}</p>
           </div>
-          <div className="mx-auto max-w-2xl">
-            <motion.div key={testIdx} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-              className="rounded-xl border bg-card p-8 shadow-sm text-center relative">
-              <span className="absolute top-4 start-6 font-display text-6xl text-primary/20">"</span>
-              <div className="mb-4 flex justify-center">
-                {[...Array(testimonials[testIdx].rating)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-warning text-warning" />
-                ))}
-              </div>
-              <p className="mb-6 text-lg italic text-muted-foreground">"{testimonials[testIdx].text}"</p>
-              <img src={testimonials[testIdx].avatar} alt="" className="mx-auto mb-3 h-12 w-12 rounded-full border-2 border-primary/20" />
-              <p className="font-display font-semibold text-foreground">{testimonials[testIdx].name}</p>
-              <p className="text-sm text-muted-foreground">{testimonials[testIdx].role}</p>
-            </motion.div>
-            <div className="mt-6 flex justify-center gap-2">
-              {testimonials.map((_, i) => (
-                <button key={i} onClick={() => setTestIdx(i)}
-                  className={`h-2.5 w-2.5 rounded-full transition-colors ${i === testIdx ? "bg-primary" : "bg-muted"}`} />
-              ))}
-            </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+            <TestimonialsColumn testimonials={firstColumn} duration={18} />
+            <TestimonialsColumn testimonials={secondColumn} duration={22} className="hidden md:block" />
+            <TestimonialsColumn testimonials={thirdColumn} duration={16} className="hidden lg:block" />
           </div>
         </div>
       </section>
