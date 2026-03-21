@@ -39,6 +39,7 @@ export default function CreateCourse() {
   const isAdmin = roles.includes("admin");
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [productType, setProductType] = useState<"course" | "book">("course");
 
   // Step 1 — Basic Info
   const [title, setTitle] = useState("");
@@ -47,6 +48,8 @@ export default function CreateCourse() {
   const [level, setLevel] = useState("beginner");
   const [language, setLanguage] = useState("ar");
   const [tags, setTags] = useState("");
+  const [pageCount, setPageCount] = useState(0);
+  const [fileUrl, setFileUrl] = useState("");
 
   // Step 2 — Media
   const [coverImage, setCoverImage] = useState("");
