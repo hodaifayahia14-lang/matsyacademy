@@ -11,17 +11,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const categories = [
-  "IT & Software", "Business", "Languages", "Health", "Law", "Arts",
-  "Science", "Marketing", "Design", "Cooking", "Education", "Sport",
+const categoryKeys = [
+  { labelKey: "navbar.cat.hse", to: "/courses?category=HSE+Safety" },
+  { labelKey: "navbar.cat.religious", to: "/courses?category=Religious+Guidance" },
+  { labelKey: "navbar.cat.certified", to: "/courses?category=Certified+Training" },
 ];
 
-const pages = [
-  { label: "About Us", to: "/about" },
-  { label: "Q&A", to: "/qa" },
-  { label: "Instructions", to: "/instructions" },
-  { label: "Blog", to: "/blog" },
-  { label: "Contact Us", to: "/contact" },
+const pageKeys = [
+  { labelKey: "navbar.about", to: "/about" },
+  { labelKey: "navbar.qa", to: "/qa" },
+  { labelKey: "navbar.instructions", to: "/instructions" },
+  { labelKey: "navbar.blog", to: "/blog" },
+  { labelKey: "navbar.contactUs", to: "/contact" },
 ];
 
 export default function Navbar() {
@@ -77,10 +78,10 @@ export default function Navbar() {
               {catOpen && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
                   className="absolute start-0 top-full w-56 rounded-lg border bg-card p-2 shadow-lg">
-                  {categories.map((c) => (
-                    <Link key={c} to={`/courses?category=${encodeURIComponent(c)}`}
+                  {categoryKeys.map(({ labelKey, to }) => (
+                    <Link key={to} to={to}
                       className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
-                      {c}
+                      {t(labelKey)}
                     </Link>
                   ))}
                 </motion.div>
@@ -105,10 +106,10 @@ export default function Navbar() {
               {pagesOpen && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
                   className="absolute start-0 top-full w-48 rounded-lg border bg-card p-2 shadow-lg">
-                  {pages.map(({ label, to }) => (
+                  {pageKeys.map(({ labelKey, to }) => (
                     <Link key={to} to={to}
                       className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
-                      {label}
+                      {t(labelKey)}
                     </Link>
                   ))}
                 </motion.div>
