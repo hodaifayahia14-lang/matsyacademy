@@ -105,13 +105,16 @@ export default function CreateCourse() {
         level: level as any, language,
         tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
         cover_image: coverImage || null,
-        promo_video: promoVideo || null,
+        promo_video: productType === "course" ? (promoVideo || null) : null,
         instructor_id: user.id,
         is_free: isFree, price: isFree ? 0 : price,
         cpf_eligible: cpfEligible, status: status as any,
         learning_outcomes: outcomes.filter(Boolean),
         requirements: requirements.filter(Boolean),
-      }).select().single();
+        type: productType,
+        page_count: productType === "book" ? (pageCount || null) : null,
+        file_url: productType === "book" ? (fileUrl || null) : null,
+      } as any).select().single();
       if (error) throw error;
 
       for (let si = 0; si < sections.length; si++) {
