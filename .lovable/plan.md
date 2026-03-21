@@ -1,31 +1,42 @@
 
+Goal: fix “Add to cart” so products are actually inserted and visible in `/cart`.
 
-# Fix "Enroll Now" for Books — Wrong Navigation
+Root cause (confirmed from network logs):
+- Cart insert sends `course_id: "course-1"` / `"course-2"`.
+- `cart_items.course_id` is UUID and references `courses.id`.
+- Storefront pages still use `mockCourses` (string IDs), while cart/checkout use backend tables (UUID IDs).  
+So the storefront and cart are out of sync.
 
-## Problem
-When clicking "Enroll Now" on a book (e.g., `/courses/book-2`), the code navigates to `/courses/book-2/player` — a route that doesn't exist. The actual course player route is `/learn/:courseId/:lessonId`, and books have **no sections or lessons** (`sections: []`), so there's nothing to play.
+Implementation plan:
 
-## Solution
+1) Unify storefront product source to backend (published products)
+- Replace `mockCourses` usage in:
+  - `src/pages/HomePage.tsx`
+  - `src/pages/CourseCatalog.tsx`
+- Fetch published `courses` (+ category names) from backend and render those items.
+- Keep UI design intact, but card data must use real UUID IDs from `courses.id`.
 
-**File: `src/pages/CourseDetail.tsx`** (lines 49-55)
+2) Update course detail page to backend-first
+- In `src/pages/CourseDetail.tsx`, load product by route `id` from backend using `.maybeSingle()` (not `.single()`).
+- Load sections/lessons only when product type is `course`.
+- Keep a temporary legacy fallback for old mock URLs (like `/courses/course-1`) so old links don’t hard-fail during transition.
 
-Update `handleEnroll` to handle books vs courses differently:
-- **Books**: If user is signed in, add to cart and navigate to `/cart`. If not signed in, go to `/login`.
-- **Courses**: If user is signed in and course has lessons, navigate to `/learn/${id}/${firstLessonId}`. If no lessons exist, show a toast. If not signed in, go to `/login`.
+3) Harden cart insert logic
+- In `src/contexts/CartContext.tsx`:
+  - Validate `courseId` format before insert (UUID guard).
+  - Improve error feedback from insert failures (show backend message in toast for debugging instead of generic failure).
+  - Keep existing duplicate handling (`23505`).
 
-Also update the button label: books should show "Buy Now" / "اشترِ الآن" instead of "Enroll Now" / "سجّل الآن".
+4) Keep Add-to-cart buttons mapped to real IDs
+- `src/components/CourseCard.tsx` and `src/pages/CourseDetail.tsx` should pass backend `course.id` (UUID) to `addToCart`.
+- Ensure book and course CTAs both use the same valid backend product ID path.
 
-**Changes:**
-```
-handleEnroll:
-  if (!user) → navigate("/login")
-  if (course.type === "book") → addToCart(course.id), navigate("/cart")
-  if (course.type === "course") → find first lesson from sections[0].lessons[0], navigate("/learn/${id}/${lessonId}")
-  if no lessons → toast error
-```
+5) Verify end-to-end flow
+- From Home and Catalog: click Add to Cart on a course and a book.
+- Confirm successful row creation in `cart_items` and item visibility in `/cart`.
+- Confirm checkout still reads joined `courses` data and proceeds normally.
 
-**Button text**: Use `course.type === "book" ? buyText : enrollText` where `buyText` = "اشترِ الآن" / "Acheter" / "Buy Now"
-
-## Files to Modify
-- `src/pages/CourseDetail.tsx` — fix `handleEnroll` logic + button label
-
+Technical notes:
+- No schema migration is required for this fix.
+- This resolves the exact UUID mismatch causing the current 400 errors.
+- As a side benefit, newly created admin/instructor products will appear in storefront and become purchasable immediately.
