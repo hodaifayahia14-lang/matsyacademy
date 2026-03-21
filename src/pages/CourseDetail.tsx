@@ -253,19 +253,13 @@ export default function CourseDetail() {
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
               <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <div className="mb-4">
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 text-lg font-bold text-primary hover:underline">
-                    <MessageCircle className="h-5 w-5" />
-                    {contactText}
-                  </a>
+                <div className="mb-4 text-center">
+                  <p className="font-display text-3xl font-bold text-primary">{priceText}</p>
                 </div>
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  <Button className="mb-3 w-full gap-2" size="lg">
-                    {enrollText}
-                    <MessageCircle className="h-4 w-4" />
-                  </Button>
-                </a>
+                <Button className="mb-3 w-full gap-2" size="lg" onClick={handleEnroll}>
+                  <ShoppingCart className="h-4 w-4" />
+                  {enrollText}
+                </Button>
                 <p className="mb-4 text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
                 <div className="space-y-3 border-t pt-4">
                   {[
