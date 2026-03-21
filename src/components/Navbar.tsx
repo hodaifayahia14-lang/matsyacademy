@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, LogOut, User, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User, Phone, ArrowRight, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
