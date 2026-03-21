@@ -124,10 +124,16 @@ export default function CourseCard({ course }: { course: Course }) {
           <span className="text-lg font-bold text-primary">{priceFormatted}</span>
         </div>
 
-        <Button size="sm" onClick={handleEnroll}
-          className="w-full gap-1 bg-accent text-accent-foreground hover:bg-accent/90">
-          {enrollText}
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" onClick={handleEnroll}
+            className="flex-1 gap-1 bg-accent text-accent-foreground hover:bg-accent/90">
+            {enrollText}
+          </Button>
+          <Button size="sm" variant={inCart ? "secondary" : "outline"} onClick={handleAddToCart}
+            className="gap-1" disabled={inCart}>
+            <ShoppingCart className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
     </Link>
   );
