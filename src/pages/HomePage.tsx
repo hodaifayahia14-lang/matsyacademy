@@ -1,17 +1,19 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Users, BookOpen, Award, Shield, Star, Mail,
   CheckCircle, ChevronDown, Sparkles,
   GraduationCap, Clock, Headphones, BadgeCheck, Book,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import CourseCard from "@/components/CourseCard";
 import { mockCourses, mockCategories } from "@/data/mockData";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
-import heroImage from "@/assets/hero-matsy-main.png";
+import heroSlide1 from "@/assets/hero-slide-1.jpg";
+import heroSlide2 from "@/assets/hero-slide-2.jpg";
+import heroSlide3 from "@/assets/hero-slide-3.jpg";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
