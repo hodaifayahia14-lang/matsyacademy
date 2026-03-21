@@ -260,6 +260,36 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
+      <section className="py-20 bg-secondary/30">
+        <div className="container">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12 text-center">
+            <h2 className="mb-3 font-display text-3xl font-bold md:text-4xl">
+              <span className="text-foreground">{lang === "ar" ? "كيف" : lang === "fr" ? "Comment" : "How It"} </span>
+              <span className="text-accent">{lang === "ar" ? "يعمل؟" : lang === "fr" ? "ça Marche ?" : "Works?"}</span>
+            </h2>
+            <div className="mx-auto mb-4 h-1 w-16 rounded-full bg-accent" />
+          </motion.div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              { step: "01", icon: Book, title: lang === "ar" ? "تصفح الدورات" : lang === "fr" ? "Parcourir les Cours" : "Browse Courses", desc: lang === "ar" ? "اختر من بين دوراتنا وكتبنا المعتمدة" : lang === "fr" ? "Choisissez parmi nos cours et livres certifiés" : "Choose from our certified courses and books" },
+              { step: "02", icon: GraduationCap, title: lang === "ar" ? "سجّل وتعلّم" : lang === "fr" ? "Inscrivez-vous" : "Enroll & Learn", desc: lang === "ar" ? "سجّل وابدأ التعلم بالسرعة التي تناسبك" : lang === "fr" ? "Inscrivez-vous et apprenez à votre rythme" : "Sign up and start learning at your own pace" },
+              { step: "03", icon: Award, title: lang === "ar" ? "احصل على الشهادة" : lang === "fr" ? "Obtenez le Certificat" : "Get Certified", desc: lang === "ar" ? "احصل على شهادة معتمدة من وزارة التكوين المهني" : lang === "fr" ? "Obtenez un certificat reconnu" : "Earn a ministry-recognized certificate" },
+            ].map(({ step, icon: Icon, title, desc }, i) => (
+              <motion.div key={step} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}
+                className="relative text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-accent-foreground font-display text-xl font-bold shadow-lg">
+                  {step}
+                </div>
+                <Icon className="mx-auto mb-3 h-8 w-8 text-accent/60" />
+                <h3 className="mb-2 font-display text-lg font-semibold text-foreground">{title}</h3>
+                <p className="text-sm text-muted-foreground">{desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══════════════════ WHY CHOOSE US ═══════════════════ */}
       <section className="py-20 bg-secondary/50">
         <div className="container">
@@ -286,6 +316,31 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+
+          {/* Comparison Table */}
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="mt-16 mx-auto max-w-2xl">
+            <div className="rounded-2xl border bg-card overflow-hidden">
+              <div className="grid grid-cols-3 bg-secondary/50 p-4 text-center font-semibold text-sm">
+                <span>{lang === "ar" ? "الميزة" : "Feature"}</span>
+                <span className="text-accent">Matsy Academy</span>
+                <span className="text-muted-foreground">{lang === "ar" ? "منصات أخرى" : lang === "fr" ? "Autres" : "Others"}</span>
+              </div>
+              {[
+                lang === "ar" ? "معتمد وزارياً" : "Ministry Certified",
+                lang === "ar" ? "محتوى عربي" : "Arabic Content",
+                lang === "ar" ? "شهادة معترف بها" : "Recognized Certificate",
+                lang === "ar" ? "أسعار مناسبة" : "Affordable Pricing",
+                lang === "ar" ? "دعم مباشر" : "Direct Support",
+              ].map((feature, i) => (
+                <div key={i} className={`grid grid-cols-3 p-3 text-center text-sm ${i % 2 ? "bg-secondary/20" : ""}`}>
+                  <span className="text-foreground">{feature}</span>
+                  <span className="text-accent font-bold">✓</span>
+                  <span className="text-destructive">✗</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
