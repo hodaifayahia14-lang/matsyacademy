@@ -138,11 +138,12 @@ export default function CreateCourse() {
         }
       }
 
+      const productLabel = productType === "book" ? (lang === "ar" ? "الكتاب" : "Book") : (lang === "ar" ? "الدورة" : "Course");
       toast.success(asDraft
-        ? (lang === "ar" ? "تم حفظ المسودة" : "Draft saved")
+        ? (lang === "ar" ? `تم حفظ مسودة ${productLabel}` : `${productLabel} draft saved`)
         : isAdmin
-        ? (lang === "ar" ? "تم نشر الدورة" : "Course published")
-        : (lang === "ar" ? "تم إرسال الدورة للمراجعة" : "Course submitted for review"));
+        ? (lang === "ar" ? `تم نشر ${productLabel}` : `${productLabel} published`)
+        : (lang === "ar" ? `تم إرسال ${productLabel} للمراجعة` : `${productLabel} submitted for review`));
       navigate(isAdmin ? "/dashboard/admin/courses" : "/dashboard/instructor");
     } catch (err: any) {
       toast.error(err.message);
