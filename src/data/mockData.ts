@@ -454,5 +454,4 @@ export const mockCategories = [
   { name: "HSE Safety", name_en: "HSE Safety", name_fr: "Sécurité HSE", name_ar: "أمن ووقاية", icon: "Shield", slug: "hse-safety", courseCount: 2 },
   { name: "Religious Guidance", name_en: "Religious Guidance", name_fr: "Guide Religieux", name_ar: "إرشاد ديني", icon: "BookOpen", slug: "religious-guidance", courseCount: 1 },
   { name: "Certified Training", name_en: "Certified Training", name_fr: "Formation Certifiée", name_ar: "تكوين معتمد", icon: "Award", slug: "certified-training", courseCount: 3 },
-  { name: "Books", name_en: "Books", name_fr: "Livres", name_ar: "كتب", icon: "BookOpen", slug: "books", courseCount: 3 },
 ];
