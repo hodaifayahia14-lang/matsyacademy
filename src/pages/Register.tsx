@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import matsyLogo from "@/assets/matsy-logo.png";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
@@ -22,12 +23,19 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function Register() {
-  const { signUp, signInWithGoogle } = useAuth();
+  const { signUp, signInWithGoogle, user, roles } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [showPass, setShowPass] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [role, setRole] = useState<"student" | "instructor">("student");
+
+  useEffect(() => {
+    if (user && roles.length > 0) {
+      const dest = roles.includes("admin") ? "/dashboard/admin" : roles.includes("instructor") ? "/dashboard/instructor" : "/dashboard/student";
+      navigate(dest, { replace: true });
+    }
+  }, [user, roles]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -47,7 +55,7 @@ export default function Register() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="mx-auto mb-4">
-            <span className="font-display text-2xl font-bold text-primary">Matsy<span className="text-foreground"> Academy</span></span>
+            <img src={matsyLogo} alt="Matsy Academy" className="mx-auto h-16 w-16 rounded-xl object-contain" />
           </Link>
           <CardTitle className="text-2xl">{t("auth.createAccount")}</CardTitle>
           <CardDescription>{t("auth.startJourney")}</CardDescription>

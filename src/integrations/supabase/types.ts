@@ -594,7 +594,11 @@ export type Database = {
           id: string
           is_active: boolean
           name: string
+          phone: string | null
+          social_links: Json | null
+          specialization: string | null
           updated_at: string
+          years_experience: number | null
         }
         Insert: {
           avatar_url?: string | null
@@ -604,7 +608,11 @@ export type Database = {
           id: string
           is_active?: boolean
           name?: string
+          phone?: string | null
+          social_links?: Json | null
+          specialization?: string | null
           updated_at?: string
+          years_experience?: number | null
         }
         Update: {
           avatar_url?: string | null
@@ -614,7 +622,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           name?: string
+          phone?: string | null
+          social_links?: Json | null
+          specialization?: string | null
           updated_at?: string
+          years_experience?: number | null
         }
         Relationships: []
       }

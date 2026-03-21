@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, BookOpen, Award, Target, Eye, Shield, CheckCircle, GraduationCap, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import matsyLogo from "@/assets/matsy-logo.png";
 
 const team = [
   { name: "Dr. Ahmed Matsy", role_en: "Founder & CEO", role_fr: "Fondateur & PDG", role_ar: "المؤسس والرئيس التنفيذي", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
@@ -32,11 +33,18 @@ export default function About() {
     { icon: CheckCircle, title_en: "Recognized Certificates", title_fr: "Certificats Reconnus", title_ar: "شهادات معترف بها", desc_en: "Earn certificates valued by employers across Algeria and the Arab world.", desc_fr: "Obtenez des certificats reconnus par les employeurs en Algérie et dans le monde arabe.", desc_ar: "احصل على شهادات معترف بها من قبل أصحاب العمل في الجزائر والعالم العربي." },
   ];
 
+  const howItWorks = [
+    { step: "01", title_en: "Browse Courses", title_fr: "Parcourir les Cours", title_ar: "تصفح الدورات", desc_en: "Explore our certified courses and books", desc_fr: "Explorez nos formations et livres certifiés", desc_ar: "استكشف دوراتنا وكتبنا المعتمدة" },
+    { step: "02", title_en: "Enroll & Learn", title_fr: "S'inscrire & Apprendre", title_ar: "سجّل وتعلّم", desc_en: "Sign up and start learning at your pace", desc_fr: "Inscrivez-vous et apprenez à votre rythme", desc_ar: "سجّل وابدأ التعلم بالسرعة التي تناسبك" },
+    { step: "03", title_en: "Get Certified", title_fr: "Obtenez le Certificat", title_ar: "احصل على الشهادة", desc_en: "Earn your recognized professional certificate", desc_fr: "Obtenez votre certificat professionnel reconnu", desc_ar: "احصل على شهادتك المهنية المعترف بها" },
+  ];
+
   return (
     <div>
       {/* Hero */}
       <section className="bg-secondary/50 py-20">
         <div className="container text-center">
+          <img src={matsyLogo} alt="Matsy Academy" className="mx-auto mb-6 h-20 w-20 rounded-2xl object-contain shadow-lg" />
           <h1 className="mb-4 font-display text-4xl font-bold text-foreground">{t("about.title")}</h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("about.subtitle")}</p>
         </div>
@@ -60,8 +68,33 @@ export default function About() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="py-16 bg-secondary/30">
+        <div className="container">
+          <h2 className="mb-10 text-center font-display text-3xl font-bold text-foreground">
+            {lang === "ar" ? "كيف يعمل" : lang === "fr" ? "Comment ça marche" : "How It Works"}
+          </h2>
+          <div className="grid gap-8 md:grid-cols-3">
+            {howItWorks.map((item, i) => (
+              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+                className="text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground font-display text-2xl font-bold">
+                  {item.step}
+                </div>
+                <h3 className="mb-2 font-display text-lg font-bold text-foreground">
+                  {lang === "ar" ? item.title_ar : lang === "fr" ? item.title_fr : item.title_en}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {lang === "ar" ? item.desc_ar : lang === "fr" ? item.desc_fr : item.desc_en}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Why Choose Us */}
-      <section className="py-16 bg-secondary/50">
+      <section className="py-16">
         <div className="container">
           <h2 className="mb-10 text-center font-display text-3xl font-bold text-foreground">
             {lang === "ar" ? "لماذا تختار أكاديمية مايسي؟" : lang === "fr" ? "Pourquoi choisir Matsy Academy ?" : "Why Choose Matsy Academy?"}
@@ -69,16 +102,18 @@ export default function About() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {whyChoose.map((item, i) => {
               const Icon = item.icon;
-              const title = lang === "ar" ? item.title_ar : lang === "fr" ? item.title_fr : item.title_en;
-              const desc = lang === "ar" ? item.desc_ar : lang === "fr" ? item.desc_fr : item.desc_en;
               return (
                 <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
                   className="rounded-xl border bg-card p-6 text-center transition-all hover:-translate-y-1 hover:shadow-md">
                   <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                     <Icon className="h-7 w-7 text-primary" />
                   </div>
-                  <h3 className="mb-2 font-display text-lg font-bold text-foreground">{title}</h3>
-                  <p className="text-sm text-muted-foreground">{desc}</p>
+                  <h3 className="mb-2 font-display text-lg font-bold text-foreground">
+                    {lang === "ar" ? item.title_ar : lang === "fr" ? item.title_fr : item.title_en}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {lang === "ar" ? item.desc_ar : lang === "fr" ? item.desc_fr : item.desc_en}
+                  </p>
                 </motion.div>
               );
             })}
@@ -153,11 +188,11 @@ export default function About() {
                 {lang === "ar" ? "تصفح الدورات" : lang === "fr" ? "Parcourir les cours" : "Browse Courses"} <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <a href="https://wa.me/213554275994" target="_blank" rel="noopener noreferrer">
+            <Link to="/register">
               <Button size="lg" variant="outline" className="gap-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                {lang === "ar" ? "تواصل عبر واتساب" : lang === "fr" ? "Contactez via WhatsApp" : "Contact via WhatsApp"}
+                {lang === "ar" ? "سجّل مجاناً" : lang === "fr" ? "Inscrivez-vous" : "Register Free"}
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
