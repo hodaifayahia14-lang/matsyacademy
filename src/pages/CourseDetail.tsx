@@ -243,10 +243,10 @@ export default function CourseDetail() {
 
             {activeTab === "instructor" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="flex items-start gap-6 rounded-xl border p-6">
-                  {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-24 w-24 rounded-full border-2 border-primary/20" />}
-                  <div className="flex-1">
-                    <h3 className="mb-1 font-display text-xl font-bold">{course.instructor_name}</h3>
+                <div className="flex flex-col items-center gap-4 rounded-xl border p-4 sm:flex-row sm:items-start sm:gap-6 sm:p-6">
+                  {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-20 w-20 rounded-full border-2 border-primary/20 sm:h-24 sm:w-24" />}
+                  <div className="flex-1 text-center sm:text-start">
+                    <h3 className="mb-1 font-display text-lg font-bold sm:text-xl">{course.instructor_name}</h3>
                     <p className="mb-4 text-sm text-muted-foreground">{t("courseDetail.expertInstructor")}</p>
                   </div>
                 </div>
