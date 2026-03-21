@@ -1,111 +1,135 @@
 
 
-# Light Mode + Books + Filter Sidebar + Prices + Auth-based Enroll
+# Comprehensive Admin Dashboard + UI/UX Fixes + Content Management
 
-## Summary
+## Overview
+Fix RTL sidebar, enhance admin dashboard to a full-featured CMS, add blog management, Q&A moderation, About content management, and fix course enrollment flow.
 
-Switch the entire site from dark theme to a clean **light mode**, add **books** as a new product type alongside courses, add a **filter sidebar** to the catalog page with price/level/category filters, show **prices** on cards, replace WhatsApp CTA with **auth-based enrollment** (sign in to enroll), and use the **uploaded hero image**.
+## Phase 1: Fix RTL Sidebar in Dashboard
 
-## Phase 1: Light Mode Theme (`src/index.css`)
+**File: `src/components/DashboardLayout.tsx`**
+- Detect `dir` from `i18n` and apply `side="right"` on `Sidebar` when RTL
+- The shadcn Sidebar component uses `border-e` (logical) which is correct, but the sidebar itself renders on the left by default. Add `side={isRTL ? "right" : "left"}` prop
 
-Replace all dark CSS variables with light ones:
-- `--background: 0 0% 98%` (near-white)
-- `--foreground: 0 0% 10%` (dark text)
-- `--card: 0 0% 100%` (white cards)
-- `--card-foreground: 0 0% 10%`
-- `--secondary: 0 0% 96%`
-- `--muted: 0 0% 94%`, `--muted-foreground: 0 0% 45%`
-- `--border: 0 0% 88%`, `--input: 0 0% 88%`
-- Keep `--primary` (crimson), `--accent` (gold) unchanged
-- Update sidebar vars similarly to light
-- Update Navbar from `bg-background/95` transparent dark to light white `bg-white/95`
+**File: `src/components/ui/sidebar.tsx`**
+- Verify the `Sidebar` component supports a `side` prop — it does (shadcn default). Ensure it's wired through.
 
-## Phase 2: Copy Uploaded Hero Image
+## Phase 2: Fix Course Card — Remove WhatsApp, Use Auth Flow
 
-Copy `user-uploads://Cinematic_wide-angle_hero_202603211215.png` to `src/assets/hero-matsy-main.png` and update `HomePage.tsx` to import and use it.
+**File: `src/components/CourseCard.tsx`**
+- The `handleEnroll` already navigates to `/login` for unauthenticated users — this is correct. Verify no WhatsApp links remain anywhere. The current code looks clean. Check `CourseDetail.tsx` for any remaining WhatsApp links.
 
-## Phase 3: Add Books to Data (`src/data/mockData.ts`)
+**File: `src/pages/CourseDetail.tsx`**
+- Replace any WhatsApp CTA with auth-based enrollment button (navigate to `/login` if not signed in).
 
-Add a `type` field to the `Course` interface: `type: "course" | "book"`. Existing 3 courses keep `type: "course"`.
+## Phase 3: Enhanced Admin Dashboard — Full CMS
 
-Add 2-3 books:
-- **Book 1**: "HSE Safety Manual" / "Manuel de Sécurité HSE" / "دليل السلامة والصحة المهنية" — price: 2500 DZD
-- **Book 2**: "Hajj & Umrah Complete Guide" / "Guide Complet Hajj et Omra" / "الدليل الشامل للحج والعمرة" — price: 1800 DZD
-- **Book 3**: "Workplace Inspection Handbook" / "Manuel d'Inspection" / "كتاب التفتيش المهني" — price: 2000 DZD
+### New sidebar items (AdminDashboard.tsx):
+Add 4 new routes:
+- `/dashboard/admin/qa` — Q&A Moderation
+- `/dashboard/admin/blogs` — Blog Management (CRUD)
+- `/dashboard/admin/about` — About Page Content
+- `/dashboard/admin/enrollments` — Enrollment & Revenue tracking
 
-Set real prices on courses too (e.g., 15000 DZD, 20000 DZD, 12000 DZD) since user wants prices shown.
+### New Admin Pages:
 
-Add a new category: `{ name: "Books", name_en: "Books", name_fr: "Livres", name_ar: "كتب" }`.
+**`src/pages/dashboard/admin/QAModeration.tsx`** (NEW)
+- View all questions, delete inappropriate ones, mark as answered
+- View and moderate answers, accept best answers
+- Search and filter by status
 
-## Phase 4: Course Card Updates (`src/components/CourseCard.tsx`)
+**`src/pages/dashboard/admin/BlogManagement.tsx`** (NEW)
+- Database migration: create `blog_posts` table (id, title, excerpt, content, cover_image, author_id, status, published_at, created_at)
+- CRUD for blog posts with rich text editing (textarea for now)
+- Publish/unpublish toggle
+- Admin-only RLS policies
 
-- **Show price**: Display `course.price DZD` instead of "Contact for Price" WhatsApp link
-- **Remove WhatsApp CTA**: Replace with "Enroll Now" / "Buy Now" button that links to `/login` if not authenticated, or `/courses/:id` if authenticated
-- **Book vs Course visual**: Show a small "📚 Book" or "🎓 Course" type badge
-- Keep hover overlay but with price and auth-based CTA
+**`src/pages/dashboard/admin/AboutManagement.tsx`** (NEW)
+- Edit about page content stored in a `site_content` table (key-value pairs for mission, vision, team, stats)
+- Database migration: create `site_content` table (id, key, value_en, value_fr, value_ar)
+- Admin can update mission text, vision text, stats numbers, team members
 
-## Phase 5: Catalog Filter Sidebar (`src/pages/CourseCatalog.tsx`)
+**`src/pages/dashboard/admin/EnrollmentsDashboard.tsx`** (NEW)
+- View all enrollments with student name, course, date, progress
+- Revenue summary from payments table
+- Charts/stats for enrollment trends
 
-Replace the simple top filter bar with a **sidebar + grid layout**:
+### Enhance Existing Admin Pages:
 
+**`src/pages/dashboard/admin/AdminOverview.tsx`**
+- Add recent enrollments list, recent Q&A activity, pending courses count
+- Add quick-action cards (Approve Courses, View Users, Manage Blogs)
+- Better card design with colored backgrounds and trends
+- Show revenue in DZD not USD
+
+**`src/pages/dashboard/admin/CoursesModeration.tsx`**
+- Show ALL courses (not just pending) with tabs: All / Pending / Published / Draft
+- Add ability to edit course details, change status, delete courses
+- Add course creation (admin can add courses/books directly)
+- Show price, category, student count per course
+
+**`src/pages/dashboard/admin/UsersManagement.tsx`**
+- Add role assignment (promote student to instructor, assign admin)
+- Add user detail view
+- Better table with avatars
+
+## Phase 4: Blog System (Database-Backed)
+
+**Database Migration:**
+```sql
+CREATE TABLE blog_posts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  author_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+  status text NOT NULL DEFAULT 'draft',
+  published_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  title_en text NOT NULL DEFAULT '',
+  title_fr text NOT NULL DEFAULT '',
+  title_ar text NOT NULL DEFAULT '',
+  excerpt_en text NOT NULL DEFAULT '',
+  excerpt_fr text NOT NULL DEFAULT '',
+  excerpt_ar text NOT NULL DEFAULT '',
+  content_en text NOT NULL DEFAULT '',
+  content_fr text NOT NULL DEFAULT '',
+  content_ar text NOT NULL DEFAULT '',
+  cover_image text
+);
+-- RLS: public read published, admin full access
 ```
-┌──────────┬──────────────────────────┐
-│ Filters  │  Course/Book Grid        │
-│          │                          │
-│ Type     │  [Card] [Card] [Card]    │
-│ ☐ Course │  [Card] [Card] [Card]    │
-│ ☐ Book   │                          │
-│          │                          │
-│ Category │                          │
-│ ☐ HSE    │                          │
-│ ☐ Relig. │                          │
-│ ☐ Books  │                          │
-│          │                          │
-│ Price    │                          │
-│ [slider] │                          │
-│          │                          │
-│ Level    │                          │
-│ ☐ Begin  │                          │
-│ ☐ Inter  │                          │
-│ ☐ All    │                          │
-└──────────┴──────────────────────────┘
-```
 
-- Sidebar: collapsible on mobile (sheet/drawer)
-- Filters: type (course/book), category checkboxes, price range, level
-- Show result count
-- Clear all filters button
+**Update `src/pages/Blog.tsx`** — fetch from `blog_posts` table instead of hardcoded array
+**Update `src/pages/BlogDetail.tsx`** — fetch single post from DB
 
-## Phase 6: Homepage Updates (`src/pages/HomePage.tsx`)
+## Phase 5: Update About Page to Use DB Content
 
-- Update hero to use the new uploaded image
-- Add a "Books" section or include books in the featured products carousel
-- Update section title from "Our Courses" to "Our Products" / "منتجاتنا" or keep "Courses & Books"
-- Light mode compatible colors (dark text on light bg)
+**`src/pages/About.tsx`** — optionally fetch from `site_content` table, fallback to current hardcoded content.
 
-## Phase 7: Navbar Light Mode (`src/components/Navbar.tsx`)
+## Phase 6: i18n Updates
 
-- Scrolled state: `bg-white/95 backdrop-blur-md shadow-sm`
-- Logo text: dark instead of light
-- Links: dark text with crimson/gold hover
+Add keys for new admin sections:
+- `dashboard.admin.qa`, `dashboard.admin.blogs`, `dashboard.admin.about`, `dashboard.admin.enrollments`
+- `dashboard.admin.allCourses`, `dashboard.admin.published`, `dashboard.admin.draft`
+- Blog management keys
 
-## Phase 8: i18n Updates
-
-Add keys:
-- `catalog.type`, `catalog.books`, `catalog.courses`, `catalog.priceRange`, `catalog.level`
-- `product.book`, `product.course`, `product.buyNow`
-- `currency`: "DZD"
+## Database Migrations Summary
+1. `blog_posts` table with trilingual fields + RLS
+2. `site_content` table for editable page content + RLS
 
 ## Files to Create
-- Copy hero image to `src/assets/hero-matsy-main.png`
+- `src/pages/dashboard/admin/QAModeration.tsx`
+- `src/pages/dashboard/admin/BlogManagement.tsx`
+- `src/pages/dashboard/admin/AboutManagement.tsx`
+- `src/pages/dashboard/admin/EnrollmentsDashboard.tsx`
 
 ## Files to Modify
-- `src/index.css` — light mode CSS variables
-- `src/data/mockData.ts` — add `type` field, books, prices
-- `src/components/CourseCard.tsx` — prices, auth CTA, type badge
-- `src/pages/CourseCatalog.tsx` — filter sidebar layout
-- `src/pages/HomePage.tsx` — new hero image, books in featured
-- `src/components/Navbar.tsx` — light mode styling
-- `src/components/Footer.tsx` — light mode styling
-- `src/i18n/en.json`, `fr.json`, `ar.json` — new keys
+- `src/components/DashboardLayout.tsx` — RTL sidebar fix
+- `src/pages/dashboard/admin/AdminDashboard.tsx` — add new routes
+- `src/pages/dashboard/admin/AdminOverview.tsx` — enhanced overview with quick actions
+- `src/pages/dashboard/admin/CoursesModeration.tsx` — full course management with tabs
+- `src/pages/dashboard/admin/UsersManagement.tsx` — role assignment
+- `src/pages/Blog.tsx` — fetch from DB
+- `src/pages/BlogDetail.tsx` — fetch from DB
+- `src/pages/CourseDetail.tsx` — fix any WhatsApp references
+- `src/i18n/en.json`, `fr.json`, `ar.json` — new admin keys
 
