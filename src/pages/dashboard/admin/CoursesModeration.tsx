@@ -9,7 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/sonner";
-import { Check, X, Trash2, Search } from "lucide-react";
+import { Check, X, Trash2, Search, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CoursesModeration() {
   const { t } = useTranslation();
