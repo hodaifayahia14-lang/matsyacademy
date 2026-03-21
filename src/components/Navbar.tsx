@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Menu, X, ChevronDown, GraduationCap, Search, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,6 +106,7 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden items-center gap-2 md:flex">
+          <LanguageSwitcher />
           <Button variant="ghost" size="icon" className="text-muted-foreground">
             <Search className="h-4 w-4" />
           </Button>

@@ -170,9 +170,11 @@ export type Database = {
           instructor_id: string
           is_free: boolean
           language: string
+          learning_outcomes: string[] | null
           level: Database["public"]["Enums"]["course_level"]
           price: number
           promo_video: string | null
+          requirements: string[] | null
           status: Database["public"]["Enums"]["course_status"]
           subtitle: string | null
           tags: string[] | null
@@ -189,9 +191,11 @@ export type Database = {
           instructor_id: string
           is_free?: boolean
           language?: string
+          learning_outcomes?: string[] | null
           level?: Database["public"]["Enums"]["course_level"]
           price?: number
           promo_video?: string | null
+          requirements?: string[] | null
           status?: Database["public"]["Enums"]["course_status"]
           subtitle?: string | null
           tags?: string[] | null
@@ -208,9 +212,11 @@ export type Database = {
           instructor_id?: string
           is_free?: boolean
           language?: string
+          learning_outcomes?: string[] | null
           level?: Database["public"]["Enums"]["course_level"]
           price?: number
           promo_video?: string | null
+          requirements?: string[] | null
           status?: Database["public"]["Enums"]["course_status"]
           subtitle?: string | null
           tags?: string[] | null
@@ -446,6 +452,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          is_active: boolean
           name: string
           updated_at: string
         }
@@ -455,6 +462,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id: string
+          is_active?: boolean
           name?: string
           updated_at?: string
         }
@@ -464,6 +472,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          is_active?: boolean
           name?: string
           updated_at?: string
         }

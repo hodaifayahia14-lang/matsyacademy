@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomePage from "@/pages/HomePage";
@@ -13,6 +14,9 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
+import StudentDashboard from "@/pages/dashboard/student/StudentDashboard";
+import InstructorDashboard from "@/pages/dashboard/instructor/InstructorDashboard";
+import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,22 +28,38 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <div className="flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/courses" element={<CourseCatalog />} />
-                <Route path="/courses/:id" element={<CourseDetail />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
+          <Routes>
+            {/* Dashboard routes — no global Navbar/Footer */}
+            <Route path="/dashboard/student/*" element={
+              <ProtectedRoute requiredRole="student"><StudentDashboard /></ProtectedRoute>
+            } />
+            <Route path="/dashboard/instructor/*" element={
+              <ProtectedRoute requiredRole="instructor"><InstructorDashboard /></ProtectedRoute>
+            } />
+            <Route path="/dashboard/admin/*" element={
+              <ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>
+            } />
+
+            {/* Public routes with Navbar/Footer */}
+            <Route path="*" element={
+              <div className="flex min-h-screen flex-col">
+                <Navbar />
+                <main className="flex-1">
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/courses" element={<CourseCatalog />} />
+                    <Route path="/courses/:id" element={<CourseDetail />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </div>
+            } />
+          </Routes>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
