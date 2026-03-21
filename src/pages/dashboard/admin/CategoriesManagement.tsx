@@ -132,7 +132,9 @@ export default function CategoriesManagement() {
                 <TableCell className="text-muted-foreground text-sm">{cat.name_en || cat.name}</TableCell>
                 <TableCell className="text-muted-foreground text-sm">{cat.name_fr || "—"}</TableCell>
                 <TableCell className="text-muted-foreground text-sm" dir="rtl">{cat.name_ar || "—"}</TableCell>
-                <TableCell className="text-muted-foreground text-sm">{cat.icon || "—"}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">
+                  {cat.icon && icons[cat.icon] ? (() => { const I = icons[cat.icon]; return <span className="inline-flex items-center gap-1"><I className="h-4 w-4" /> {cat.icon}</span>; })() : "—"}
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button size="sm" variant="ghost" onClick={() => startEdit(cat)}><Pencil className="h-4 w-4" /></Button>
