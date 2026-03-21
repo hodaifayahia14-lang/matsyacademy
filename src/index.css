@@ -98,3 +98,21 @@
     color: hsl(var(--bg-light-foreground));
   }
 }
+
+@keyframes scroll-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scroll-up {
+  animation: scroll-up var(--duration, 15s) linear infinite;
+}
+
+.animate-scroll-up:hover {
+  animation-play-state: paused;
+}
+}

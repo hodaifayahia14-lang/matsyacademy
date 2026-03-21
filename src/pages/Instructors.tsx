@@ -9,25 +9,25 @@ export default function Instructors() {
     {
       name: "Dr. Ahmed Matsy",
       role_en: "HSE Expert & Founder", role_fr: "Expert HSE & Fondateur", role_ar: "خبير السلامة والمؤسس",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AhmedMatsy",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
       students: 500, courses: 2, rating: 4.9,
     },
     {
       name: "Sheikh Ibrahim Khalil",
       role_en: "Religious Guidance Expert", role_fr: "Expert en Guide Religieux", role_ar: "خبير الإرشاد الديني",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SheikhIbrahim",
+      avatar: "https://randomuser.me/api/portraits/men/75.jpg",
       students: 312, courses: 1, rating: 4.9,
     },
     {
       name: "Mme. Sarah Benali",
       role_en: "Education Advisor", role_fr: "Conseillère Éducative", role_ar: "مستشارة تعليمية",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SarahBenali",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
       students: 200, courses: 0, rating: 4.8,
     },
     {
       name: "M. Rachid Toumi",
       role_en: "Certified HSE Inspector", role_fr: "Inspecteur HSE Certifié", role_ar: "مفتش أمن معتمد",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=RachidToumi",
+      avatar: "https://randomuser.me/api/portraits/men/52.jpg",
       students: 178, courses: 0, rating: 4.8,
     },
   ];
