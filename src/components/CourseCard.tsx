@@ -14,6 +14,7 @@ export default function CourseCard({ course }: { course: Course }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const { user } = useAuth();
+  const { addToCart, isInCart } = useCart();
   const navigate = useNavigate();
 
   const title = getLocalized(course, "title", lang);
