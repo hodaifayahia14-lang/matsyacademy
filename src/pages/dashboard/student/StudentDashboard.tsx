@@ -22,16 +22,16 @@ export default function StudentDashboard() {
   ];
 
   return (
-    <DashboardLayout items={items} groupLabel={t("dashboard.student.title")}>
-      <Routes>
+    <Routes>
+      <Route element={<DashboardLayout items={items} groupLabel={t("dashboard.student.title")} />}>
         <Route index element={<MyCourses />} />
         <Route path="progress" element={<Progress />} />
         <Route path="certificates" element={<Certificates />} />
         <Route path="wishlist" element={<Wishlist />} />
         <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<StudentSettings />} />
-        <Route path="*" element={<Navigate to="/dashboard/student" replace />} />
-      </Routes>
-    </DashboardLayout>
+      </Route>
+      <Route path="*" element={<Navigate to="/dashboard/student" replace />} />
+    </Routes>
   );
 }

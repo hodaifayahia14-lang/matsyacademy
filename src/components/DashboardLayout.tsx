@@ -76,7 +76,7 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
           </div>
         )}
 
-        <SidebarGroup defaultOpen>
+        <SidebarGroup>
           <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
