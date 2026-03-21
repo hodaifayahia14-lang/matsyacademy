@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
-import { Plus, X, ChevronRight, ChevronLeft, Check, Image, Video, GripVertical, BookOpen, DollarSign, Eye } from "lucide-react";
+import { Plus, X, ChevronRight, ChevronLeft, Check, Image, Video, GripVertical, BookOpen, DollarSign, Eye, GraduationCap, FileText } from "lucide-react";
 
 const stepNames = [
   { key: "basic", icon: BookOpen },
@@ -39,6 +39,7 @@ export default function CreateCourse() {
   const isAdmin = roles.includes("admin");
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [productType, setProductType] = useState<"course" | "book">("course");
 
   // Step 1 — Basic Info
   const [title, setTitle] = useState("");
@@ -47,6 +48,8 @@ export default function CreateCourse() {
   const [level, setLevel] = useState("beginner");
   const [language, setLanguage] = useState("ar");
   const [tags, setTags] = useState("");
+  const [pageCount, setPageCount] = useState(0);
+  const [fileUrl, setFileUrl] = useState("");
 
   // Step 2 — Media
   const [coverImage, setCoverImage] = useState("");
@@ -87,7 +90,7 @@ export default function CreateCourse() {
   const canAdvance = () => {
     if (step === 0) return title.trim().length >= 3;
     if (step === 2) return description.trim().length >= 10;
-    if (step === 3) return sections.some((s) => s.title && s.lessons.some((l) => l.title));
+    if (step === 3 && productType === "course") return sections.some((s) => s.title && s.lessons.some((l) => l.title));
     return true;
   };
 
@@ -102,38 +105,45 @@ export default function CreateCourse() {
         level: level as any, language,
         tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
         cover_image: coverImage || null,
-        promo_video: promoVideo || null,
+        promo_video: productType === "course" ? (promoVideo || null) : null,
         instructor_id: user.id,
         is_free: isFree, price: isFree ? 0 : price,
         cpf_eligible: cpfEligible, status: status as any,
         learning_outcomes: outcomes.filter(Boolean),
         requirements: requirements.filter(Boolean),
-      }).select().single();
+        type: productType,
+        page_count: productType === "book" ? (pageCount || null) : null,
+        file_url: productType === "book" ? (fileUrl || null) : null,
+      } as any).select().single();
       if (error) throw error;
 
-      for (let si = 0; si < sections.length; si++) {
-        const sec = sections[si];
-        if (!sec.title) continue;
-        const { data: sectionData, error: secErr } = await supabase.from("sections").insert({
-          course_id: course.id, title: sec.title, order: si,
-        }).select().single();
-        if (secErr) throw secErr;
-        for (let li = 0; li < sec.lessons.length; li++) {
-          const lesson = sec.lessons[li];
-          if (!lesson.title) continue;
-          await supabase.from("lessons").insert({
-            section_id: sectionData.id, title: lesson.title,
-            type: lesson.type as any, duration_minutes: lesson.duration,
-            order: li, content: lesson.content || null,
-          });
+      // Only create sections/lessons for courses, not books
+      if (productType === "course") {
+        for (let si = 0; si < sections.length; si++) {
+          const sec = sections[si];
+          if (!sec.title) continue;
+          const { data: sectionData, error: secErr } = await supabase.from("sections").insert({
+            course_id: course.id, title: sec.title, order: si,
+          }).select().single();
+          if (secErr) throw secErr;
+          for (let li = 0; li < sec.lessons.length; li++) {
+            const lesson = sec.lessons[li];
+            if (!lesson.title) continue;
+            await supabase.from("lessons").insert({
+              section_id: sectionData.id, title: lesson.title,
+              type: lesson.type as any, duration_minutes: lesson.duration,
+              order: li, content: lesson.content || null,
+            });
+          }
         }
       }
 
+      const productLabel = productType === "book" ? (lang === "ar" ? "الكتاب" : "Book") : (lang === "ar" ? "الدورة" : "Course");
       toast.success(asDraft
-        ? (lang === "ar" ? "تم حفظ المسودة" : "Draft saved")
+        ? (lang === "ar" ? `تم حفظ مسودة ${productLabel}` : `${productLabel} draft saved`)
         : isAdmin
-        ? (lang === "ar" ? "تم نشر الدورة" : "Course published")
-        : (lang === "ar" ? "تم إرسال الدورة للمراجعة" : "Course submitted for review"));
+        ? (lang === "ar" ? `تم نشر ${productLabel}` : `${productLabel} published`)
+        : (lang === "ar" ? `تم إرسال ${productLabel} للمراجعة` : `${productLabel} submitted for review`));
       navigate(isAdmin ? "/dashboard/admin/courses" : "/dashboard/instructor");
     } catch (err: any) {
       toast.error(err.message);
@@ -157,10 +167,26 @@ export default function CreateCourse() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="mb-2 font-display text-2xl font-bold">{t("dashboard.instructor.createCourse")}</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        {lang === "ar" ? "أنشئ دورة جديدة خطوة بخطوة" : lang === "fr" ? "Créez un cours étape par étape" : "Create a new course step by step"}
+      <h1 className="mb-2 font-display text-2xl font-bold">
+        {productType === "book" ? (lang === "ar" ? "إضافة كتاب جديد" : lang === "fr" ? "Ajouter un Livre" : "Add New Book") : t("dashboard.instructor.createCourse")}
+      </h1>
+      <p className="mb-4 text-sm text-muted-foreground">
+        {lang === "ar" ? "أنشئ محتوى جديد خطوة بخطوة" : lang === "fr" ? "Créez du contenu étape par étape" : "Create new content step by step"}
       </p>
+
+      {/* Product Type Selector */}
+      <div className="mb-6 flex gap-3">
+        <button onClick={() => setProductType("course")}
+          className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${productType === "course" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30"}`}>
+          <GraduationCap className="h-4 w-4" />
+          {lang === "ar" ? "دورة تدريبية" : lang === "fr" ? "Cours" : "Course"}
+        </button>
+        <button onClick={() => setProductType("book")}
+          className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${productType === "book" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30"}`}>
+          <BookOpen className="h-4 w-4" />
+          {lang === "ar" ? "كتاب" : lang === "fr" ? "Livre" : "Book"}
+        </button>
+      </div>
 
       {/* Progress */}
       <div className="mb-8">
@@ -227,6 +253,12 @@ export default function CreateCourse() {
                   </select>
                 </div>
               </div>
+              {productType === "book" && (
+                <div>
+                  <Label>{lang === "ar" ? "عدد الصفحات" : lang === "fr" ? "Nombre de pages" : "Page Count"}</Label>
+                  <Input type="number" value={pageCount || ""} onChange={(e) => setPageCount(parseInt(e.target.value) || 0)} placeholder="320" />
+                </div>
+              )}
               <div>
                 <Label>{t("dashboard.instructor.tags")}</Label>
                 <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="HSE, safety, سلامة" />
@@ -246,16 +278,30 @@ export default function CreateCourse() {
                   </div>
                 )}
               </div>
-              <div>
-                <Label>{t("dashboard.instructor.promoVideo")}</Label>
-                <Input value={promoVideo} onChange={(e) => setPromoVideo(e.target.value)} placeholder="https://youtube.com/..." />
-                {promoVideo && (
-                  <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
-                    <Video className="h-5 w-5 text-primary" />
-                    <span className="truncate text-sm text-muted-foreground">{promoVideo}</span>
-                  </div>
-                )}
-              </div>
+              {productType === "course" && (
+                <div>
+                  <Label>{t("dashboard.instructor.promoVideo")}</Label>
+                  <Input value={promoVideo} onChange={(e) => setPromoVideo(e.target.value)} placeholder="https://youtube.com/..." />
+                  {promoVideo && (
+                    <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
+                      <Video className="h-5 w-5 text-primary" />
+                      <span className="truncate text-sm text-muted-foreground">{promoVideo}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {productType === "book" && (
+                <div>
+                  <Label>{lang === "ar" ? "رابط ملف الكتاب (PDF)" : lang === "fr" ? "Lien du fichier (PDF)" : "Book File URL (PDF)"}</Label>
+                  <Input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://..." />
+                  {fileUrl && (
+                    <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <span className="truncate text-sm text-muted-foreground">{fileUrl}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
 
@@ -292,8 +338,8 @@ export default function CreateCourse() {
             </>
           )}
 
-          {/* Step 4 — Curriculum */}
-          {step === 3 && (
+          {/* Step 4 — Curriculum (courses only) */}
+          {step === 3 && productType === "course" && (
             <>
               <p className="text-sm text-muted-foreground mb-4">{lang === "ar" ? "نظّم محتوى دورتك في أقسام ودروس" : "Organize your course content into sections and lessons"}</p>
               {sections.map((sec, si) => (
@@ -345,6 +391,15 @@ export default function CreateCourse() {
                 <Plus className="mr-1 h-4 w-4" /> {t("dashboard.instructor.addSection")}
               </Button>
             </>
+          )}
+
+          {/* Step 4 — Book info (books only) */}
+          {step === 3 && productType === "book" && (
+            <div className="rounded-xl border bg-secondary/30 p-6 text-center">
+              <BookOpen className="mx-auto mb-3 h-12 w-12 text-primary/50" />
+              <h3 className="mb-2 font-semibold">{lang === "ar" ? "لا يوجد منهج مطلوب للكتب" : lang === "fr" ? "Pas de programme requis pour les livres" : "No curriculum needed for books"}</h3>
+              <p className="text-sm text-muted-foreground">{lang === "ar" ? "الكتب لا تحتاج لأقسام ودروس. انتقل للخطوة التالية." : "Books don't need sections and lessons. Continue to the next step."}</p>
+            </div>
           )}
 
           {/* Step 5 — Pricing */}

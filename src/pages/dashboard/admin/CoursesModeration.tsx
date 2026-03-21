@@ -72,6 +72,7 @@ export default function CoursesModeration() {
         <TableHeader>
           <TableRow>
             <TableHead>Title</TableHead>
+            <TableHead>Type</TableHead>
             <TableHead>{t("courseDetail.instructor")}</TableHead>
             <TableHead>{t("catalog.level")}</TableHead>
             <TableHead>{t("catalog.price")}</TableHead>
@@ -84,6 +85,9 @@ export default function CoursesModeration() {
             <TableRow key={c.id}>
               <TableCell className="max-w-xs">
                 <p className="truncate font-medium">{c.title}</p>
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline" className="text-xs capitalize">{c.type || "course"}</Badge>
               </TableCell>
               <TableCell className="text-sm">{(c.profiles as any)?.name || "—"}</TableCell>
               <TableCell><Badge variant="outline" className="text-xs capitalize">{c.level}</Badge></TableCell>
@@ -121,7 +125,7 @@ export default function CoursesModeration() {
             </TableRow>
           ))}
           {!items.length && (
-            <TableRow><TableCell colSpan={6} className="py-8 text-center text-muted-foreground">No courses found</TableCell></TableRow>
+            <TableRow><TableCell colSpan={7} className="py-8 text-center text-muted-foreground">No courses found</TableCell></TableRow>
           )}
         </TableBody>
       </Table>

@@ -231,12 +231,14 @@ export type Database = {
           cpf_eligible: boolean
           created_at: string
           description: string | null
+          file_url: string | null
           id: string
           instructor_id: string
           is_free: boolean
           language: string
           learning_outcomes: string[] | null
           level: Database["public"]["Enums"]["course_level"]
+          page_count: number | null
           price: number
           promo_video: string | null
           requirements: string[] | null
@@ -244,6 +246,7 @@ export type Database = {
           subtitle: string | null
           tags: string[] | null
           title: string
+          type: string
           updated_at: string
         }
         Insert: {
@@ -252,12 +255,14 @@ export type Database = {
           cpf_eligible?: boolean
           created_at?: string
           description?: string | null
+          file_url?: string | null
           id?: string
           instructor_id: string
           is_free?: boolean
           language?: string
           learning_outcomes?: string[] | null
           level?: Database["public"]["Enums"]["course_level"]
+          page_count?: number | null
           price?: number
           promo_video?: string | null
           requirements?: string[] | null
@@ -265,6 +270,7 @@ export type Database = {
           subtitle?: string | null
           tags?: string[] | null
           title: string
+          type?: string
           updated_at?: string
         }
         Update: {
@@ -273,12 +279,14 @@ export type Database = {
           cpf_eligible?: boolean
           created_at?: string
           description?: string | null
+          file_url?: string | null
           id?: string
           instructor_id?: string
           is_free?: boolean
           language?: string
           learning_outcomes?: string[] | null
           level?: Database["public"]["Enums"]["course_level"]
+          page_count?: number | null
           price?: number
           promo_video?: string | null
           requirements?: string[] | null
@@ -286,6 +294,7 @@ export type Database = {
           subtitle?: string | null
           tags?: string[] | null
           title?: string
+          type?: string
           updated_at?: string
         }
         Relationships: [
