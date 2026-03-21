@@ -61,6 +61,8 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const [activeCat, setActiveCat] = useState("All");
+  const { courses: dbCourses, loading: coursesLoading } = useCourses();
+  const dbCategories = useCategories();
   const heroSlides = [heroSlide1, heroSlide2, heroSlide3];
   const [currentSlide, setCurrentSlide] = useState(0);
 
