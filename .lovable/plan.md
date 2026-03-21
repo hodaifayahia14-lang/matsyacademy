@@ -1,55 +1,111 @@
 
 
-# Fix Categories, Seed Blog/Q&A, Fix Hero Section
+# Fix Instructors Page, Add Cart System, PDF Upload & Payment Methods
 
-## 1. Remove Extra Categories from mockData
+## Problem Analysis
+1. `/instructors/instructor-3` fails because the Instructors page uses hardcoded fake IDs ("instructor-1", etc.) that don't exist in the `profiles` DB table. The `InstructorDetail` page queries `profiles` by UUID.
+2. No cart system exists — users can only enroll directly.
+3. Books use external URLs instead of uploaded PDFs.
+4. No payment method selection (BaridiMob, CCP) or thank-you page.
 
-`src/data/mockData.ts` — Remove "Certified Training" and "Books" from `mockCategories`. Keep only:
-- HSE Safety / أمن ووقاية
-- Religious Guidance / إرشاد ديني
-- Certified Training / تكوين معتمد (keep — matches the screenshot)
+## Phase 1: Fix Instructors Page
 
-Remove "Books" category. The screenshot shows 3 categories: أمن ووقاية, إرشاد ديني, تكوين معتمد. Keep those 3 only.
+**`src/pages/Instructors.tsx`** — Make it self-contained. Instead of linking to `/instructors/:id` with fake IDs, either:
+- Option A: Make each card expandable in-place showing full details (no separate page needed)
+- Option B: Keep the detail page but pass instructor data via URL state
 
-Update `CourseCatalog.tsx` filter panel to use only `mockCategories` from data (already does). The "Type" filter (course/book) already handles book filtering separately.
+**Best approach**: Rewrite `Instructors.tsx` to fetch real instructor profiles from DB (users with `instructor` role), and link using their real UUIDs. Fallback to hardcoded data if no DB instructors exist yet.
 
-## 2. Seed Blog Posts via Migration
+**`src/pages/InstructorDetail.tsx`** — Add fallback: if profile not found in DB, check hardcoded instructor list and display that data instead. Also enhance the design with social links, experience years, and a more polished layout.
 
-Insert 4 blog posts into `blog_posts` table with `status='published'`:
-1. HSE topic: "أهمية السلامة المهنية في المؤسسات" / "L'importance de la sécurité HSE" / "Importance of Workplace Safety"
-2. Religious: "كيف تصبح مرشد حج محترف" / "Devenir guide Hajj professionnel" / "How to Become a Professional Hajj Guide"
-3. HSE: "معدات الحماية الشخصية: دليل شامل" / "Guide complet des EPI" / "Complete PPE Guide"
-4. General: "التكوين المعتمد: مفتاح النجاح المهني" / "Formation certifiée: clé du succès" / "Certified Training: Key to Career Success"
+## Phase 2: PDF Upload for Books
 
-## 3. Seed Q&A Questions via Migration
+**Database migration**: Create a `book-files` storage bucket (public: false, authenticated download).
 
-Since `qa_questions.user_id` is NOT NULL, we need a user. We'll create a seeder edge function OR use a migration that references an existing test user. Safer: use an edge function with service role to find test users and insert.
+**`src/pages/dashboard/instructor/CreateCourse.tsx`** — Replace the "File URL" text input with a real file upload component that:
+- Accepts PDF files only
+- Uploads to `book-files` bucket via Supabase Storage
+- Saves the storage path in `file_url` column
+- Shows upload progress
 
-Create `supabase/functions/seed-content/index.ts`:
-- Finds existing users (or uses first available)
-- Inserts 6 Q&A questions related to HSE and Hajj categories
-- Inserts 2-3 answers per question
-- Idempotent (checks if data exists first)
+## Phase 3: Cart System
 
-## 4. Fix Hero Section
+**Database migration**: Create `cart_items` table:
+```sql
+CREATE TABLE cart_items (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  course_id uuid NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(user_id, course_id)
+);
+-- RLS: users manage own cart items
+```
 
-**Fix "استعرض المنتجات" button**: Currently uses `variant="outline"` with `border-white/40 text-white` — the white background issue is likely from the outline variant's default `bg-background`. Fix by adding `bg-transparent` or `bg-white/10`.
+**Create `src/contexts/CartContext.tsx`**:
+- Provides `cartItems`, `addToCart`, `removeFromCart`, `clearCart`, `cartCount`
+- For authenticated users: syncs with `cart_items` table
+- For unauthenticated users: redirects to login
 
-**Hero carousel**: Replace single static hero image with a carousel of 3 images (one per category theme):
-- Image 1: HSE/Safety themed (hard hat, PPE) — Unsplash `photo-1504307651254-35680f356dfd`
-- Image 2: Hajj/Mecca themed — Unsplash `photo-1591604129939-f1efa4d9f7fa`
-- Image 3: Education/graduation themed — use the existing uploaded hero image
+**Update `src/components/Navbar.tsx`**:
+- Add cart icon with badge count in the header
 
-Auto-scroll left-to-right every 5s with smooth fade transition. Add padding around images. Use framer-motion for transitions.
+**Create `src/pages/Cart.tsx`**:
+- List cart items with course/book thumbnails, titles, prices
+- Remove item button
+- Total price calculation
+- "Proceed to Checkout" button
 
-## Files to Modify
-- `src/data/mockData.ts` — remove "Books" category, keep 3 real ones
-- `src/pages/HomePage.tsx` — hero carousel with 3 images, fix button bg, add padding
-- `src/pages/CourseCatalog.tsx` — no changes needed (already reads from mockCategories)
+**Create `src/pages/Checkout.tsx`**:
+- Order summary
+- Payment method selection with icons:
+  - BaridiMob (with logo/icon)
+  - CCP (Poste Algérie) (with logo/icon)
+  - Cash on delivery (optional)
+- Each method shows payment instructions
+- "Confirm Order" button → creates payment records + enrollments → redirects to thank you
+
+**Create `src/pages/ThankYou.tsx`**:
+- Success animation
+- Order confirmation details
+- "Go to My Courses" button
+
+**Update `src/components/CourseCard.tsx`**:
+- Add "Add to Cart" button alongside existing "Enroll Now"
+
+**Update `src/pages/CourseDetail.tsx`**:
+- Add "Add to Cart" button
+- Show cart status if already in cart
+
+**Update `src/App.tsx`**:
+- Add routes: `/cart`, `/checkout`, `/thank-you`
+- Wrap app with `CartProvider`
+
+## Phase 4: Homepage Payment Methods Strip
+
+**`src/pages/HomePage.tsx`** — Add a "Payment Methods" section near the footer showing accepted payment icons (BaridiMob, CCP) with a trust message.
+
+## Phase 5: Student Dashboard — Show Purchased Courses
+
+**`src/pages/dashboard/student/MyCourses.tsx`** — Already shows enrollments. After checkout creates enrollments, purchased courses will appear automatically.
 
 ## Files to Create
-- `supabase/functions/seed-content/index.ts` — seed blog + Q&A data
+- `src/contexts/CartContext.tsx`
+- `src/pages/Cart.tsx`
+- `src/pages/Checkout.tsx`
+- `src/pages/ThankYou.tsx`
 
-## Database Migration
-- Insert 4 blog posts directly (no user_id required, it's nullable)
+## Files to Modify
+- `src/pages/Instructors.tsx` — fetch from DB or use fallback
+- `src/pages/InstructorDetail.tsx` — fallback + enhanced design
+- `src/pages/dashboard/instructor/CreateCourse.tsx` — PDF upload
+- `src/components/CourseCard.tsx` — add to cart button
+- `src/pages/CourseDetail.tsx` — add to cart button
+- `src/components/Navbar.tsx` — cart icon
+- `src/pages/HomePage.tsx` — payment methods section
+- `src/App.tsx` — new routes + CartProvider
+
+## Database Changes
+1. Create `book-files` storage bucket + RLS policies
+2. Create `cart_items` table + RLS policies
 
