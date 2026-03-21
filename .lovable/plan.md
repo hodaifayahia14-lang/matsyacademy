@@ -1,39 +1,67 @@
 
 
-# Hero Image Generation + Testimonials Upgrade + UI Polish
+# Seed Data + Fix Navbar Pages Dropdown + Generate Hero Image
 
-## What's Changing
+## Tasks
 
-1. **Hero image**: Use AI image generation (Nano banana) to create a custom Matsy Academy hero image — professional education/graduation themed with dark tones matching the brand
-2. **Instructor avatars**: Replace dicebear cartoon SVGs with realistic professional photo URLs from randomuser.me (diverse, professional-looking)
-3. **Course category dropdown**: Fix the filter tabs in "Explore Top Courses" section — currently showing raw English category names from mockData. Make them trilingual using `getLocalized` on mockCategories
-4. **Testimonials section**: Replace the single-card slider with the `TestimonialsColumn` scrolling columns component (3 columns of testimonials auto-scrolling vertically, like the provided shadcn component)
-5. **Expand testimonials data**: Add 9 testimonials (from 3) with realistic names, randomuser.me photos, and trilingual text
+### 1. Seed Q&A Questions & Answers
+Insert seed data into `qa_questions` and `qa_answers` tables via a database migration. Since these tables require `user_id` (FK to auth.users), we'll create an edge function to seed the data using the admin API to find existing test users, or insert with a service-role bypass.
 
-## Technical Details
+**Alternative (simpler):** Create the seed data directly in the QA page as static fallback content when the DB is empty — but that defeats the purpose. Better approach: use a migration to insert with `user_id` set to NULL or use a temporary seeder edge function.
 
-### File: `src/components/ui/testimonials-columns.tsx` (NEW)
-- Create the `TestimonialsColumn` component adapted from the provided code
-- Uses `framer-motion` (already installed, no need for `motion` package — adapt imports from `motion/react` to `framer-motion`)
-- Auto-scrolling vertical columns with `@keyframes` CSS animation
+**Issue:** `qa_questions.user_id` is NOT NULL (likely). Let me check — actually the schema shows `user_id uuid` without NOT NULL explicitly visible. We'll use a seeder edge function that:
+- Finds the existing test users (admin@matsy.test, student@matsy.test, instructor@matsy.test)
+- Inserts 6 Q&A questions with realistic HSE/Hajj content in Arabic-style names
+- Inserts 2-3 answers per question
+- Marks some as answered
 
-### File: `src/pages/HomePage.tsx`
-- **Hero**: Create an edge function to generate image via AI, OR use a high-quality Unsplash photo of professional Arab/Algerian education setting. For speed, use a curated Unsplash photo: `photo-1541339907198-e08756dedf3f` (graduation celebration, dark)
-- **Testimonials section** (~lines 372-401): Replace single-card slider with 3-column `TestimonialsColumn` layout. 9 testimonials split into 3 columns, all trilingual
-- **Course filter tabs** (~lines 261-269): Use `getLocalized(cat, "name", lang)` instead of raw `cat` name. Need to pass full category objects instead of just name strings
-- **Mentor avatars** (~lines 72-77): Replace dicebear URLs with `randomuser.me/api/portraits/men/X.jpg` and `women/X.jpg`
-- **Testimonial avatars**: Same — use randomuser.me
+**Seed content (6 questions):**
+1. "How to prepare for the HSE certification exam?" — answered
+2. "What PPE is required for industrial inspections?" — answered
+3. "Hajj guide course — is it suitable for beginners?" — unanswered
+4. "Can I get the certificate before completing all modules?" — answered
+5. "What is the difference between Agent and Inspector courses?" — unanswered
+6. "Are there group discounts for companies?" — unanswered
 
-### File: `src/pages/Instructors.tsx`
-- Replace all `dicebear` avatar URLs with professional `randomuser.me` photos
+### 2. Seed Instructions
+Insert 6 trilingual instructions into the `instructions` table via migration:
+1. How to create an account (EN/FR/AR)
+2. How to enroll in a course
+3. How to access course materials
+4. How to complete quizzes and assignments
+5. How to download your certificate
+6. How to contact support
 
-### File: `src/data/mockData.ts`
-- Add `name_en`, `name_fr`, `name_ar` to mockCategories for proper trilingual filter rendering
+### 3. Fix Navbar Pages Dropdown Languages
+The `pages` array in `Navbar.tsx` is hardcoded in English:
+```js
+const pages = [
+  { label: "About Us", to: "/about" },
+  ...
+];
+```
+Fix by using `t()` keys for each label instead of static English strings.
 
-### File: `src/index.css`
-- Add `@keyframes scroll-up` for testimonials column animation
+### 4. Fix Courses Dropdown
+The `categories` array is also hardcoded English generic categories (IT & Software, Business, etc.) that don't match Matsy's real courses. Replace with the real categories using `t()`.
 
-## Files Summary
-- **Create**: `src/components/ui/testimonials-columns.tsx`
-- **Modify**: `src/pages/HomePage.tsx`, `src/pages/Instructors.tsx`, `src/data/mockData.ts`, `src/index.css`
+### 5. Improve About Us Page
+- Replace dicebear avatar URLs with `randomuser.me` professional photos
+- Add a "Why Choose Us" section with 4 feature cards (Certified Training, Expert Instructors, Flexible Learning, Ministry Accredited)
+- Add a CTA section at the bottom
+
+### 6. Generate Hero Image
+Use the AI image generation script to create a hero image that combines HSE safety (helmets, PPE) and Hajj/Umrah (Kaaba) themes — representing both course categories.
+
+## Files to Create
+- `supabase/functions/seed-content/index.ts` — one-time seeder for Q&A + Instructions
+
+## Files to Modify
+- `src/components/Navbar.tsx` — fix pages dropdown to use `t()`, fix courses dropdown to show real categories
+- `src/pages/About.tsx` — improve design with better avatars, Why Choose Us section, CTA
+- `src/pages/HomePage.tsx` — update hero image reference after generation
+
+## Database Changes
+- Migration to insert 6 instructions (trilingual) directly — these don't need user_id
+- Edge function to seed Q&A questions/answers (needs user_id from auth)
 
