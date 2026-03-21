@@ -274,16 +274,30 @@ export default function CreateCourse() {
                   </div>
                 )}
               </div>
-              <div>
-                <Label>{t("dashboard.instructor.promoVideo")}</Label>
-                <Input value={promoVideo} onChange={(e) => setPromoVideo(e.target.value)} placeholder="https://youtube.com/..." />
-                {promoVideo && (
-                  <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
-                    <Video className="h-5 w-5 text-primary" />
-                    <span className="truncate text-sm text-muted-foreground">{promoVideo}</span>
-                  </div>
-                )}
-              </div>
+              {productType === "course" && (
+                <div>
+                  <Label>{t("dashboard.instructor.promoVideo")}</Label>
+                  <Input value={promoVideo} onChange={(e) => setPromoVideo(e.target.value)} placeholder="https://youtube.com/..." />
+                  {promoVideo && (
+                    <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
+                      <Video className="h-5 w-5 text-primary" />
+                      <span className="truncate text-sm text-muted-foreground">{promoVideo}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {productType === "book" && (
+                <div>
+                  <Label>{lang === "ar" ? "رابط ملف الكتاب (PDF)" : lang === "fr" ? "Lien du fichier (PDF)" : "Book File URL (PDF)"}</Label>
+                  <Input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://..." />
+                  {fileUrl && (
+                    <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <span className="truncate text-sm text-muted-foreground">{fileUrl}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
 
