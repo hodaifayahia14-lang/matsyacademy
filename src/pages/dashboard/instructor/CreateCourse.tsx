@@ -90,7 +90,7 @@ export default function CreateCourse() {
   const canAdvance = () => {
     if (step === 0) return title.trim().length >= 3;
     if (step === 2) return description.trim().length >= 10;
-    if (step === 3) return sections.some((s) => s.title && s.lessons.some((l) => l.title));
+    if (step === 3 && productType === "course") return sections.some((s) => s.title && s.lessons.some((l) => l.title));
     return true;
   };
 
