@@ -91,11 +91,6 @@ export default function HomePage() {
     },
   ];
 
-  useEffect(() => {
-    const interval = setInterval(() => setTestIdx((i) => (i + 1) % testimonials.length), 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   const filteredCourses = activeCat === "All"
     ? mockCourses
     : mockCourses.filter((c) => c.category === activeCat);
