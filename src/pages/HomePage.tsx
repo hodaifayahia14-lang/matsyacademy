@@ -61,6 +61,17 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const [activeCat, setActiveCat] = useState("All");
+  const heroSlides = [heroSlide1, heroSlide2, heroSlide3];
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  }, [heroSlides.length]);
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   const stats = [
     { icon: Users, value: "+500", labelKey: "stats.students" },
