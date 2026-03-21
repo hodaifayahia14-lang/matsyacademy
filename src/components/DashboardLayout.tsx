@@ -5,11 +5,10 @@ import {
   SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar,
 } from "@/components/ui/sidebar";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LogOut, Bell } from "lucide-react";
+import { LogOut, Bell, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import type { LucideIcon } from "lucide-react";
@@ -24,15 +23,17 @@ interface DashboardLayoutProps { items: NavItem[]; groupLabel: string; }
 
 function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
   const { state } = useSidebar();
+  const { t } = useTranslation();
   const collapsed = state === "collapsed";
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const isRTL = useIsRTL();
 
   const initials = profile?.name
     ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : "U";
 
   return (
-    <Sidebar collapsible="icon" side={useIsRTL() ? "right" : "left"} className="border-e">
+    <Sidebar collapsible="icon" side={isRTL ? "right" : "left"} className="border-e">
       <SidebarContent className="flex flex-col bg-background">
         <div className="flex h-14 items-center gap-2 border-b px-4">
           <Link to="/" className="flex items-center gap-2">
@@ -55,6 +56,17 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
             </div>
           </div>
         )}
+
+        {/* Back to website */}
+        <div className="border-b px-2 py-2">
+          <Button variant="ghost" size={collapsed ? "icon" : "sm"} asChild className="w-full justify-start text-muted-foreground hover:text-primary">
+            <Link to="/">
+              <Home className="h-4 w-4" />
+              {!collapsed && <span className="ms-2">{t("navbar.home")}</span>}
+            </Link>
+          </Button>
+        </div>
+
         <SidebarGroup>
           <SidebarGroupLabel className="text-primary text-xs uppercase tracking-wider">{groupLabel}</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -79,7 +91,7 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
             className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={async () => { await signOut(); navigate("/"); }}>
             <LogOut className="h-4 w-4" />
-            {!collapsed && <span className="ms-2">Sign Out</span>}
+            {!collapsed && <span className="ms-2">{t("navbar.signOut")}</span>}
           </Button>
         </div>
       </SidebarContent>

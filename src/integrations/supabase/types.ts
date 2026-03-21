@@ -85,6 +85,9 @@ export type Database = {
           icon: string | null
           id: string
           name: string
+          name_ar: string
+          name_en: string
+          name_fr: string
           slug: string
         }
         Insert: {
@@ -92,6 +95,9 @@ export type Database = {
           icon?: string | null
           id?: string
           name: string
+          name_ar?: string
+          name_en?: string
+          name_fr?: string
           slug: string
         }
         Update: {
@@ -99,6 +105,9 @@ export type Database = {
           icon?: string | null
           id?: string
           name?: string
+          name_ar?: string
+          name_en?: string
+          name_fr?: string
           slug?: string
         }
         Relationships: []
