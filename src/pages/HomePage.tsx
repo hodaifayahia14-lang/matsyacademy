@@ -4,24 +4,19 @@ import { motion, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Users, BookOpen, Award, Shield, Star, Mail,
-  Play, CheckCircle, MessageCircle, ChevronDown, Sparkles,
-  GraduationCap, Clock, Headphones, BadgeCheck,
+  CheckCircle, ChevronDown, Sparkles,
+  GraduationCap, Clock, Headphones, BadgeCheck, Book,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import CourseCard from "@/components/CourseCard";
 import { mockCourses, mockCategories } from "@/data/mockData";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
-import heroImage from "@/assets/hero-cinematic.jpg";
-
-const iconMap: Record<string, React.ElementType> = {
-  Shield, BookOpen, Award, Sparkles,
-};
+import heroImage from "@/assets/hero-matsy-main.png";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
 }
 
-/* Animated counter hook */
 function useCounter(target: number, inView: boolean) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -73,21 +68,21 @@ export default function HomePage() {
   ];
 
   const marqueeItems = lang === "ar"
-    ? ["⭐ تكوين معتمد", "⭐ دورات السلامة والصحة المهنية", "⭐ مرشد الحج والعمرة", "⭐ +500 طالب", "⭐ شهادات معتمدة", "⭐ تكوين عن بعد"]
+    ? ["⭐ تكوين معتمد", "⭐ دورات السلامة المهنية", "⭐ مرشد الحج والعمرة", "⭐ +500 طالب", "⭐ كتب متخصصة", "⭐ تكوين عن بعد"]
     : lang === "fr"
-    ? ["⭐ Formation Certifiée", "⭐ Cours HSE", "⭐ Guide Hajj & Omra", "⭐ +500 Étudiants", "⭐ Certificats Reconnus", "⭐ Formation en Ligne"]
-    : ["⭐ Certified Training", "⭐ HSE Courses", "⭐ Hajj & Umrah Guide", "⭐ +500 Students", "⭐ Recognized Certificates", "⭐ Online Training"];
+    ? ["⭐ Formation Certifiée", "⭐ Cours HSE", "⭐ Guide Hajj & Omra", "⭐ +500 Étudiants", "⭐ Livres Spécialisés", "⭐ Formation en Ligne"]
+    : ["⭐ Certified Training", "⭐ HSE Courses", "⭐ Hajj & Umrah Guide", "⭐ +500 Students", "⭐ Specialized Books", "⭐ Online Training"];
 
   const testimonials: Testimonial[] = [
     { name: "Karim Bouzid", role: lang === "ar" ? "متخصص في السلامة" : lang === "fr" ? "Spécialiste Sécurité" : "Safety Specialist", text: lang === "ar" ? "أكاديمية مايسي غيرت مساري المهني. الدورات عملية والمدربون من أعلى مستوى." : lang === "fr" ? "Matsy Academy a transformé ma carrière. Les cours sont pratiques et les formateurs excellents." : "Matsy Academy transformed my career. The courses are practical and the instructors are top-notch.", image: "https://randomuser.me/api/portraits/men/11.jpg", rating: 5 },
     { name: "Amina Belhadj", role: lang === "ar" ? "مفتشة أمن" : lang === "fr" ? "Inspectrice Sécurité" : "Safety Inspector", text: lang === "ar" ? "أكملت دورة التفتيش الأمني. المنصة سهلة الاستخدام والمحتوى دائماً محدث." : lang === "fr" ? "J'ai terminé la formation d'inspection. La plateforme est intuitive et le contenu toujours à jour." : "I completed the safety inspection course. The platform is intuitive and content always up to date.", image: "https://randomuser.me/api/portraits/women/21.jpg", rating: 5 },
     { name: "Youcef Hamdi", role: lang === "ar" ? "مرشد حج وعمرة" : lang === "fr" ? "Guide Hajj" : "Hajj Guide", text: lang === "ar" ? "دورة مرشد الحج والعمرة كانت شاملة ومفيدة جداً. أنصح بها لكل من يريد العمل في هذا المجال." : lang === "fr" ? "Le cours de guide du Hajj était incroyablement complet. Très recommandé !" : "The Hajj guide course was incredibly comprehensive. Highly recommended!", image: "https://randomuser.me/api/portraits/men/45.jpg", rating: 5 },
-    { name: "Fatima Zerhouni", role: lang === "ar" ? "مديرة الجودة" : lang === "fr" ? "Responsable Qualité" : "Quality Manager", text: lang === "ar" ? "منصة رائعة مع دورات منظمة بشكل جيد. تعلمت الكثير عن التفتيش الأمني." : lang === "fr" ? "Excellente plateforme avec des cours bien structurés. J'ai beaucoup appris sur l'inspection de sécurité." : "Great platform with well-structured courses. I learned a lot about safety inspection.", image: "https://randomuser.me/api/portraits/women/33.jpg", rating: 5 },
-    { name: "Mohamed Saidi", role: lang === "ar" ? "مهندس سلامة" : lang === "fr" ? "Ingénieur Sécurité" : "Safety Engineer", text: lang === "ar" ? "الدكتور أحمد مايسي مدرب استثنائي. دورة السلامة غيرت مساري المهني." : lang === "fr" ? "Dr. Ahmed Matsy est un formateur exceptionnel. Le cours de sécurité a changé ma carrière." : "Dr. Ahmed Matsy is an exceptional instructor. The safety course changed my career.", image: "https://randomuser.me/api/portraits/men/22.jpg", rating: 5 },
-    { name: "Nadia Boudiaf", role: lang === "ar" ? "طالبة" : lang === "fr" ? "Étudiante" : "Student", text: lang === "ar" ? "المحتوى التعليمي ممتاز والشهادة معتمدة من وزارة التكوين المهني." : lang === "fr" ? "Le contenu éducatif est excellent et le certificat est reconnu par le Ministère de la Formation." : "The educational content is excellent and the certificate is recognized by the Ministry.", image: "https://randomuser.me/api/portraits/women/56.jpg", rating: 5 },
-    { name: "Hassan Mebarki", role: lang === "ar" ? "مشرف أمن" : lang === "fr" ? "Superviseur Sécurité" : "Safety Supervisor", text: lang === "ar" ? "أفضل منصة تعليمية عربية في مجال السلامة والصحة المهنية." : lang === "fr" ? "La meilleure plateforme éducative arabe dans le domaine de la sécurité et santé au travail." : "The best Arabic educational platform in workplace safety and health.", image: "https://randomuser.me/api/portraits/men/67.jpg", rating: 5 },
-    { name: "Salima Kaddour", role: lang === "ar" ? "مرشدة دينية" : lang === "fr" ? "Guide Religieuse" : "Religious Guide", text: lang === "ar" ? "دورة مرشد الحج والعمرة ساعدتني كثيراً في تطوير مهاراتي المهنية." : lang === "fr" ? "Le cours de guide du Hajj m'a beaucoup aidé à développer mes compétences professionnelles." : "The Hajj guide course helped me greatly develop my professional skills.", image: "https://randomuser.me/api/portraits/women/68.jpg", rating: 5 },
-    { name: "Rachid Benmoussa", role: lang === "ar" ? "عون أمن" : lang === "fr" ? "Agent de Sécurité" : "Safety Agent", text: lang === "ar" ? "حصلت على شهادة عون أمن ووقاية بفضل هذه الأكاديمية الرائعة." : lang === "fr" ? "J'ai obtenu mon certificat d'agent de sécurité grâce à cette formidable académie." : "I earned my safety agent certificate thanks to this amazing academy.", image: "https://randomuser.me/api/portraits/men/36.jpg", rating: 5 },
+    { name: "Fatima Zerhouni", role: lang === "ar" ? "مديرة الجودة" : lang === "fr" ? "Responsable Qualité" : "Quality Manager", text: lang === "ar" ? "منصة رائعة مع دورات منظمة بشكل جيد. تعلمت الكثير عن التفتيش الأمني." : lang === "fr" ? "Excellente plateforme avec des cours bien structurés." : "Great platform with well-structured courses.", image: "https://randomuser.me/api/portraits/women/33.jpg", rating: 5 },
+    { name: "Mohamed Saidi", role: lang === "ar" ? "مهندس سلامة" : lang === "fr" ? "Ingénieur Sécurité" : "Safety Engineer", text: lang === "ar" ? "الدكتور أحمد مايسي مدرب استثنائي. دورة السلامة غيرت مساري المهني." : lang === "fr" ? "Dr. Ahmed Matsy est un formateur exceptionnel." : "Dr. Ahmed Matsy is an exceptional instructor.", image: "https://randomuser.me/api/portraits/men/22.jpg", rating: 5 },
+    { name: "Nadia Boudiaf", role: lang === "ar" ? "طالبة" : lang === "fr" ? "Étudiante" : "Student", text: lang === "ar" ? "المحتوى التعليمي ممتاز والشهادة معتمدة من وزارة التكوين المهني." : lang === "fr" ? "Le contenu éducatif est excellent et le certificat est reconnu." : "The educational content is excellent and the certificate is recognized.", image: "https://randomuser.me/api/portraits/women/56.jpg", rating: 5 },
+    { name: "Hassan Mebarki", role: lang === "ar" ? "مشرف أمن" : lang === "fr" ? "Superviseur Sécurité" : "Safety Supervisor", text: lang === "ar" ? "أفضل منصة تعليمية عربية في مجال السلامة والصحة المهنية." : lang === "fr" ? "La meilleure plateforme éducative arabe dans le domaine HSE." : "The best Arabic educational platform in workplace safety.", image: "https://randomuser.me/api/portraits/men/67.jpg", rating: 5 },
+    { name: "Salima Kaddour", role: lang === "ar" ? "مرشدة دينية" : lang === "fr" ? "Guide Religieuse" : "Religious Guide", text: lang === "ar" ? "دورة مرشد الحج والعمرة ساعدتني كثيراً في تطوير مهاراتي المهنية." : lang === "fr" ? "Le cours de guide du Hajj m'a beaucoup aidé." : "The Hajj guide course helped me greatly.", image: "https://randomuser.me/api/portraits/women/68.jpg", rating: 5 },
+    { name: "Rachid Benmoussa", role: lang === "ar" ? "عون أمن" : lang === "fr" ? "Agent de Sécurité" : "Safety Agent", text: lang === "ar" ? "حصلت على شهادة عون أمن ووقاية بفضل هذه الأكاديمية الرائعة." : lang === "fr" ? "J'ai obtenu mon certificat grâce à cette formidable académie." : "I earned my safety agent certificate thanks to this amazing academy.", image: "https://randomuser.me/api/portraits/men/36.jpg", rating: 5 },
   ];
 
   const firstColumn = testimonials.slice(0, 3);
@@ -102,80 +97,72 @@ export default function HomePage() {
   ];
 
   const whyChooseUs = [
-    { icon: BadgeCheck, title: lang === "ar" ? "تكوين معتمد وزارياً" : lang === "fr" ? "Formation Certifiée par le Ministère" : "Ministry-Certified Training", desc: lang === "ar" ? "جميع دوراتنا معتمدة من وزارة التكوين المهني" : lang === "fr" ? "Toutes nos formations sont certifiées par le Ministère de la Formation" : "All our courses are certified by the Ministry of Vocational Training" },
-    { icon: Clock, title: lang === "ar" ? "تعلّم عن بعد مرن" : lang === "fr" ? "Apprentissage en Ligne Flexible" : "Flexible Online Learning", desc: lang === "ar" ? "تعلم في أي وقت ومن أي مكان بالسرعة التي تناسبك" : lang === "fr" ? "Apprenez à tout moment et n'importe où à votre propre rythme" : "Learn anytime, anywhere at your own pace" },
-    { icon: GraduationCap, title: lang === "ar" ? "شهادة معترف بها" : lang === "fr" ? "Certificat Reconnu" : "Recognized Certificate", desc: lang === "ar" ? "احصل على شهادة مهنية معترف بها عند إتمام الدورة" : lang === "fr" ? "Obtenez un certificat professionnel reconnu à la fin de la formation" : "Earn a recognized professional certificate upon completion" },
-    { icon: Headphones, title: lang === "ar" ? "دعم مستمر" : lang === "fr" ? "Support Continu" : "Ongoing Support", desc: lang === "ar" ? "فريق دعم متاح لمساعدتك في كل خطوة من رحلتك التعليمية" : lang === "fr" ? "Une équipe de support disponible pour vous aider à chaque étape" : "A support team available to help you every step of the way" },
+    { icon: BadgeCheck, title: lang === "ar" ? "تكوين معتمد وزارياً" : lang === "fr" ? "Formation Certifiée par le Ministère" : "Ministry-Certified Training", desc: lang === "ar" ? "جميع دوراتنا معتمدة من وزارة التكوين المهني" : lang === "fr" ? "Toutes nos formations sont certifiées par le Ministère" : "All our courses are certified by the Ministry" },
+    { icon: Clock, title: lang === "ar" ? "تعلّم عن بعد مرن" : lang === "fr" ? "Apprentissage en Ligne Flexible" : "Flexible Online Learning", desc: lang === "ar" ? "تعلم في أي وقت ومن أي مكان" : lang === "fr" ? "Apprenez à tout moment et n'importe où" : "Learn anytime, anywhere at your own pace" },
+    { icon: GraduationCap, title: lang === "ar" ? "شهادة معترف بها" : lang === "fr" ? "Certificat Reconnu" : "Recognized Certificate", desc: lang === "ar" ? "احصل على شهادة مهنية معترف بها" : lang === "fr" ? "Obtenez un certificat professionnel reconnu" : "Earn a recognized professional certificate" },
+    { icon: Headphones, title: lang === "ar" ? "دعم مستمر" : lang === "fr" ? "Support Continu" : "Ongoing Support", desc: lang === "ar" ? "فريق دعم متاح لمساعدتك" : lang === "fr" ? "Une équipe de support disponible pour vous aider" : "A support team available to help you" },
   ];
 
-  const filteredCourses = activeCat === "All"
-    ? mockCourses
-    : mockCourses.filter((c) => c.category === activeCat);
+  const courses = activeCat === "All" ? mockCourses : mockCourses.filter((c) => c.category === activeCat);
+  const featuredCourses = activeCat === "All" ? courses : courses;
 
   return (
     <div className="overflow-hidden">
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section className="relative min-h-[100vh] flex items-center">
-        {/* Background image with dark overlay */}
+      <section className="relative min-h-[90vh] flex items-center">
         <div className="absolute inset-0">
           <img src={heroImage} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-background/80" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
           <div className="mx-auto max-w-3xl text-center">
-            {/* Animated badge */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-sm text-accent">
-              <Sparkles className="h-4 w-4" />
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-sm text-white">
+              <Sparkles className="h-4 w-4 text-[hsl(var(--gold-light))]" />
               {lang === "ar" ? "منصة تعليمية معتمدة" : lang === "fr" ? "Plateforme Éducative Certifiée" : "Certified Education Platform"}
             </motion.div>
 
-            {/* Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
               className="mb-6 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
             >
-              <span className="text-accent">
-                {lang === "ar" ? "أكاديمية مايسي" : lang === "fr" ? "Matsy Academy" : "Matsy Academy"}
+              <span className="text-[hsl(var(--gold-light))]">
+                {lang === "ar" ? "أكاديمية مايسي" : "Matsy Academy"}
               </span>
               <br />
-              <span className="text-foreground">
+              <span className="text-white">
                 {lang === "ar" ? "للتدريب والتطوير المهني" : lang === "fr" ? "Formation & Développement Professionnel" : "Professional Training & Development"}
               </span>
             </motion.h1>
 
-            {/* Subtitle */}
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
-              className="mb-10 text-lg text-muted-foreground md:text-xl"
+              className="mb-10 text-lg text-white/80 md:text-xl"
             >
               {lang === "ar"
-                ? "دورات معتمدة في السلامة والصحة المهنية والإرشاد الديني — +500 طالب مسجل"
+                ? "دورات وكتب معتمدة في السلامة المهنية والإرشاد الديني — +500 طالب مسجل"
                 : lang === "fr"
-                ? "Formations certifiées en sécurité HSE et guidance religieuse — +500 étudiants inscrits"
-                : "Certified HSE safety and religious guidance courses — +500 enrolled students"}
+                ? "Cours et livres certifiés en sécurité HSE et guidance religieuse — +500 étudiants"
+                : "Certified courses & books in HSE safety and religious guidance — +500 students"}
             </motion.p>
 
-            {/* CTA buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
               className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
             >
-              <Link to="/courses">
-                <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 border border-accent/30 shadow-lg shadow-primary/30 text-lg px-8 py-6">
+              <Link to="/register">
+                <Button size="lg" className="gap-2 bg-[hsl(var(--crimson))] hover:bg-[hsl(var(--crimson))]/90 text-white border border-[hsl(var(--gold-light))]/30 shadow-lg text-lg px-8 py-6">
                   {lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now"} <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
               <Link to="/courses">
-                <Button size="lg" variant="outline" className="gap-2 border-accent/40 text-accent hover:bg-accent/10 text-lg px-8 py-6">
-                  {lang === "ar" ? "استعرض الدورات" : lang === "fr" ? "Parcourir les Cours" : "Browse Courses"}
+                <Button size="lg" variant="outline" className="gap-2 border-white/40 text-white hover:bg-white/10 text-lg px-8 py-6">
+                  {lang === "ar" ? "استعرض المنتجات" : lang === "fr" ? "Parcourir les Produits" : "Browse Products"}
                 </Button>
               </Link>
             </motion.div>
 
-            {/* Social proof */}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
               className="mt-12 flex items-center justify-center gap-4"
@@ -183,26 +170,21 @@ export default function HomePage() {
               <div className="flex -space-x-3 rtl:space-x-reverse">
                 {[32, 75, 44, 52, 21].map((id, idx) => (
                   <img key={id} src={`https://randomuser.me/api/portraits/${idx % 2 === 0 ? 'men' : 'women'}/${id}.jpg`} alt=""
-                    className="h-10 w-10 rounded-full border-2 border-background object-cover ring-2 ring-accent/20" />
+                    className="h-10 w-10 rounded-full border-2 border-white/50 object-cover" />
                 ))}
               </div>
               <div className="text-start">
                 <div className="flex items-center gap-1 mb-0.5">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-accent text-accent" />)}
+                  {[...Array(5)].map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-[hsl(var(--gold-light))] text-[hsl(var(--gold-light))]" />)}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  +500 {t("stats.students")} • 4.9/5
-                </p>
+                <p className="text-sm text-white/70">+500 {t("stats.students")} • 4.9/5</p>
               </div>
             </motion.div>
           </div>
 
-          {/* Scroll arrow */}
-          <motion.div
-            animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          >
-            <ChevronDown className="h-8 w-8 text-accent/50" />
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2">
+            <ChevronDown className="h-8 w-8 text-white/50" />
           </motion.div>
         </div>
       </section>
@@ -210,7 +192,7 @@ export default function HomePage() {
       {/* ═══════════════════ STATS BAR ═══════════════════ */}
       <section className="relative -mt-16 z-20">
         <div className="container">
-          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md p-8 shadow-2xl">
+          <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
             <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
               {stats.map(({ icon, value, labelKey }) => (
                 <StatCounter key={labelKey} icon={icon} value={value} label={t(labelKey)} />
@@ -229,14 +211,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════ FEATURED COURSES ═══════════════════ */}
+      {/* ═══════════════════ FEATURED COURSES & BOOKS ═══════════════════ */}
       <section className="py-20">
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="mb-10 text-center">
             <h2 className="mb-3 font-display text-3xl font-bold md:text-4xl">
               <span className="text-foreground">{lang === "ar" ? "دوراتنا" : lang === "fr" ? "Nos" : "Our"} </span>
-              <span className="text-accent">{lang === "ar" ? "المميزة" : lang === "fr" ? "Formations" : "Courses"}</span>
+              <span className="text-accent">{lang === "ar" ? "وكتبنا" : lang === "fr" ? "Cours & Livres" : "Courses & Books"}</span>
             </h2>
             <div className="mx-auto mb-4 h-1 w-16 rounded-full bg-accent" />
             <p className="text-muted-foreground">{t("featured.subtitle")}</p>
@@ -259,9 +241,8 @@ export default function HomePage() {
             })}
           </div>
 
-          {/* Course grid */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredCourses.map((c, i) => (
+            {featuredCourses.map((c, i) => (
               <motion.div key={c.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}>
                 <CourseCard course={c} />
@@ -280,7 +261,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ WHY CHOOSE US ═══════════════════ */}
-      <section className="py-20 bg-secondary/30">
+      <section className="py-20 bg-secondary/50">
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="mb-12 text-center">
@@ -351,7 +332,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
-      <section className="py-20 bg-secondary/30">
+      <section className="py-20 bg-secondary/50">
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="mb-10 text-center">
@@ -373,18 +354,17 @@ export default function HomePage() {
       {/* ═══════════════════ CTA BANNER ═══════════════════ */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-primary" />
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, hsl(var(--accent) / 0.1) 10px, hsl(var(--accent) / 0.1) 20px)' }} />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px)' }} />
         <div className="container relative z-10 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <h2 className="mb-4 font-display text-3xl font-bold text-primary-foreground md:text-4xl">
               {lang === "ar" ? "ابدأ رحلتك التعليمية اليوم" : lang === "fr" ? "Commencez Votre Parcours Aujourd'hui" : "Start Your Learning Journey Today"}
             </h2>
             <p className="mb-8 text-lg text-primary-foreground/80">
-              {lang === "ar" ? "سجّل مجاناً واحصل على وصول فوري لدوراتنا المعتمدة" : lang === "fr" ? "Inscrivez-vous gratuitement et accédez instantanément à nos formations certifiées" : "Register for free and get instant access to our certified courses"}
+              {lang === "ar" ? "سجّل مجاناً واحصل على وصول فوري لدوراتنا وكتبنا المعتمدة" : lang === "fr" ? "Inscrivez-vous et accédez à nos formations et livres certifiés" : "Register and get access to our certified courses and books"}
             </p>
             <Link to="/register">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-lg px-10 py-6 shadow-xl animate-shimmer"
-                style={{ backgroundSize: '200% 100%', backgroundImage: 'linear-gradient(90deg, hsl(var(--accent)) 0%, hsl(var(--gold-light)) 50%, hsl(var(--accent)) 100%)' }}>
+              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-lg px-10 py-6 shadow-xl">
                 {lang === "ar" ? "سجّل مجاناً" : lang === "fr" ? "Inscrivez-vous Gratuitement" : "Register Free"} <ArrowRight className="ms-2 h-5 w-5" />
               </Button>
             </Link>
