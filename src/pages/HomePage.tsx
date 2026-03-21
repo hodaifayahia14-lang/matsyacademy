@@ -28,7 +28,6 @@ function getLocalized(obj: any, field: string, lang: string): string {
 export default function HomePage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
-  const [testIdx, setTestIdx] = useState(0);
   const [activeCat, setActiveCat] = useState("All");
 
   const stats = [
