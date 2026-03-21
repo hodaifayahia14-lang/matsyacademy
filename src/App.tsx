@@ -38,6 +38,9 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
+            {/* Course Player — full-screen, no Navbar/Footer */}
+            <Route path="/learn/:courseId/:lessonId" element={<CoursePlayer />} />
+
             {/* Dashboard routes — no global Navbar/Footer */}
             <Route path="/dashboard/student/*" element={
               <ProtectedRoute requiredRole="student"><StudentDashboard /></ProtectedRoute>
