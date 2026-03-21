@@ -27,11 +27,11 @@ export const TestimonialsColumn = ({
         {[...testimonials, ...testimonials].map((t, i) => (
           <div
             key={i}
-            className="rounded-xl border bg-card p-5 shadow-sm"
+            className="rounded-xl border border-border bg-card p-5 shadow-sm backdrop-blur-sm"
           >
             <div className="mb-3 flex gap-0.5">
               {[...Array(t.rating || 5)].map((_, j) => (
-                <Star key={j} className="h-3.5 w-3.5 fill-warning text-warning" />
+                <Star key={j} className="h-3.5 w-3.5 fill-accent text-accent" />
               ))}
             </div>
             <p className="mb-4 text-sm text-muted-foreground leading-relaxed">
@@ -41,7 +41,7 @@ export const TestimonialsColumn = ({
               <img
                 src={t.image}
                 alt={t.name}
-                className="h-9 w-9 rounded-full object-cover border border-border"
+                className="h-10 w-10 rounded-full object-cover ring-2 ring-accent/30"
               />
               <div>
                 <p className="text-sm font-semibold text-foreground">{t.name}</p>
