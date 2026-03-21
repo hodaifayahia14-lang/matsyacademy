@@ -282,6 +282,81 @@ export type Database = {
           },
         ]
       }
+      instruction_progress: {
+        Row: {
+          completed: boolean
+          id: string
+          instruction_id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          id?: string
+          instruction_id: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          id?: string
+          instruction_id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instruction_progress_instruction_id_fkey"
+            columns: ["instruction_id"]
+            isOneToOne: false
+            referencedRelation: "instructions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "instruction_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instructions: {
+        Row: {
+          body_ar: string
+          body_en: string
+          body_fr: string
+          created_at: string
+          id: string
+          sort_order: number
+          title_ar: string
+          title_en: string
+          title_fr: string
+        }
+        Insert: {
+          body_ar?: string
+          body_en?: string
+          body_fr?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title_ar?: string
+          title_en?: string
+          title_fr?: string
+        }
+        Update: {
+          body_ar?: string
+          body_en?: string
+          body_fr?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title_ar?: string
+          title_en?: string
+          title_fr?: string
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           completed_at: string
@@ -477,6 +552,96 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      qa_answers: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_accepted: boolean
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_accepted?: boolean
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_accepted?: boolean
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qa_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "qa_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qa_answers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qa_questions: {
+        Row: {
+          body: string
+          course_id: string | null
+          created_at: string
+          id: string
+          is_answered: boolean
+          title: string
+          upvotes: number
+          user_id: string
+        }
+        Insert: {
+          body: string
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          is_answered?: boolean
+          title: string
+          upvotes?: number
+          user_id: string
+        }
+        Update: {
+          body?: string
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          is_answered?: boolean
+          title?: string
+          upvotes?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qa_questions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "qa_questions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quiz_attempts: {
         Row: {

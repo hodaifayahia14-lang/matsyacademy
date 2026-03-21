@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, GraduationCap, Search, LogOut, User } from "lucide-react";
+import { Menu, X, ChevronDown, Search, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,6 +26,7 @@ export default function Navbar() {
   const [catOpen, setCatOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, profile, roles, signOut } = useAuth();
 
   useEffect(() => {
@@ -56,30 +57,27 @@ export default function Navbar() {
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        scrolled ? "bg-card/95 backdrop-blur-md shadow-header" : "bg-card"
+        scrolled ? "bg-background/95 backdrop-blur-md shadow-header" : "bg-background"
       }`}
     >
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <GraduationCap className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="font-display text-xl font-bold text-foreground">
-            Edu<span className="text-primary">Zone</span>
+          <span className="font-display text-xl font-bold text-gold">
+            Matsy<span className="text-primary"> Academy</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 md:flex">
           <Link to="/courses">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              Course Catalog
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-gold">
+              {t("navbar.courses")}
             </Button>
           </Link>
           <div className="relative" onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              Categories <ChevronDown className="ml-1 h-3 w-3" />
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-gold">
+              {t("navbar.categories")} <ChevronDown className="ms-1 h-3 w-3" />
             </Button>
             <AnimatePresence>
               {catOpen && (
@@ -87,13 +85,13 @@ export default function Navbar() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
-                  className="absolute left-0 top-full w-56 rounded-lg border bg-card p-2 shadow-lg"
+                  className="absolute start-0 top-full w-56 rounded-lg border border-border bg-card p-2 shadow-lg"
                 >
                   {categories.map((c) => (
                     <Link
                       key={c}
                       to={`/courses?category=${encodeURIComponent(c)}`}
-                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground"
+                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-gold"
                     >
                       {c}
                     </Link>
@@ -102,12 +100,22 @@ export default function Navbar() {
               )}
             </AnimatePresence>
           </div>
+          <Link to="/about">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-gold">
+              {t("navbar.about")}
+            </Button>
+          </Link>
+          <Link to="/qa">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-gold">
+              {t("navbar.qa")}
+            </Button>
+          </Link>
         </nav>
 
         {/* Right Actions */}
         <div className="hidden items-center gap-2 md:flex">
           <LanguageSwitcher />
-          <Button variant="ghost" size="icon" className="text-muted-foreground">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-gold">
             <Search className="h-4 w-4" />
           </Button>
           {user ? (
@@ -129,21 +137,21 @@ export default function Navbar() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate(dashboardPath)}>
-                  <User className="mr-2 h-4 w-4" /> Dashboard
+                  <User className="me-2 h-4 w-4" /> {t("navbar.dashboard")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                <DropdownMenuItem onClick={handleSignOut} className="text-primary">
+                  <LogOut className="me-2 h-4 w-4" /> {t("navbar.signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" size="sm">Log In</Button>
+                <Button variant="ghost" size="sm" className="text-gold-light hover:text-gold">{t("navbar.login")}</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm">Sign Up</Button>
+                <Button size="sm" className="bg-primary text-primary-foreground border border-gold/30 hover:bg-primary/90">{t("navbar.signUp")}</Button>
               </Link>
             </>
           )}
@@ -153,7 +161,7 @@ export default function Navbar() {
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className="md:hidden text-gold"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -167,20 +175,22 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t bg-card md:hidden"
+            className="overflow-hidden border-t border-border bg-background md:hidden"
           >
             <div className="container flex flex-col gap-2 py-4">
-              <Link to="/courses" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">Course Catalog</Link>
+              <Link to="/courses" className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary">{t("navbar.courses")}</Link>
+              <Link to="/about" className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary">{t("navbar.about")}</Link>
+              <Link to="/qa" className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary">{t("navbar.qa")}</Link>
               {user ? (
                 <>
-                  <Link to={dashboardPath} className="rounded-md px-3 py-2 text-sm hover:bg-secondary">Dashboard</Link>
-                  <button onClick={handleSignOut} className="rounded-md px-3 py-2 text-left text-sm hover:bg-secondary">Sign Out</button>
+                  <Link to={dashboardPath} className="rounded-md px-3 py-2 text-sm text-foreground hover:bg-secondary">{t("navbar.dashboard")}</Link>
+                  <button onClick={handleSignOut} className="rounded-md px-3 py-2 text-start text-sm text-primary hover:bg-secondary">{t("navbar.signOut")}</button>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">Log In</Link>
+                  <Link to="/login" className="rounded-md px-3 py-2 text-sm text-gold hover:bg-secondary">{t("navbar.login")}</Link>
                   <Link to="/register">
-                    <Button className="w-full" size="sm">Sign Up</Button>
+                    <Button className="w-full bg-primary border border-gold/30" size="sm">{t("navbar.signUp")}</Button>
                   </Link>
                 </>
               )}
