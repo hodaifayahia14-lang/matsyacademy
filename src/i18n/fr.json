@@ -1,16 +1,17 @@
 {
-  "nav": {
+  "navbar": {
     "courses": "Catalogue de Cours",
     "categories": "Catégories",
+    "about": "À propos",
+    "qa": "Q&R",
     "login": "Connexion",
-    "signup": "Inscription",
+    "signUp": "Inscription",
     "dashboard": "Tableau de bord",
-    "signout": "Déconnexion",
-    "search": "Rechercher"
+    "signOut": "Déconnexion"
   },
   "hero": {
     "title": "Tout le savoir s'apprend ici",
-    "subtitle": "Rejoignez des milliers d'apprenants qui maîtrisent de nouvelles compétences chaque jour. Cours dirigés par des experts en technologie, business, langues et plus encore.",
+    "subtitle": "Rejoignez des milliers d'apprenants qui maîtrisent de nouvelles compétences chaque jour avec Matsy Academy.",
     "browseCourses": "Parcourir les cours",
     "becomeInstructor": "Devenir formateur"
   },
@@ -35,13 +36,12 @@
     "subtitle": "Sélectionnés par notre équipe",
     "viewAll": "Voir tous les cours"
   },
-  "categoriesSection": {
+  "categories": {
     "title": "Parcourir par catégorie",
     "subtitle": "Explorez notre diversité de sujets"
   },
   "testimonials": {
-    "title": "Ce que disent nos étudiants",
-    "subtitle": "Rejoignez des milliers d'apprenants satisfaits"
+    "title": "Ce que disent nos étudiants"
   },
   "newsletter": {
     "title": "Restez informé",
@@ -51,19 +51,41 @@
   },
   "footer": {
     "platform": "Plateforme",
-    "browseCourses": "Parcourir les cours",
-    "becomeInstructor": "Devenir formateur",
-    "pricing": "Tarifs",
-    "company": "Entreprise",
-    "about": "À propos",
-    "contact": "Contact",
-    "careers": "Carrières",
     "support": "Support",
-    "faq": "FAQ",
+    "becomeInstructor": "Devenir formateur",
+    "instructions": "Instructions",
     "terms": "Conditions d'utilisation",
-    "privacy": "Politique de confidentialité",
-    "copyright": "© {{year}} EduZone. Tous droits réservés.",
-    "description": "La plateforme d'apprentissage en ligne leader. Accédez à des milliers de cours dispensés par des experts du monde entier."
+    "description": "Matsy Academy — La plateforme d'apprentissage en ligne leader pour la formation et le développement."
+  },
+  "about": {
+    "title": "À propos de Matsy Academy",
+    "subtitle": "Autonomiser les apprenants du monde entier grâce à une éducation de qualité et au développement professionnel.",
+    "mission": "Notre Mission",
+    "missionText": "Démocratiser l'éducation en proposant des cours accessibles et de haute qualité qui permettent aux individus d'atteindre leurs objectifs professionnels et personnels.",
+    "vision": "Notre Vision",
+    "visionText": "Devenir la plateforme leader de formation et de développement professionnel dans le monde arabe et au-delà.",
+    "team": "Notre Équipe"
+  },
+  "qa": {
+    "title": "Questions & Réponses",
+    "subtitle": "Posez des questions et obtenez des réponses de la communauté",
+    "recent": "Récentes",
+    "popular": "Populaires",
+    "unanswered": "Sans réponse",
+    "askQuestion": "Poser une question",
+    "titlePlaceholder": "Titre de la question...",
+    "bodyPlaceholder": "Décrivez votre question en détail...",
+    "submit": "Soumettre",
+    "questionPosted": "Question publiée !",
+    "noQuestions": "Pas encore de questions",
+    "answered": "Répondu"
+  },
+  "instructions": {
+    "title": "Instructions de la plateforme",
+    "subtitle": "Apprenez à utiliser Matsy Academy étape par étape",
+    "noInstructions": "Aucune instruction disponible pour le moment",
+    "markComplete": "Marquer comme terminé",
+    "completed": "Terminé"
   },
   "auth": {
     "welcomeBack": "Bon retour",
@@ -78,9 +100,11 @@
     "signIn": "Se connecter",
     "signingIn": "Connexion en cours…",
     "noAccount": "Vous n'avez pas de compte ?",
+    "signUp": "Inscription",
     "hasAccount": "Vous avez déjà un compte ?",
     "createAccount": "Créer un compte",
     "creatingAccount": "Création du compte…",
+    "accountCreated": "Compte créé ! Veuillez vérifier votre email.",
     "startJourney": "Commencez votre parcours d'apprentissage aujourd'hui",
     "fullName": "Nom complet",
     "confirmPassword": "Confirmer le mot de passe",
@@ -91,7 +115,7 @@
     "checkEmail": "Vérifiez votre email pour le lien de réinitialisation",
     "sendResetLink": "Envoyer le lien",
     "sending": "Envoi en cours…",
-    "emailSent": "Nous avons envoyé un lien de réinitialisation à votre email. Veuillez vérifier votre boîte de réception.",
+    "emailSent": "Nous avons envoyé un lien de réinitialisation à votre email.",
     "backToLogin": "Retour à la connexion",
     "setNewPassword": "Définir un nouveau mot de passe",
     "newPasswordDesc": "Entrez votre nouveau mot de passe ci-dessous",
