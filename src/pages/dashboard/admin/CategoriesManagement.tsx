@@ -11,10 +11,12 @@ import { toast } from "@/components/ui/sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
 export default function CategoriesManagement() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language as "en" | "fr" | "ar";
   const qc = useQueryClient();
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
+  const [nameEn, setNameEn] = useState("");
+  const [nameFr, setNameFr] = useState("");
+  const [nameAr, setNameAr] = useState("");
   const [icon, setIcon] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -29,19 +31,22 @@ export default function CategoriesManagement() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const slug = nameEn.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const payload = { name: nameEn, name_en: nameEn, name_fr: nameFr, name_ar: nameAr, slug, icon };
       if (editingId) {
-        const { error } = await supabase.from("categories").update({ name, slug, icon }).eq("id", editingId);
+        const { error } = await supabase.from("categories").update(payload).eq("id", editingId);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("categories").insert({ name, slug, icon });
+        const { error } = await supabase.from("categories").insert(payload);
         if (error) throw error;
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-categories"] });
-      toast.success("Category saved");
+      toast.success(t("common.success"));
       resetForm();
     },
+    onError: () => toast.error(t("common.error")),
   });
 
   const deleteMutation = useMutation({
@@ -51,14 +56,25 @@ export default function CategoriesManagement() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-categories"] });
-      toast.success("Category deleted");
+      toast.success(t("common.success"));
     },
   });
 
-  const resetForm = () => { setName(""); setSlug(""); setIcon(""); setEditingId(null); setOpen(false); };
+  const resetForm = () => { setNameEn(""); setNameFr(""); setNameAr(""); setIcon(""); setEditingId(null); setOpen(false); };
 
   const startEdit = (cat: any) => {
-    setName(cat.name); setSlug(cat.slug); setIcon(cat.icon || ""); setEditingId(cat.id); setOpen(true);
+    setNameEn(cat.name_en || cat.name || "");
+    setNameFr(cat.name_fr || "");
+    setNameAr(cat.name_ar || "");
+    setIcon(cat.icon || "");
+    setEditingId(cat.id);
+    setOpen(true);
+  };
+
+  const getCatName = (cat: any) => {
+    if (lang === "ar") return cat.name_ar || cat.name;
+    if (lang === "fr") return cat.name_fr || cat.name;
+    return cat.name_en || cat.name;
   };
 
   if (isLoading) return <Skeleton className="h-40 rounded-xl" />;
@@ -69,15 +85,28 @@ export default function CategoriesManagement() {
         <h1 className="font-display text-2xl font-bold">{t("dashboard.admin.categories")}</h1>
         <Dialog open={open} onOpenChange={(v) => { if (!v) resetForm(); setOpen(v); }}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-1 h-4 w-4" /> {t("dashboard.admin.addCategory")}</Button>
+            <Button><Plus className="me-1 h-4 w-4" /> {t("dashboard.admin.addCategory")}</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-md">
             <DialogHeader><DialogTitle>{editingId ? t("common.edit") : t("dashboard.admin.addCategory")}</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><label className="mb-1 block text-sm font-medium">{t("dashboard.admin.categoryName")}</label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
-              <div><label className="mb-1 block text-sm font-medium">{t("dashboard.admin.categorySlug")}</label><Input value={slug} onChange={(e) => setSlug(e.target.value)} /></div>
-              <div><label className="mb-1 block text-sm font-medium">{t("dashboard.admin.categoryIcon")}</label><Input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="e.g. Monitor" /></div>
-              <Button onClick={() => saveMutation.mutate()} disabled={!name || !slug}>{t("common.save")}</Button>
+              <div>
+                <label className="mb-1 block text-sm font-medium">English Name</label>
+                <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder="e.g. HSE Safety" />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">Nom en Français</label>
+                <Input value={nameFr} onChange={(e) => setNameFr(e.target.value)} placeholder="e.g. Sécurité HSE" />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">الاسم بالعربية</label>
+                <Input value={nameAr} onChange={(e) => setNameAr(e.target.value)} placeholder="مثال: أمن ووقاية" dir="rtl" />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">{t("dashboard.admin.categoryIcon")}</label>
+                <Input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="e.g. Shield, BookOpen, Award" />
+              </div>
+              <Button onClick={() => saveMutation.mutate()} disabled={!nameEn} className="w-full">{t("common.save")}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -86,18 +115,22 @@ export default function CategoriesManagement() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t("dashboard.admin.categoryName")}</TableHead>
-              <TableHead>{t("dashboard.admin.categorySlug")}</TableHead>
+              <TableHead>{lang === "ar" ? "الاسم" : lang === "fr" ? "Nom" : "Name"}</TableHead>
+              <TableHead>English</TableHead>
+              <TableHead>Français</TableHead>
+              <TableHead>العربية</TableHead>
               <TableHead>{t("dashboard.admin.categoryIcon")}</TableHead>
               <TableHead>{t("common.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories?.map((cat) => (
+            {categories?.map((cat: any) => (
               <TableRow key={cat.id}>
-                <TableCell className="font-medium">{cat.name}</TableCell>
-                <TableCell className="text-muted-foreground">{cat.slug}</TableCell>
-                <TableCell className="text-muted-foreground">{cat.icon}</TableCell>
+                <TableCell className="font-medium">{getCatName(cat)}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">{cat.name_en || cat.name}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">{cat.name_fr || "—"}</TableCell>
+                <TableCell className="text-muted-foreground text-sm" dir="rtl">{cat.name_ar || "—"}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">{cat.icon || "—"}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button size="sm" variant="ghost" onClick={() => startEdit(cat)}><Pencil className="h-4 w-4" /></Button>
@@ -106,6 +139,9 @@ export default function CategoriesManagement() {
                 </TableCell>
               </TableRow>
             ))}
+            {!categories?.length && (
+              <TableRow><TableCell colSpan={6} className="py-8 text-center text-muted-foreground">{t("catalog.noResults")}</TableCell></TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
