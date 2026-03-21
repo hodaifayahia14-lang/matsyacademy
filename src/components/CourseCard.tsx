@@ -4,24 +4,22 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import type { Course } from "@/data/mockData";
+import type { DBCourse } from "@/hooks/useCourses";
 
-function getLocalized(course: any, field: string, lang: string): string {
-  return course[`${field}_${lang}`] || course[`${field}_en`] || course[field] || "";
+function getLocalized(obj: any, field: string, lang: string): string {
+  return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
 }
 
-export default function CourseCard({ course }: { course: Course }) {
+export default function CourseCard({ course }: { course: DBCourse }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const { user } = useAuth();
   const { addToCart, isInCart } = useCart();
   const navigate = useNavigate();
 
-  const title = getLocalized(course, "title", lang);
-  const description = getLocalized(course, "description", lang);
-  const badge = getLocalized(course, "badge", lang);
-  const format = getLocalized(course, "format", lang);
-  const categoryName = getLocalized(course, "category", lang);
+  const title = course.title || "";
+  const description = course.description || "";
+  const categoryName = getLocalized(course, "category_name", lang);
   const isBook = course.type === "book";
 
   const enrollText = isBook
@@ -45,21 +43,20 @@ export default function CourseCard({ course }: { course: Course }) {
   const inCart = isInCart(course.id);
 
   const priceFormatted = course.price > 0
-    ? `${course.price.toLocaleString()} ${lang === "ar" ? "د.ج" : "DZD"}`
+    ? `${Number(course.price).toLocaleString()} ${lang === "ar" ? "د.ج" : "DZD"}`
     : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
+
+  const levelLabel = course.level === "beginner"
+    ? (lang === "ar" ? "مبتدئ" : lang === "fr" ? "Débutant" : "Beginner")
+    : course.level === "intermediate"
+    ? (lang === "ar" ? "متوسط" : lang === "fr" ? "Intermédiaire" : "Intermediate")
+    : (lang === "ar" ? "متقدم" : lang === "fr" ? "Avancé" : "Advanced");
 
   return (
     <Link
       to={`/courses/${course.id}`}
       className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10"
     >
-      {/* Badge */}
-      {badge && (
-        <div className="absolute top-3 start-3 z-10 rounded-md bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow">
-          {badge}
-        </div>
-      )}
-
       {/* Type badge */}
       <div className="absolute top-3 end-3 z-10 flex items-center gap-1 rounded-md bg-card/90 backdrop-blur-sm px-2 py-1 text-[10px] font-medium text-foreground border border-border">
         {isBook ? <Book className="h-3 w-3" /> : <GraduationCap className="h-3 w-3" />}
@@ -69,15 +66,14 @@ export default function CourseCard({ course }: { course: Course }) {
       {/* Image */}
       <div className="relative aspect-video overflow-hidden">
         <img
-          src={course.coverImage}
+          src={course.cover_image || "/placeholder.svg"}
           alt={title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        {/* Format tag */}
         <div className="absolute bottom-2 end-2 rounded bg-accent/90 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
-          {format}
+          {levelLabel}
         </div>
       </div>
 
@@ -89,28 +85,22 @@ export default function CourseCard({ course }: { course: Course }) {
 
         <h3 className="mb-2 line-clamp-2 text-sm font-semibold text-foreground">{title}</h3>
 
-        <div className="mb-2 flex items-center gap-1 text-xs text-muted-foreground">
-          <span className="font-semibold text-accent">{course.rating.toFixed(1)}</span>
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`h-3 w-3 ${i < Math.floor(course.rating) ? "fill-accent text-accent" : "text-border"}`} />
-            ))}
-          </div>
-          <span>({course.reviewCount})</span>
-        </div>
-
         {/* Price */}
         <div className="mb-2">
           <span className="text-lg font-bold text-primary">{priceFormatted}</span>
         </div>
 
         <div className="mt-auto flex items-center gap-4 border-t border-border pt-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Users className="h-3.5 w-3.5" /> {course.studentCount}
-          </span>
-          <span className="flex items-center gap-1">
-            <BookOpen className="h-3.5 w-3.5" /> {isBook ? course.duration : `${course.lessonCount} ${t("catalog.lessons")}`}
-          </span>
+          {course.instructor_name && (
+            <span className="flex items-center gap-1 truncate">
+              <Users className="h-3.5 w-3.5" /> {course.instructor_name}
+            </span>
+          )}
+          {isBook && course.page_count && (
+            <span className="flex items-center gap-1">
+              <BookOpen className="h-3.5 w-3.5" /> {course.page_count} {lang === "ar" ? "صفحة" : "pages"}
+            </span>
+          )}
         </div>
       </div>
 
