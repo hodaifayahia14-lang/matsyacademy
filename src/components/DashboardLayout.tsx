@@ -14,6 +14,11 @@ import { Link } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import type { LucideIcon } from "lucide-react";
 
+function useIsRTL() {
+  const { i18n } = useTranslation();
+  return i18n.language === "ar";
+}
+
 interface NavItem { title: string; url: string; icon: LucideIcon; }
 interface DashboardLayoutProps { items: NavItem[]; groupLabel: string; }
 
