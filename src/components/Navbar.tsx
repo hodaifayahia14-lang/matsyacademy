@@ -14,9 +14,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import maisyLogo from "@/assets/maisy-logo.png";
 
 const categoryKeys = [
-  { labelKey: "navbar.cat.hse", to: "/courses?category=HSE+Safety" },
+  { labelKey: "navbar.cat.bodyCare", to: "/courses?category=Body+Care" },
+  { labelKey: "navbar.cat.earlyChildhood", to: "/courses?category=Early+Childhood+Education" },
+  { labelKey: "navbar.cat.hse", to: "/courses?category=Workplace+Safety+(HSE)" },
   { labelKey: "navbar.cat.religious", to: "/courses?category=Religious+Guidance" },
-  { labelKey: "navbar.cat.certified", to: "/courses?category=Certified+Training" },
 ];
 
 const pageKeys = [
