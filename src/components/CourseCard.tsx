@@ -22,7 +22,7 @@ export default function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       to={`/courses/${course.id}`}
-      className="group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10"
     >
       {/* Badge Ribbon */}
       {badge && (
@@ -39,16 +39,16 @@ export default function CourseCard({ course }: { course: Course }) {
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
         {/* Format tag */}
-        <div className="absolute bottom-2 end-2 rounded bg-foreground/80 px-2 py-0.5 text-[10px] font-medium text-background">
+        <div className="absolute bottom-2 end-2 rounded bg-accent/90 px-2 py-0.5 text-[10px] font-medium text-accent-foreground">
           {format}
         </div>
       </div>
 
-      {/* Default content — visible normally */}
+      {/* Default content */}
       <div className="flex flex-1 flex-col p-4 transition-opacity duration-300 group-hover:opacity-0">
-        {/* Category */}
-        <span className="mb-1.5 inline-block w-fit rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary">
+        <span className="mb-1.5 inline-block w-fit rounded-full bg-accent/10 px-2.5 py-0.5 text-[10px] font-semibold text-accent">
           {categoryName}
         </span>
 
@@ -58,14 +58,14 @@ export default function CourseCard({ course }: { course: Course }) {
 
         <div className="mb-2 flex items-center gap-1 text-xs text-muted-foreground">
           <span className="font-medium text-foreground">(</span>
-          <span className="font-semibold text-foreground">{course.rating.toFixed(1)}</span>
+          <span className="font-semibold text-accent">{course.rating.toFixed(1)}</span>
           <span className="text-muted-foreground">/</span>
           <span>{course.reviewCount} {lang === "ar" ? "تقييم" : lang === "fr" ? "avis" : "Ratings"})</span>
         </div>
 
         <div className="mb-2 flex items-center gap-2 text-sm">
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+            className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline">
             <MessageCircle className="h-3.5 w-3.5" />
             {contactText}
           </a>
@@ -83,15 +83,15 @@ export default function CourseCard({ course }: { course: Course }) {
         </div>
       </div>
 
-      {/* Hover overlay — slides up on hover */}
-      <div className="absolute inset-x-0 bottom-0 translate-y-full bg-card border-t border-border p-4 transition-transform duration-300 ease-out group-hover:translate-y-0">
+      {/* Hover overlay */}
+      <div className="absolute inset-x-0 bottom-0 translate-y-full bg-card border-t border-accent/30 p-4 transition-transform duration-300 ease-out group-hover:translate-y-0">
         <h3 className="mb-2 line-clamp-2 text-sm font-semibold text-foreground">
           {title}
         </h3>
 
         <div className="mb-2 flex items-center gap-1 text-xs text-muted-foreground">
           <span>(</span>
-          <span className="font-semibold text-foreground">{course.rating.toFixed(1)}</span>
+          <span className="font-semibold text-accent">{course.rating.toFixed(1)}</span>
           <span>/</span>
           <span>{course.reviewCount} {lang === "ar" ? "تقييم" : lang === "fr" ? "avis" : "Ratings"})</span>
         </div>
@@ -102,13 +102,13 @@ export default function CourseCard({ course }: { course: Course }) {
 
         <div className="mb-3">
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+            className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline">
             <MessageCircle className="h-3.5 w-3.5" />
             {contactText}
           </a>
         </div>
 
-        <span className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+        <span className="inline-flex items-center gap-1 rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent/90">
           {enrollText}
         </span>
       </div>
