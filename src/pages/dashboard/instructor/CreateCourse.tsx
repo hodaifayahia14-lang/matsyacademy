@@ -334,8 +334,8 @@ export default function CreateCourse() {
             </>
           )}
 
-          {/* Step 4 — Curriculum */}
-          {step === 3 && (
+          {/* Step 4 — Curriculum (courses only) */}
+          {step === 3 && productType === "course" && (
             <>
               <p className="text-sm text-muted-foreground mb-4">{lang === "ar" ? "نظّم محتوى دورتك في أقسام ودروس" : "Organize your course content into sections and lessons"}</p>
               {sections.map((sec, si) => (
