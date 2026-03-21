@@ -14,6 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          content_ar: string
+          content_en: string
+          content_fr: string
+          cover_image: string | null
+          created_at: string
+          excerpt_ar: string
+          excerpt_en: string
+          excerpt_fr: string
+          id: string
+          published_at: string | null
+          status: string
+          title_ar: string
+          title_en: string
+          title_fr: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content_ar?: string
+          content_en?: string
+          content_fr?: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt_ar?: string
+          excerpt_en?: string
+          excerpt_fr?: string
+          id?: string
+          published_at?: string | null
+          status?: string
+          title_ar?: string
+          title_en?: string
+          title_fr?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content_ar?: string
+          content_en?: string
+          content_fr?: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt_ar?: string
+          excerpt_en?: string
+          excerpt_fr?: string
+          id?: string
+          published_at?: string | null
+          status?: string
+          title_ar?: string
+          title_en?: string
+          title_fr?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
@@ -822,6 +887,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      site_content: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          value_ar: string
+          value_en: string
+          value_fr: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          value_ar?: string
+          value_en?: string
+          value_fr?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          value_ar?: string
+          value_en?: string
+          value_fr?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
