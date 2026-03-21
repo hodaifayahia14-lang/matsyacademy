@@ -1,7 +1,8 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, MessageCircle } from "lucide-react";
+import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { mockCourses, mockReviews } from "@/data/mockData";
 import { motion } from "framer-motion";
@@ -13,6 +14,8 @@ function getLocalized(obj: any, field: string, lang: string): string {
 export default function CourseDetail() {
   const { id } = useParams();
   const { t, i18n } = useTranslation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const lang = i18n.language as "en" | "fr" | "ar";
   const course = mockCourses.find((c) => c.id === id);
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
@@ -38,9 +41,16 @@ export default function CourseDetail() {
   const levelName = getLocalized(course, "level", lang);
   const learningOutcomes = (course as any)[`learningOutcomes_${lang}`] || course.learningOutcomes;
   const requirements = (course as any)[`requirements_${lang}`] || course.requirements;
-  const whatsappUrl = "https://wa.me/213554275994";
-  const contactText = lang === "ar" ? "اتصل بنا للسعر" : lang === "fr" ? "Contactez-nous pour le prix" : "Contact for Price";
+  const priceText = course.price > 0 ? `${course.price.toLocaleString()} DZD` : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
   const enrollText = lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now";
+
+  const handleEnroll = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate(`/courses/${id}/player`);
+    }
+  };
 
   const toggleSection = (sectionId: string) => {
     setOpenSections((prev) => { const next = new Set(prev); next.has(sectionId) ? next.delete(sectionId) : next.add(sectionId); return next; });
@@ -243,19 +253,13 @@ export default function CourseDetail() {
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
               <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <div className="mb-4">
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 text-lg font-bold text-primary hover:underline">
-                    <MessageCircle className="h-5 w-5" />
-                    {contactText}
-                  </a>
+                <div className="mb-4 text-center">
+                  <p className="font-display text-3xl font-bold text-primary">{priceText}</p>
                 </div>
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  <Button className="mb-3 w-full gap-2" size="lg">
-                    {enrollText}
-                    <MessageCircle className="h-4 w-4" />
-                  </Button>
-                </a>
+                <Button className="mb-3 w-full gap-2" size="lg" onClick={handleEnroll}>
+                  <ShoppingCart className="h-4 w-4" />
+                  {enrollText}
+                </Button>
                 <p className="mb-4 text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
                 <div className="space-y-3 border-t pt-4">
                   {[

@@ -14,6 +14,11 @@ import { Link } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import type { LucideIcon } from "lucide-react";
 
+function useIsRTL() {
+  const { i18n } = useTranslation();
+  return i18n.language === "ar";
+}
+
 interface NavItem { title: string; url: string; icon: LucideIcon; }
 interface DashboardLayoutProps { items: NavItem[]; groupLabel: string; }
 
@@ -27,7 +32,7 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
     ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : "U";
 
   return (
-    <Sidebar collapsible="icon" className="border-e">
+    <Sidebar collapsible="icon" side={useIsRTL() ? "right" : "left"} className="border-e">
       <SidebarContent className="flex flex-col bg-background">
         <div className="flex h-14 items-center gap-2 border-b px-4">
           <Link to="/" className="flex items-center gap-2">
