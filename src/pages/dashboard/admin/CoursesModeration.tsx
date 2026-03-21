@@ -9,11 +9,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/sonner";
-import { Check, X, Trash2, Search } from "lucide-react";
+import { Check, X, Trash2, Search, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CoursesModeration() {
   const { t } = useTranslation();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
   const { data: courses, isLoading } = useQuery({
@@ -128,7 +130,12 @@ export default function CoursesModeration() {
 
   return (
     <div>
-      <h1 className="mb-6 font-display text-2xl font-bold">{t("dashboard.admin.courses")}</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold">{t("dashboard.admin.courses")}</h1>
+        <Button onClick={() => navigate("/dashboard/admin/courses/create")}>
+          <Plus className="me-1 h-4 w-4" /> {t("dashboard.instructor.createCourse")}
+        </Button>
+      </div>
 
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

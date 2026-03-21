@@ -12,6 +12,7 @@ import QAModeration from "./QAModeration";
 import BlogManagement from "./BlogManagement";
 import AboutManagement from "./AboutManagement";
 import EnrollmentsDashboard from "./EnrollmentsDashboard";
+import CreateCourse from "@/pages/dashboard/instructor/CreateCourse";
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
         <Route index element={<AdminOverview />} />
         <Route path="users" element={<UsersManagement />} />
         <Route path="courses" element={<CoursesModeration />} />
+        <Route path="courses/create" element={<CreateCourse />} />
         <Route path="enrollments" element={<EnrollmentsDashboard />} />
         <Route path="categories" element={<CategoriesManagement />} />
         <Route path="coupons" element={<CouponsManagement />} />

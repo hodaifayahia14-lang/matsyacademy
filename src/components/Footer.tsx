@@ -1,17 +1,33 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
 import matsyLogo from "@/assets/matsy-logo.png";
 
-const socials = [
-  { icon: Facebook, href: "#" },
-  { icon: Twitter, href: "#" },
-  { icon: Linkedin, href: "#" },
-  { icon: Youtube, href: "#" },
+const socialConfig = [
+  { key: "social_facebook", icon: Facebook },
+  { key: "social_twitter", icon: Twitter },
+  { key: "social_linkedin", icon: Linkedin },
+  { key: "social_youtube", icon: Youtube },
 ];
 
 export default function Footer() {
   const { t } = useTranslation();
+
+  const { data: socialLinks } = useQuery({
+    queryKey: ["footer-social-links"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("site_content")
+        .select("key, value_en")
+        .in("key", socialConfig.map((s) => s.key));
+      const map: Record<string, string> = {};
+      data?.forEach((item: any) => { map[item.key] = item.value_en || ""; });
+      return map;
+    },
+    staleTime: 60000,
+  });
 
   const footerLinks = {
     [t("footer.platform")]: [
@@ -40,12 +56,20 @@ export default function Footer() {
             </Link>
             <p className="mb-6 max-w-sm text-sm text-muted-foreground">{t("footer.description")}</p>
             <div className="flex gap-3">
-              {socials.map(({ icon: Icon, href }, i) => (
-                <a key={i} href={href}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground hover:border-accent">
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              {socialConfig.map(({ key, icon: Icon }) => {
+                const href = socialLinks?.[key] || "#";
+                return (
+                  <a
+                    key={key}
+                    href={href !== "" ? href : "#"}
+                    target={href && href !== "#" ? "_blank" : undefined}
+                    rel="noopener noreferrer"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground hover:border-accent"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
           {Object.entries(footerLinks).map(([title, links]) => (
