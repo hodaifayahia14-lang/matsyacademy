@@ -1,17 +1,19 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Users, BookOpen, Award, Shield, Star, Mail,
   CheckCircle, ChevronDown, Sparkles,
   GraduationCap, Clock, Headphones, BadgeCheck, Book,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import CourseCard from "@/components/CourseCard";
 import { mockCourses, mockCategories } from "@/data/mockData";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
-import heroImage from "@/assets/hero-matsy-main.png";
+import heroSlide1 from "@/assets/hero-slide-1.jpg";
+import heroSlide2 from "@/assets/hero-slide-2.jpg";
+import heroSlide3 from "@/assets/hero-slide-3.jpg";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
@@ -59,6 +61,17 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const [activeCat, setActiveCat] = useState("All");
+  const heroSlides = [heroSlide1, heroSlide2, heroSlide3];
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  }, [heroSlides.length]);
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   const stats = [
     { icon: Users, value: "+500", labelKey: "stats.students" },
@@ -110,9 +123,28 @@ export default function HomePage() {
     <div className="overflow-hidden">
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section className="relative min-h-[90vh] flex items-center">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+        <div className="absolute inset-0 overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentSlide}
+              src={heroSlides[currentSlide]}
+              alt=""
+              className="h-full w-full object-cover"
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+            />
+          </AnimatePresence>
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/35" />
+        </div>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-24 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+          {heroSlides.map((_, i) => (
+            <button key={i} onClick={() => setCurrentSlide(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${i === currentSlide ? "w-8 bg-accent" : "w-2 bg-white/40"}`} />
+          ))}
         </div>
 
         <div className="container relative z-10 py-20 lg:py-32">
@@ -157,7 +189,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link to="/courses">
-                <Button size="lg" variant="outline" className="gap-2 border-white/40 text-white hover:bg-white/10 text-lg px-8 py-6">
+                <Button size="lg" variant="outline" className="gap-2 border-white/40 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 text-lg px-8 py-6">
                   {lang === "ar" ? "استعرض المنتجات" : lang === "fr" ? "Parcourir les Produits" : "Browse Products"}
                 </Button>
               </Link>
