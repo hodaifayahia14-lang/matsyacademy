@@ -7,24 +7,27 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import CourseCard from "@/components/CourseCard";
-import { mockCourses, mockCategories } from "@/data/mockData";
+import { useCourses, useCategories } from "@/hooks/useCourses";
 import { motion } from "framer-motion";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
 }
 
-const levels = ["Beginner", "Intermediate", "Advanced"];
+const levels = ["beginner", "intermediate", "advanced"];
 const levelLabels: Record<string, Record<string, string>> = {
-  Beginner: { en: "Beginner", fr: "Débutant", ar: "مبتدئ" },
-  Intermediate: { en: "Intermediate", fr: "Intermédiaire", ar: "متوسط" },
-  Advanced: { en: "Advanced", fr: "Avancé", ar: "متقدم" },
+  beginner: { en: "Beginner", fr: "Débutant", ar: "مبتدئ" },
+  intermediate: { en: "Intermediate", fr: "Intermédiaire", ar: "متوسط" },
+  advanced: { en: "Advanced", fr: "Avancé", ar: "متقدم" },
 };
 
 export default function CourseCatalog() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const [searchParams] = useSearchParams();
+  const { courses: dbCourses, loading } = useCourses();
+  const dbCategories = useCategories();
+
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     searchParams.get("category") ? [searchParams.get("category")!] : []
@@ -33,20 +36,16 @@ export default function CourseCatalog() {
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 25000]);
 
-  const maxPrice = Math.max(...mockCourses.map(c => c.price), 25000);
+  const maxPrice = Math.max(...dbCourses.map(c => Number(c.price)), 25000);
 
   const filtered = useMemo(() => {
-    let result = [...mockCourses];
+    let result = [...dbCourses];
     if (search) {
       const q = search.toLowerCase();
-      result = result.filter((c) =>
-        c.title_en.toLowerCase().includes(q) ||
-        c.title_fr.toLowerCase().includes(q) ||
-        c.title_ar.includes(q)
-      );
+      result = result.filter((c) => c.title.toLowerCase().includes(q) || (c.description || "").toLowerCase().includes(q));
     }
     if (selectedCategories.length > 0) {
-      result = result.filter((c) => selectedCategories.includes(c.category));
+      result = result.filter((c) => selectedCategories.includes(c.category_name));
     }
     if (selectedTypes.length > 0) {
       result = result.filter((c) => selectedTypes.includes(c.type));
@@ -54,9 +53,9 @@ export default function CourseCatalog() {
     if (selectedLevels.length > 0) {
       result = result.filter((c) => selectedLevels.includes(c.level));
     }
-    result = result.filter((c) => c.price >= priceRange[0] && c.price <= priceRange[1]);
+    result = result.filter((c) => Number(c.price) >= priceRange[0] && Number(c.price) <= priceRange[1]);
     return result;
-  }, [search, selectedCategories, selectedTypes, selectedLevels, priceRange]);
+  }, [search, selectedCategories, selectedTypes, selectedLevels, priceRange, dbCourses]);
 
   const hasFilters = selectedCategories.length > 0 || selectedTypes.length > 0 || selectedLevels.length > 0 || search || priceRange[0] > 0 || priceRange[1] < maxPrice;
 
@@ -72,6 +71,9 @@ export default function CourseCatalog() {
     setter(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val]);
   };
 
+  const courseCount = dbCourses.filter(c => c.type === "course").length;
+  const bookCount = dbCourses.filter(c => c.type === "book").length;
+
   const FilterPanel = () => (
     <div className="space-y-6">
       {/* Type */}
@@ -81,17 +83,15 @@ export default function CourseCatalog() {
         </h4>
         <div className="space-y-2">
           {[
-            { val: "course", icon: GraduationCap, label: lang === "ar" ? "دورات" : lang === "fr" ? "Cours" : "Courses" },
-            { val: "book", icon: Book, label: lang === "ar" ? "كتب" : lang === "fr" ? "Livres" : "Books" },
-          ].map(({ val, icon: Icon, label }) => (
+            { val: "course", icon: GraduationCap, label: lang === "ar" ? "دورات" : lang === "fr" ? "Cours" : "Courses", count: courseCount },
+            { val: "book", icon: Book, label: lang === "ar" ? "كتب" : lang === "fr" ? "Livres" : "Books", count: bookCount },
+          ].map(({ val, icon: Icon, label, count }) => (
             <label key={val} className="flex cursor-pointer items-center gap-2 text-sm">
               <Checkbox checked={selectedTypes.includes(val)}
                 onCheckedChange={() => toggleFilter(selectedTypes, val, setSelectedTypes)} />
               <Icon className="h-4 w-4 text-muted-foreground" />
               <span className="text-foreground">{label}</span>
-              <span className="ms-auto text-xs text-muted-foreground">
-                ({mockCourses.filter(c => c.type === val).length})
-              </span>
+              <span className="ms-auto text-xs text-muted-foreground">({count})</span>
             </label>
           ))}
         </div>
@@ -101,14 +101,17 @@ export default function CourseCatalog() {
       <div>
         <h4 className="mb-3 text-sm font-semibold text-foreground">{t("catalog.category")}</h4>
         <div className="space-y-2">
-          {mockCategories.map((cat) => (
-            <label key={cat.name} className="flex cursor-pointer items-center gap-2 text-sm">
-              <Checkbox checked={selectedCategories.includes(cat.name)}
-                onCheckedChange={() => toggleFilter(selectedCategories, cat.name, setSelectedCategories)} />
-              <span className="text-foreground">{getLocalized(cat, "name", lang)}</span>
-              <span className="ms-auto text-xs text-muted-foreground">({cat.courseCount})</span>
-            </label>
-          ))}
+          {dbCategories.map((cat: any) => {
+            const catCount = dbCourses.filter(c => c.category_name === cat.name).length;
+            return (
+              <label key={cat.id} className="flex cursor-pointer items-center gap-2 text-sm">
+                <Checkbox checked={selectedCategories.includes(cat.name)}
+                  onCheckedChange={() => toggleFilter(selectedCategories, cat.name, setSelectedCategories)} />
+                <span className="text-foreground">{getLocalized(cat, "name", lang)}</span>
+                <span className="ms-auto text-xs text-muted-foreground">({catCount})</span>
+              </label>
+            );
+          })}
         </div>
       </div>
 
@@ -154,7 +157,7 @@ export default function CourseCatalog() {
             {lang === "ar" ? "الدورات والكتب" : lang === "fr" ? "Cours & Livres" : "Courses & Books"}
           </h1>
           <p className="text-primary-foreground/70">
-            {t("catalog.subtitle", { count: mockCourses.length })}
+            {t("catalog.subtitle", { count: dbCourses.length })}
           </p>
         </div>
       </div>
@@ -197,7 +200,9 @@ export default function CourseCatalog() {
               {t("catalog.coursesFound", { count: filtered.length })}
             </p>
 
-            {filtered.length > 0 ? (
+            {loading ? (
+              <div className="py-20 text-center text-muted-foreground">{lang === "ar" ? "جاري التحميل..." : "Loading..."}</div>
+            ) : filtered.length > 0 ? (
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {filtered.map((c, i) => (
                   <motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
