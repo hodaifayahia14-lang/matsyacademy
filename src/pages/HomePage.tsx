@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import CourseCard from "@/components/CourseCard";
-import { mockCourses, mockCategories } from "@/data/mockData";
+import { useCourses, useCategories } from "@/hooks/useCourses";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
 import heroSlide1 from "@/assets/hero-slide-1.jpg";
 import heroSlide2 from "@/assets/hero-slide-2.jpg";
