@@ -1,28 +1,63 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowRight, Users, BookOpen, Award, GraduationCap, MapPin, Clock, Zap,
-  Star, Mail, Shield, Play, CheckCircle, MessageCircle
+  ArrowRight, Users, BookOpen, Award, Shield, Star, Mail,
+  Play, CheckCircle, MessageCircle, ChevronDown, Sparkles,
+  GraduationCap, Clock, Headphones, BadgeCheck,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CourseCard from "@/components/CourseCard";
 import { mockCourses, mockCategories } from "@/data/mockData";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
-import heroImage from "@/assets/hero-matsy.jpg";
+import heroImage from "@/assets/hero-cinematic.jpg";
 
 const iconMap: Record<string, React.ElementType> = {
-  Shield, BookOpen, Award, Zap,
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
+  Shield, BookOpen, Award, Sparkles,
 };
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
+}
+
+/* Animated counter hook */
+function useCounter(target: number, inView: boolean) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const duration = 1500;
+    const step = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [inView, target]);
+  return count;
+}
+
+function StatCounter({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const numericValue = parseInt(value.replace(/\D/g, '')) || 0;
+  const count = useCounter(numericValue, inView);
+  const prefix = value.startsWith('+') ? '+' : '';
+  const isCheck = value === '✓';
+
+  return (
+    <div ref={ref} className="flex flex-col items-center gap-2 text-center">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+        <Icon className="h-6 w-6 text-accent" />
+      </div>
+      <span className="font-display text-3xl font-bold text-accent">
+        {isCheck ? '✓' : `${prefix}${count}`}
+      </span>
+      <p className="text-sm text-muted-foreground">{label}</p>
+    </div>
+  );
 }
 
 export default function HomePage() {
@@ -66,206 +101,177 @@ export default function HomePage() {
     { name: "M. Rachid Toumi", role: lang === "ar" ? "مفتش أمن معتمد" : lang === "fr" ? "Inspecteur HSE Certifié" : "Certified HSE Inspector", avatar: "https://randomuser.me/api/portraits/men/52.jpg" },
   ];
 
-  const learningFocused = [
-    {
-      title: lang === "ar" ? "تكوين عن بعد مسجل" : lang === "fr" ? "Formation en Ligne Enregistrée" : "Online Recorded Training",
-      desc: lang === "ar" ? "تعلم في أي وقت يناسبك مع دروس مسجلة عالية الجودة ومحتوى تفاعلي"
-        : lang === "fr" ? "Apprenez à votre rythme avec des cours enregistrés de haute qualité et du contenu interactif"
-        : "Learn at your own pace with high-quality recorded lessons and interactive content",
-      img: "https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=600&h=400&fit=crop",
-    },
-    {
-      title: lang === "ar" ? "دورات السلامة المعتمدة" : lang === "fr" ? "Formations Sécurité Certifiées" : "Certified Safety Training",
-      desc: lang === "ar" ? "احصل على شهادات معتمدة من وزارة التكوين المهني في مجال السلامة والوقاية"
-        : lang === "fr" ? "Obtenez des certificats reconnus par le Ministère de la Formation Professionnelle"
-        : "Get certificates accredited by the Ministry of Vocational Training in safety and prevention",
-      img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop",
-    },
-    {
-      title: lang === "ar" ? "إرشاد ديني متخصص" : lang === "fr" ? "Guidance Religieuse Spécialisée" : "Specialized Religious Guidance",
-      desc: lang === "ar" ? "تعلم فنون الإرشاد الديني وإدارة مجموعات الحجاج والمعتمرين باحترافية"
-        : lang === "fr" ? "Apprenez l'art du guidage religieux et la gestion des groupes de pèlerins"
-        : "Learn the art of religious guidance and professional pilgrim group management",
-      img: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=600&h=400&fit=crop",
-    },
+  const whyChooseUs = [
+    { icon: BadgeCheck, title: lang === "ar" ? "تكوين معتمد وزارياً" : lang === "fr" ? "Formation Certifiée par le Ministère" : "Ministry-Certified Training", desc: lang === "ar" ? "جميع دوراتنا معتمدة من وزارة التكوين المهني" : lang === "fr" ? "Toutes nos formations sont certifiées par le Ministère de la Formation" : "All our courses are certified by the Ministry of Vocational Training" },
+    { icon: Clock, title: lang === "ar" ? "تعلّم عن بعد مرن" : lang === "fr" ? "Apprentissage en Ligne Flexible" : "Flexible Online Learning", desc: lang === "ar" ? "تعلم في أي وقت ومن أي مكان بالسرعة التي تناسبك" : lang === "fr" ? "Apprenez à tout moment et n'importe où à votre propre rythme" : "Learn anytime, anywhere at your own pace" },
+    { icon: GraduationCap, title: lang === "ar" ? "شهادة معترف بها" : lang === "fr" ? "Certificat Reconnu" : "Recognized Certificate", desc: lang === "ar" ? "احصل على شهادة مهنية معترف بها عند إتمام الدورة" : lang === "fr" ? "Obtenez un certificat professionnel reconnu à la fin de la formation" : "Earn a recognized professional certificate upon completion" },
+    { icon: Headphones, title: lang === "ar" ? "دعم مستمر" : lang === "fr" ? "Support Continu" : "Ongoing Support", desc: lang === "ar" ? "فريق دعم متاح لمساعدتك في كل خطوة من رحلتك التعليمية" : lang === "fr" ? "Une équipe de support disponible pour vous aider à chaque étape" : "A support team available to help you every step of the way" },
   ];
 
   const filteredCourses = activeCat === "All"
     ? mockCourses
     : mockCourses.filter((c) => c.category === activeCat);
 
-  
-
   return (
-    <div>
-      {/* Hero */}
-      <section className="bg-background py-16 lg:py-24">
+    <div className="overflow-hidden">
+      {/* ═══════════════════ HERO ═══════════════════ */}
+      <section className="relative min-h-[100vh] flex items-center">
+        {/* Background image with dark overlay */}
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-background/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background" />
+        </div>
+
+        <div className="container relative z-10 py-20 lg:py-32">
+          <div className="mx-auto max-w-3xl text-center">
+            {/* Animated badge */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-sm text-accent">
+              <Sparkles className="h-4 w-4" />
+              {lang === "ar" ? "منصة تعليمية معتمدة" : lang === "fr" ? "Plateforme Éducative Certifiée" : "Certified Education Platform"}
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-6 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
+            >
+              <span className="text-accent">
+                {lang === "ar" ? "أكاديمية مايسي" : lang === "fr" ? "Matsy Academy" : "Matsy Academy"}
+              </span>
+              <br />
+              <span className="text-foreground">
+                {lang === "ar" ? "للتدريب والتطوير المهني" : lang === "fr" ? "Formation & Développement Professionnel" : "Professional Training & Development"}
+              </span>
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
+              className="mb-10 text-lg text-muted-foreground md:text-xl"
+            >
+              {lang === "ar"
+                ? "دورات معتمدة في السلامة والصحة المهنية والإرشاد الديني — +500 طالب مسجل"
+                : lang === "fr"
+                ? "Formations certifiées en sécurité HSE et guidance religieuse — +500 étudiants inscrits"
+                : "Certified HSE safety and religious guidance courses — +500 enrolled students"}
+            </motion.p>
+
+            {/* CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
+              className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+            >
+              <Link to="/courses">
+                <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 border border-accent/30 shadow-lg shadow-primary/30 text-lg px-8 py-6">
+                  {lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now"} <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/courses">
+                <Button size="lg" variant="outline" className="gap-2 border-accent/40 text-accent hover:bg-accent/10 text-lg px-8 py-6">
+                  {lang === "ar" ? "استعرض الدورات" : lang === "fr" ? "Parcourir les Cours" : "Browse Courses"}
+                </Button>
+              </Link>
+            </motion.div>
+
+            {/* Social proof */}
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+              className="mt-12 flex items-center justify-center gap-4"
+            >
+              <div className="flex -space-x-3 rtl:space-x-reverse">
+                {[32, 75, 44, 52, 21].map((id, idx) => (
+                  <img key={id} src={`https://randomuser.me/api/portraits/${idx % 2 === 0 ? 'men' : 'women'}/${id}.jpg`} alt=""
+                    className="h-10 w-10 rounded-full border-2 border-background object-cover ring-2 ring-accent/20" />
+                ))}
+              </div>
+              <div className="text-start">
+                <div className="flex items-center gap-1 mb-0.5">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-accent text-accent" />)}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  +500 {t("stats.students")} • 4.9/5
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Scroll arrow */}
+          <motion.div
+            animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          >
+            <ChevronDown className="h-8 w-8 text-accent/50" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ STATS BAR ═══════════════════ */}
+      <section className="relative -mt-16 z-20">
         <div className="container">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
-              <h1 className="mb-6 font-display text-4xl font-bold leading-tight text-foreground md:text-5xl lg:text-6xl">
-                {lang === "ar" ? "أكاديمية مايسي للتدريب والتطوير" : lang === "fr" ? "Matsy Academy — Formation et Développement Professionnel" : "Matsy Academy — Professional Training & Development"}
-              </h1>
-              <p className="mb-8 max-w-lg text-lg text-muted-foreground">
-                {lang === "ar" ? "منصة تعليمية معتمدة تقدم دورات في السلامة والصحة المهنية والإرشاد الديني. +500 طالب مسجل."
-                  : lang === "fr" ? "Plateforme éducative certifiée proposant des formations en sécurité HSE et guidance religieuse. +500 étudiants inscrits."
-                  : "Certified educational platform offering HSE safety and religious guidance courses. +500 enrolled students."}
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row">
-                <Link to="/courses">
-                  <Button size="lg" className="gap-2 font-semibold">
-                    {t("hero.browseCourses")} <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <a href="https://wa.me/213554275994" target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="gap-2 font-semibold">
-                    <MessageCircle className="h-4 w-4" />
-                    {lang === "ar" ? "تواصل معنا" : lang === "fr" ? "Contactez-nous" : "Contact Us"}
-                  </Button>
-                </a>
-              </div>
-              <div className="mt-8 flex items-center gap-3">
-                <div className="flex -space-x-3 rtl:space-x-reverse">
-                  {[32, 75, 44, 52].map((id, idx) => (
-                    <img key={id} src={`https://randomuser.me/api/portraits/${idx === 2 ? 'women' : 'men'}/${id}.jpg`} alt=""
-                      className="h-10 w-10 rounded-full border-2 border-background object-cover" />
-                  ))}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">+500 {t("stats.students")}</p>
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => <Star key={i} className="h-3 w-3 fill-warning text-warning" />)}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
-              <div className="relative">
-                <img
-                  src={heroImage}
-                  alt={lang === "ar" ? "طلاب متخرجون" : "Graduates"}
-                  className="rounded-2xl"
-                />
-                <div className="absolute -bottom-4 -start-4 rounded-xl bg-primary p-4 text-primary-foreground shadow-lg">
-                  <p className="text-2xl font-bold">+500</p>
-                  <p className="text-sm">{t("stats.students")}</p>
-                </div>
-              </div>
-            </motion.div>
+          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md p-8 shadow-2xl">
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+              {stats.map(({ icon, value, labelKey }) => (
+                <StatCounter key={labelKey} icon={icon} value={value} label={t(labelKey)} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Scrolling Marquee */}
-      <section className="bg-primary py-4 overflow-hidden">
+      {/* ═══════════════════ MARQUEE ═══════════════════ */}
+      <section className="py-6 overflow-hidden border-y border-border bg-secondary/50 mt-12">
         <div className="flex gap-12 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: "fit-content" }}>
           {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
-            <span key={i} className="whitespace-nowrap text-base font-semibold text-primary-foreground">{item}</span>
+            <span key={i} className="whitespace-nowrap text-base font-semibold text-accent">{item}</span>
           ))}
         </div>
       </section>
 
-      {/* Learn With Us */}
-      <section className="py-16 bg-secondary/50">
+      {/* ═══════════════════ FEATURED COURSES ═══════════════════ */}
+      <section className="py-20">
         <div className="container">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="relative">
-              <img src="https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=800&h=600&fit=crop"
-                alt={lang === "ar" ? "التعلم عبر الإنترنت" : "Online Learning"} className="rounded-2xl" />
-              <button className="absolute inset-0 flex items-center justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
-                  <Play className="h-6 w-6" />
-                </div>
-              </button>
-            </div>
-            <div>
-              <h2 className="mb-4 font-display text-3xl font-bold text-foreground">
-                {t("howItWorks.title")}
-              </h2>
-              <p className="mb-6 text-muted-foreground">{t("howItWorks.subtitle")}</p>
-              <div className="space-y-4">
-                {[
-                  { icon: MapPin, titleKey: "howItWorks.where", descKey: "howItWorks.whereDesc" },
-                  { icon: Clock, titleKey: "howItWorks.when", descKey: "howItWorks.whenDesc" },
-                  { icon: Zap, titleKey: "howItWorks.pace", descKey: "howItWorks.paceDesc" },
-                ].map(({ icon: Icon, titleKey, descKey }) => (
-                  <div key={titleKey} className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">{t(titleKey)}</h3>
-                      <p className="text-sm text-muted-foreground">{t(descKey)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="mb-10 text-center">
+            <h2 className="mb-3 font-display text-3xl font-bold md:text-4xl">
+              <span className="text-foreground">{lang === "ar" ? "دوراتنا" : lang === "fr" ? "Nos" : "Our"} </span>
+              <span className="text-accent">{lang === "ar" ? "المميزة" : lang === "fr" ? "Formations" : "Courses"}</span>
+            </h2>
+            <div className="mx-auto mb-4 h-1 w-16 rounded-full bg-accent" />
+            <p className="text-muted-foreground">{t("featured.subtitle")}</p>
+          </motion.div>
 
-      {/* Learning Focused */}
-      <section className="py-16">
-        <div className="container">
-          <div className="mb-10 text-center">
-            <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("learningFocused.title")}</h2>
-            <p className="text-muted-foreground">{t("learningFocused.subtitle")}</p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {learningFocused.map((item, i) => (
-              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="group overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
-                <div className="aspect-video overflow-hidden">
-                  <img src={item.img} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                </div>
-                <div className="p-5">
-                  <h3 className="mb-2 font-display text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Explore Top Courses */}
-      <section className="py-16 bg-secondary/50">
-        <div className="container">
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("featured.title")}</h2>
-              <p className="text-muted-foreground">{t("featured.subtitle")}</p>
-            </div>
-            <Link to="/courses">
-              <Button variant="outline" className="gap-2 hidden sm:inline-flex">
-                {t("featured.viewAll")} <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="mb-8 flex flex-wrap gap-2">
+          {/* Category filters */}
+          <div className="mb-10 flex flex-wrap justify-center gap-3">
             {[{ name: "All", name_en: "All", name_fr: "Tous", name_ar: "الكل" }, ...mockCategories].map((cat) => {
               const catLabel = getLocalized(cat, "name", lang);
               return (
                 <button key={cat.name} onClick={() => setActiveCat(cat.name)}
-                  className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                    activeCat === cat.name ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                  className={`rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
+                    activeCat === cat.name
+                      ? "bg-accent text-accent-foreground shadow-lg shadow-accent/30"
+                      : "border border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-accent"
                   }`}>
                   {catLabel}
                 </button>
               );
             })}
           </div>
+
+          {/* Course grid */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredCourses.map((c, i) => (
-              <motion.div key={c.id} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+              <motion.div key={c.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}>
                 <CourseCard course={c} />
               </motion.div>
             ))}
           </div>
-          <div className="mt-8 text-center sm:hidden">
+
+          <div className="mt-10 text-center">
             <Link to="/courses">
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 border-accent/40 text-accent hover:bg-accent/10">
                 {t("featured.viewAll")} <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -273,57 +279,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16">
+      {/* ═══════════════════ WHY CHOOSE US ═══════════════════ */}
+      <section className="py-20 bg-secondary/30">
         <div className="container">
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            {stats.map(({ icon: Icon, value, labelKey }, i) => (
-              <motion.div key={labelKey} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="rounded-xl border bg-card p-6 text-center shadow-sm">
-                <Icon className="mx-auto mb-3 h-8 w-8 text-primary" />
-                <span className="font-display text-2xl font-bold text-foreground">{value}</span>
-                <p className="text-sm text-muted-foreground">{t(labelKey)}</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="mb-12 text-center">
+            <h2 className="mb-3 font-display text-3xl font-bold md:text-4xl">
+              <span className="text-foreground">{lang === "ar" ? "لماذا" : lang === "fr" ? "Pourquoi" : "Why"} </span>
+              <span className="text-accent">{lang === "ar" ? "تختار أكاديمية مايسي؟" : lang === "fr" ? "Choisir Matsy Academy ?" : "Choose Matsy Academy?"}</span>
+            </h2>
+            <div className="mx-auto mb-4 h-1 w-16 rounded-full bg-accent" />
+          </motion.div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {whyChooseUs.map(({ icon: Icon, title, desc }, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.5 }}
+                className="group rounded-2xl border border-border bg-card p-6 text-center transition-all duration-300 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1"
+              >
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10 transition-colors group-hover:bg-accent/20">
+                  <Icon className="h-7 w-7 text-accent" />
+                </div>
+                <h3 className="mb-2 font-display text-lg font-semibold text-foreground">{title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-16 bg-secondary/50">
-        <div className="container">
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("categories.title")}</h2>
-            <p className="text-muted-foreground">{t("categories.subtitle")}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {mockCategories.map(({ name, icon, slug, courseCount, ...rest }, i) => {
-              const Icon = iconMap[icon] || BookOpen;
-              const catName = getLocalized(rest, "name", lang) || name;
-              return (
-                <motion.div key={slug} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                  <Link to={`/courses?category=${encodeURIComponent(name)}`}
-                    className="group flex flex-col items-center rounded-xl border bg-card p-6 text-center shadow-sm transition-all hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground hover:shadow-md">
-                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary-foreground/20">
-                      <Icon className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
-                    </div>
-                    <h3 className="mb-1 text-sm font-semibold">{catName}</h3>
-                    <span className="text-xs text-muted-foreground group-hover:text-primary-foreground/70">{courseCount} {t("stats.courses").toLowerCase()}</span>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Mentors */}
-      <section className="py-16">
+      {/* ═══════════════════ MENTORS ═══════════════════ */}
+      <section className="py-20">
         <div className="container">
           <div className="grid items-center gap-12 lg:grid-cols-3">
-            <div>
-              <h2 className="mb-4 font-display text-3xl font-bold text-foreground">
-                {t("mentors.title")}
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              <h2 className="mb-4 font-display text-3xl font-bold">
+                <span className="text-foreground">{lang === "ar" ? "تعلّم من" : lang === "fr" ? "Apprenez avec" : "Learn from"} </span>
+                <span className="text-accent">{lang === "ar" ? "الخبراء" : lang === "fr" ? "les Experts" : "Experts"}</span>
               </h2>
               <p className="mb-6 text-muted-foreground">{t("mentors.subtitle")}</p>
               <div className="space-y-4">
@@ -333,22 +325,23 @@ export default function HomePage() {
                   { value: "99%", label: t("mentors.satisfaction") },
                 ].map(({ value, label }) => (
                   <div key={label} className="flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                    <span className="text-foreground"><strong>{value}</strong> {label}</span>
+                    <CheckCircle className="h-5 w-5 text-accent" />
+                    <span className="text-foreground"><strong className="text-accent">{value}</strong> {label}</span>
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
             <div className="lg:col-span-2 grid grid-cols-2 gap-4 md:grid-cols-4">
               {mentors.map((m, i) => (
-                <motion.div key={m.name} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                  className="group overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                <motion.div key={m.name} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                  className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:-translate-y-1 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/10">
                   <div className="aspect-square overflow-hidden">
                     <img src={m.avatar} alt={m.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div className="p-3 text-center">
                     <h3 className="text-sm font-semibold text-foreground">{m.name}</h3>
-                    <p className="text-xs text-muted-foreground">{m.role}</p>
+                    <p className="text-xs text-accent">{m.role}</p>
                   </div>
                 </motion.div>
               ))}
@@ -357,13 +350,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16 bg-secondary/50">
+      {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
+      <section className="py-20 bg-secondary/30">
         <div className="container">
-          <div className="mb-10 text-center">
-            <h2 className="mb-2 font-display text-3xl font-bold text-foreground">{t("testimonials.title")}</h2>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="mb-10 text-center">
+            <h2 className="mb-3 font-display text-3xl font-bold md:text-4xl">
+              <span className="text-foreground">{lang === "ar" ? "ماذا يقول" : lang === "fr" ? "Ce que disent" : "What Our"} </span>
+              <span className="text-accent">{lang === "ar" ? "طلابنا" : lang === "fr" ? "nos Étudiants" : "Students Say"}</span>
+            </h2>
+            <div className="mx-auto mb-4 h-1 w-16 rounded-full bg-accent" />
             <p className="text-muted-foreground">{t("testimonials.subtitle")}</p>
-          </div>
+          </motion.div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
             <TestimonialsColumn testimonials={firstColumn} duration={18} />
             <TestimonialsColumn testimonials={secondColumn} duration={22} className="hidden md:block" />
@@ -372,17 +370,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="py-16">
+      {/* ═══════════════════ CTA BANNER ═══════════════════ */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-primary" />
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, hsl(var(--accent) / 0.1) 10px, hsl(var(--accent) / 0.1) 20px)' }} />
+        <div className="container relative z-10 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="mb-4 font-display text-3xl font-bold text-primary-foreground md:text-4xl">
+              {lang === "ar" ? "ابدأ رحلتك التعليمية اليوم" : lang === "fr" ? "Commencez Votre Parcours Aujourd'hui" : "Start Your Learning Journey Today"}
+            </h2>
+            <p className="mb-8 text-lg text-primary-foreground/80">
+              {lang === "ar" ? "سجّل مجاناً واحصل على وصول فوري لدوراتنا المعتمدة" : lang === "fr" ? "Inscrivez-vous gratuitement et accédez instantanément à nos formations certifiées" : "Register for free and get instant access to our certified courses"}
+            </p>
+            <Link to="/register">
+              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 text-lg px-10 py-6 shadow-xl animate-shimmer"
+                style={{ backgroundSize: '200% 100%', backgroundImage: 'linear-gradient(90deg, hsl(var(--accent)) 0%, hsl(var(--gold-light)) 50%, hsl(var(--accent)) 100%)' }}>
+                {lang === "ar" ? "سجّل مجاناً" : lang === "fr" ? "Inscrivez-vous Gratuitement" : "Register Free"} <ArrowRight className="ms-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ NEWSLETTER ═══════════════════ */}
+      <section className="py-20">
         <div className="container">
           <div className="mx-auto max-w-xl text-center">
-            <Mail className="mx-auto mb-4 h-10 w-10 text-primary" />
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10">
+              <Mail className="h-7 w-7 text-accent" />
+            </div>
             <h2 className="mb-3 font-display text-3xl font-bold text-foreground">{t("newsletter.title")}</h2>
             <p className="mb-6 text-muted-foreground">{t("newsletter.subtitle")}</p>
             <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
               <input type="email" placeholder={t("newsletter.placeholder")}
-                className="flex-1 rounded-lg border px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-              <Button type="submit">{t("newsletter.subscribe")}</Button>
+                className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent" />
+              <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90">{t("newsletter.subscribe")}</Button>
             </form>
           </div>
         </div>

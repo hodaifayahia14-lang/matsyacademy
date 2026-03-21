@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, Search, LogOut, User, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, User, Phone, ArrowRight, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -52,35 +52,40 @@ export default function Navbar() {
     ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : "U";
 
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${scrolled ? "bg-background/95 backdrop-blur-md shadow-header" : "bg-background"}`}>
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      scrolled
+        ? "bg-background/95 backdrop-blur-md shadow-header border-b border-border"
+        : "bg-transparent"
+    }`}>
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-xl font-bold text-primary">
-            Matsy<span className="text-foreground"> Academy</span>
+          <span className="font-display text-xl font-bold">
+            <span className="text-accent">Matsy</span>
+            <span className="text-foreground"> Academy</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 lg:flex">
           <Link to="/">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.home")}</Button>
+            <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent hover:bg-accent/10">{t("navbar.home")}</Button>
           </Link>
 
           {/* Courses dropdown */}
           <div className="relative" onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
             <Link to="/courses">
-              <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">
+              <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent hover:bg-accent/10">
                 {t("navbar.courses")} <ChevronDown className="ms-1 h-3 w-3" />
               </Button>
             </Link>
             <AnimatePresence>
               {catOpen && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
-                  className="absolute start-0 top-full w-56 rounded-lg border bg-card p-2 shadow-lg">
+                  className="absolute start-0 top-full w-56 rounded-lg border border-border bg-card p-2 shadow-xl">
                   {categoryKeys.map(({ labelKey, to }) => (
                     <Link key={to} to={to}
-                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
+                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent">
                       {t(labelKey)}
                     </Link>
                   ))}
@@ -90,25 +95,25 @@ export default function Navbar() {
           </div>
 
           <Link to="/instructors">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.instructors")}</Button>
+            <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent hover:bg-accent/10">{t("navbar.instructors")}</Button>
           </Link>
 
           <Link to="/blog">
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">{t("navbar.blog")}</Button>
+            <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent hover:bg-accent/10">{t("navbar.blog")}</Button>
           </Link>
 
           {/* Pages dropdown */}
           <div className="relative" onMouseEnter={() => setPagesOpen(true)} onMouseLeave={() => setPagesOpen(false)}>
-            <Button variant="ghost" size="sm" className="text-foreground hover:text-primary">
+            <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent hover:bg-accent/10">
               {t("navbar.pages")} <ChevronDown className="ms-1 h-3 w-3" />
             </Button>
             <AnimatePresence>
               {pagesOpen && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
-                  className="absolute start-0 top-full w-48 rounded-lg border bg-card p-2 shadow-lg">
+                  className="absolute start-0 top-full w-48 rounded-lg border border-border bg-card p-2 shadow-xl">
                   {pageKeys.map(({ labelKey, to }) => (
                     <Link key={to} to={to}
-                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-primary">
+                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent">
                       {t(labelKey)}
                     </Link>
                   ))}
@@ -120,16 +125,16 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden items-center gap-3 lg:flex">
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <a href="https://wa.me/213554275994" className="flex items-center gap-1 text-sm text-accent hover:text-accent/80 transition-colors">
             <Phone className="h-4 w-4" />
-            <span>+01 123 456 7890</span>
-          </div>
+            <span className="hidden xl:inline">+213 554 275 994</span>
+          </a>
           <LanguageSwitcher />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9">
+                  <Avatar className="h-9 w-9 ring-2 ring-accent/30">
                     <AvatarImage src={profile?.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs">{initials}</AvatarFallback>
                   </Avatar>
@@ -153,10 +158,10 @@ export default function Navbar() {
           ) : (
             <div className="flex items-center gap-2">
               <Link to="/login">
-                <Button variant="ghost" size="sm">{t("navbar.login")}</Button>
+                <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent">{t("navbar.login")}</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="gap-1">
+                <Button size="sm" className="gap-1 bg-primary hover:bg-primary/90 border border-accent/30 shadow-lg shadow-primary/20">
                   {t("navbar.signUp")} <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
@@ -174,24 +179,24 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t bg-background lg:hidden">
+            className="overflow-hidden border-t border-border bg-background lg:hidden">
             <div className="container flex flex-col gap-2 py-4">
-              <Link to="/" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.home")}</Link>
-              <Link to="/courses" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.courses")}</Link>
-              <Link to="/instructors" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.instructors")}</Link>
-              <Link to="/blog" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.blog")}</Link>
-              <Link to="/about" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.about")}</Link>
-              <Link to="/qa" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.qa")}</Link>
-              <Link to="/contact" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.contactUs")}</Link>
+              <Link to="/" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.home")}</Link>
+              <Link to="/courses" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.courses")}</Link>
+              <Link to="/instructors" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.instructors")}</Link>
+              <Link to="/blog" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.blog")}</Link>
+              <Link to="/about" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.about")}</Link>
+              <Link to="/qa" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.qa")}</Link>
+              <Link to="/contact" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.contactUs")}</Link>
               <LanguageSwitcher />
               {user ? (
                 <>
-                  <Link to={dashboardPath} className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.dashboard")}</Link>
+                  <Link to={dashboardPath} className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.dashboard")}</Link>
                   <button onClick={handleSignOut} className="rounded-md px-3 py-2 text-start text-sm text-destructive hover:bg-secondary">{t("navbar.signOut")}</button>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="rounded-md px-3 py-2 text-sm hover:bg-secondary">{t("navbar.login")}</Link>
+                  <Link to="/login" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.login")}</Link>
                   <Link to="/register"><Button className="w-full" size="sm">{t("navbar.signUp")}</Button></Link>
                 </>
               )}

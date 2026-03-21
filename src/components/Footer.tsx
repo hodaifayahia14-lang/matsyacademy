@@ -26,20 +26,21 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t bg-background">
+    <footer className="border-t border-border bg-card">
       <div className="container py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link to="/" className="mb-4 flex items-center gap-2">
-              <span className="font-display text-xl font-bold text-primary">
-                Matsy<span className="text-foreground"> Academy</span>
+              <span className="font-display text-xl font-bold">
+                <span className="text-accent">Matsy</span>
+                <span className="text-foreground"> Academy</span>
               </span>
             </Link>
             <p className="mb-6 max-w-sm text-sm text-muted-foreground">{t("footer.description")}</p>
             <div className="flex gap-3">
               {socials.map(({ icon: Icon, href }, i) => (
                 <a key={i} href={href}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground">
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-secondary text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground hover:border-accent">
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
@@ -51,14 +52,14 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map(({ label, to }) => (
                   <li key={label}>
-                    <Link to={to} className="text-sm text-muted-foreground transition-colors hover:text-primary">{label}</Link>
+                    <Link to={to} className="text-sm text-muted-foreground transition-colors hover:text-accent">{label}</Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div className="mt-10 border-t pt-6 text-center text-xs text-muted-foreground">
+        <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} Matsy Academy — أكاديمية مايسي للتدريب و التطوير
         </div>
       </div>
