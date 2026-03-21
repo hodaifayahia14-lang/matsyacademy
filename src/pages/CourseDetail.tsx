@@ -32,6 +32,8 @@ export default function CourseDetail() {
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
 
+  useEffect(() => { window.scrollTo(0, 0); }, [id]);
+
   useEffect(() => {
     if (!course || course.type === "book") return;
     supabase
