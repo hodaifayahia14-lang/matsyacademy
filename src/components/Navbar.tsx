@@ -36,6 +36,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user, profile, roles, signOut } = useAuth();
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
