@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 export default function CoursesModeration() {
   const { t } = useTranslation();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
   const { data: courses, isLoading } = useQuery({
