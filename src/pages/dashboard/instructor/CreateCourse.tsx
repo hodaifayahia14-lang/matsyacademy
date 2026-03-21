@@ -389,6 +389,15 @@ export default function CreateCourse() {
             </>
           )}
 
+          {/* Step 4 — Book info (books only) */}
+          {step === 3 && productType === "book" && (
+            <div className="rounded-xl border bg-secondary/30 p-6 text-center">
+              <BookOpen className="mx-auto mb-3 h-12 w-12 text-primary/50" />
+              <h3 className="mb-2 font-semibold">{lang === "ar" ? "لا يوجد منهج مطلوب للكتب" : lang === "fr" ? "Pas de programme requis pour les livres" : "No curriculum needed for books"}</h3>
+              <p className="text-sm text-muted-foreground">{lang === "ar" ? "الكتب لا تحتاج لأقسام ودروس. انتقل للخطوة التالية." : "Books don't need sections and lessons. Continue to the next step."}</p>
+            </div>
+          )}
+
           {/* Step 5 — Pricing */}
           {step === 4 && (
             <>
