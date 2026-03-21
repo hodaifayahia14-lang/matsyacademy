@@ -77,16 +77,16 @@ export default function HomePage() {
 
   const stats = [
     { icon: Users, value: "+500", labelKey: "stats.students" },
-    { icon: BookOpen, value: "3", labelKey: "stats.courses" },
-    { icon: Shield, value: "2", labelKey: "stats.fields" },
+    { icon: BookOpen, value: "12", labelKey: "stats.courses" },
+    { icon: Shield, value: "4", labelKey: "stats.fields" },
     { icon: Award, value: "✓", labelKey: "stats.accredited" },
   ];
 
   const marqueeItems = lang === "ar"
-    ? ["⭐ تكوين معتمد", "⭐ دورات السلامة المهنية", "⭐ مرشد الحج والعمرة", "⭐ +500 طالب", "⭐ كتب متخصصة", "⭐ تكوين عن بعد"]
+    ? ["⭐ تكوين معتمد", "⭐ العناية الجسدية", "⭐ تعليم الأطفال", "⭐ الأمن والوقاية", "⭐ إرشاد الحج والعمرة", "⭐ +500 طالب", "⭐ تكوين عن بعد"]
     : lang === "fr"
-    ? ["⭐ Formation Certifiée", "⭐ Cours HSE", "⭐ Guide Hajj & Omra", "⭐ +500 Étudiants", "⭐ Livres Spécialisés", "⭐ Formation en Ligne"]
-    : ["⭐ Certified Training", "⭐ HSE Courses", "⭐ Hajj & Umrah Guide", "⭐ +500 Students", "⭐ Specialized Books", "⭐ Online Training"];
+    ? ["⭐ Formation Certifiée", "⭐ Soins Corporels", "⭐ Petite Enfance", "⭐ Sécurité HSE", "⭐ Guide Hajj & Omra", "⭐ +500 Étudiants", "⭐ Formation en Ligne"]
+    : ["⭐ Certified Training", "⭐ Body Care", "⭐ Early Childhood", "⭐ HSE Safety", "⭐ Hajj & Umrah Guide", "⭐ +500 Students", "⭐ Online Training"];
 
   const testimonials: Testimonial[] = [
     { name: "Karim Bouzid", role: lang === "ar" ? "متخصص في السلامة" : lang === "fr" ? "Spécialiste Sécurité" : "Safety Specialist", text: lang === "ar" ? "أكاديمية مايسي غيرت مساري المهني. الدورات عملية والمدربون من أعلى مستوى." : lang === "fr" ? "Maisy Academy a transformé ma carrière. Les cours sont pratiques et les formateurs excellents." : "Maisy Academy transformed my career. The courses are practical and the instructors are top-notch.", image: "https://randomuser.me/api/portraits/men/11.jpg", rating: 5 },

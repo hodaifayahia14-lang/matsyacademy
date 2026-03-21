@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Youtube, Phone } from "lucide-react";
 import maisyLogo from "@/assets/maisy-logo.png";
 
 const socialConfig = [
@@ -84,6 +84,21 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+          <div>
+            <h4 className="mb-4 text-sm font-semibold text-foreground">
+              {t("footer.contact", "اتصل بنا")}
+            </h4>
+            <ul className="space-y-2.5">
+              {["0669 79 95 16", "0554 27 59 94", "0799 10 92 95"].map((num) => (
+                <li key={num}>
+                  <a href={`https://wa.me/213${num.replace(/\s/g, "").slice(1)}`} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-accent">
+                    <Phone className="h-3.5 w-3.5" /> {num}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} Maisy Academy — أكاديمية مايسي للتدريب و التطوير
