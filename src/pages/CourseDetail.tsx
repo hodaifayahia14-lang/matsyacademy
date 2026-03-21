@@ -41,9 +41,16 @@ export default function CourseDetail() {
   const levelName = getLocalized(course, "level", lang);
   const learningOutcomes = (course as any)[`learningOutcomes_${lang}`] || course.learningOutcomes;
   const requirements = (course as any)[`requirements_${lang}`] || course.requirements;
-  const whatsappUrl = "https://wa.me/213554275994";
-  const contactText = lang === "ar" ? "اتصل بنا للسعر" : lang === "fr" ? "Contactez-nous pour le prix" : "Contact for Price";
+  const priceText = course.price > 0 ? `${course.price.toLocaleString()} DZD` : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
   const enrollText = lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now";
+
+  const handleEnroll = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate(`/courses/${id}/player`);
+    }
+  };
 
   const toggleSection = (sectionId: string) => {
     setOpenSections((prev) => { const next = new Set(prev); next.has(sectionId) ? next.delete(sectionId) : next.add(sectionId); return next; });
