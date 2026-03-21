@@ -89,11 +89,11 @@ export default function HomePage() {
     : ["⭐ Certified Training", "⭐ HSE Courses", "⭐ Hajj & Umrah Guide", "⭐ +500 Students", "⭐ Specialized Books", "⭐ Online Training"];
 
   const testimonials: Testimonial[] = [
-    { name: "Karim Bouzid", role: lang === "ar" ? "متخصص في السلامة" : lang === "fr" ? "Spécialiste Sécurité" : "Safety Specialist", text: lang === "ar" ? "أكاديمية مايسي غيرت مساري المهني. الدورات عملية والمدربون من أعلى مستوى." : lang === "fr" ? "Matsy Academy a transformé ma carrière. Les cours sont pratiques et les formateurs excellents." : "Matsy Academy transformed my career. The courses are practical and the instructors are top-notch.", image: "https://randomuser.me/api/portraits/men/11.jpg", rating: 5 },
+    { name: "Karim Bouzid", role: lang === "ar" ? "متخصص في السلامة" : lang === "fr" ? "Spécialiste Sécurité" : "Safety Specialist", text: lang === "ar" ? "أكاديمية مايسي غيرت مساري المهني. الدورات عملية والمدربون من أعلى مستوى." : lang === "fr" ? "Maisy Academy a transformé ma carrière. Les cours sont pratiques et les formateurs excellents." : "Maisy Academy transformed my career. The courses are practical and the instructors are top-notch.", image: "https://randomuser.me/api/portraits/men/11.jpg", rating: 5 },
     { name: "Amina Belhadj", role: lang === "ar" ? "مفتشة أمن" : lang === "fr" ? "Inspectrice Sécurité" : "Safety Inspector", text: lang === "ar" ? "أكملت دورة التفتيش الأمني. المنصة سهلة الاستخدام والمحتوى دائماً محدث." : lang === "fr" ? "J'ai terminé la formation d'inspection. La plateforme est intuitive et le contenu toujours à jour." : "I completed the safety inspection course. The platform is intuitive and content always up to date.", image: "https://randomuser.me/api/portraits/women/21.jpg", rating: 5 },
     { name: "Youcef Hamdi", role: lang === "ar" ? "مرشد حج وعمرة" : lang === "fr" ? "Guide Hajj" : "Hajj Guide", text: lang === "ar" ? "دورة مرشد الحج والعمرة كانت شاملة ومفيدة جداً. أنصح بها لكل من يريد العمل في هذا المجال." : lang === "fr" ? "Le cours de guide du Hajj était incroyablement complet. Très recommandé !" : "The Hajj guide course was incredibly comprehensive. Highly recommended!", image: "https://randomuser.me/api/portraits/men/45.jpg", rating: 5 },
     { name: "Fatima Zerhouni", role: lang === "ar" ? "مديرة الجودة" : lang === "fr" ? "Responsable Qualité" : "Quality Manager", text: lang === "ar" ? "منصة رائعة مع دورات منظمة بشكل جيد. تعلمت الكثير عن التفتيش الأمني." : lang === "fr" ? "Excellente plateforme avec des cours bien structurés." : "Great platform with well-structured courses.", image: "https://randomuser.me/api/portraits/women/33.jpg", rating: 5 },
-    { name: "Mohamed Saidi", role: lang === "ar" ? "مهندس سلامة" : lang === "fr" ? "Ingénieur Sécurité" : "Safety Engineer", text: lang === "ar" ? "الدكتور أحمد مايسي مدرب استثنائي. دورة السلامة غيرت مساري المهني." : lang === "fr" ? "Dr. Ahmed Matsy est un formateur exceptionnel." : "Dr. Ahmed Matsy is an exceptional instructor.", image: "https://randomuser.me/api/portraits/men/22.jpg", rating: 5 },
+    { name: "Mohamed Saidi", role: lang === "ar" ? "مهندس سلامة" : lang === "fr" ? "Ingénieur Sécurité" : "Safety Engineer", text: lang === "ar" ? "الدكتور أحمد مايسي مدرب استثنائي. دورة السلامة غيرت مساري المهني." : lang === "fr" ? "Dr. Ahmed Maisy est un formateur exceptionnel." : "Dr. Ahmed Maisy is an exceptional instructor.", image: "https://randomuser.me/api/portraits/men/22.jpg", rating: 5 },
     { name: "Nadia Boudiaf", role: lang === "ar" ? "طالبة" : lang === "fr" ? "Étudiante" : "Student", text: lang === "ar" ? "المحتوى التعليمي ممتاز والشهادة معتمدة من وزارة التكوين المهني." : lang === "fr" ? "Le contenu éducatif est excellent et le certificat est reconnu." : "The educational content is excellent and the certificate is recognized.", image: "https://randomuser.me/api/portraits/women/56.jpg", rating: 5 },
     { name: "Hassan Mebarki", role: lang === "ar" ? "مشرف أمن" : lang === "fr" ? "Superviseur Sécurité" : "Safety Supervisor", text: lang === "ar" ? "أفضل منصة تعليمية عربية في مجال السلامة والصحة المهنية." : lang === "fr" ? "La meilleure plateforme éducative arabe dans le domaine HSE." : "The best Arabic educational platform in workplace safety.", image: "https://randomuser.me/api/portraits/men/67.jpg", rating: 5 },
     { name: "Salima Kaddour", role: lang === "ar" ? "مرشدة دينية" : lang === "fr" ? "Guide Religieuse" : "Religious Guide", text: lang === "ar" ? "دورة مرشد الحج والعمرة ساعدتني كثيراً في تطوير مهاراتي المهنية." : lang === "fr" ? "Le cours de guide du Hajj m'a beaucoup aidé." : "The Hajj guide course helped me greatly.", image: "https://randomuser.me/api/portraits/women/68.jpg", rating: 5 },
@@ -105,7 +105,7 @@ export default function HomePage() {
   const thirdColumn = testimonials.slice(6, 9);
 
   const mentors = [
-    { name: "Dr. Ahmed Matsy", role: lang === "ar" ? "خبير السلامة والصحة المهنية" : lang === "fr" ? "Expert HSE" : "HSE Expert", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+    { name: "Dr. Ahmed Maisy", role: lang === "ar" ? "خبير السلامة والصحة المهنية" : lang === "fr" ? "Expert HSE" : "HSE Expert", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
     { name: "Sheikh Ibrahim Khalil", role: lang === "ar" ? "مرشد ديني" : lang === "fr" ? "Guide Religieux" : "Religious Guide", avatar: "https://randomuser.me/api/portraits/men/75.jpg" },
     { name: "Mme. Sarah Benali", role: lang === "ar" ? "مستشارة تعليمية" : lang === "fr" ? "Conseillère Éducative" : "Education Advisor", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
     { name: "M. Rachid Toumi", role: lang === "ar" ? "مفتش أمن معتمد" : lang === "fr" ? "Inspecteur HSE Certifié" : "Certified HSE Inspector", avatar: "https://randomuser.me/api/portraits/men/52.jpg" },
@@ -162,7 +162,7 @@ export default function HomePage() {
               className="mb-6 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
             >
               <span className="text-[hsl(var(--gold-light))]">
-                {lang === "ar" ? "أكاديمية مايسي" : "Matsy Academy"}
+                {lang === "ar" ? "أكاديمية مايسي" : "Maisy Academy"}
               </span>
               <br />
               <span className="text-white">
@@ -331,7 +331,7 @@ export default function HomePage() {
             className="mb-12 text-center">
             <h2 className="mb-3 font-display text-3xl font-bold md:text-4xl">
               <span className="text-foreground">{lang === "ar" ? "لماذا" : lang === "fr" ? "Pourquoi" : "Why"} </span>
-              <span className="text-accent">{lang === "ar" ? "تختار أكاديمية مايسي؟" : lang === "fr" ? "Choisir Matsy Academy ?" : "Choose Matsy Academy?"}</span>
+              <span className="text-accent">{lang === "ar" ? "تختار أكاديمية مايسي؟" : lang === "fr" ? "Choisir Maisy Academy ?" : "Choose Maisy Academy?"}</span>
             </h2>
             <div className="mx-auto mb-4 h-1 w-16 rounded-full bg-accent" />
           </motion.div>
@@ -357,7 +357,7 @@ export default function HomePage() {
             <div className="rounded-2xl border bg-card overflow-hidden">
               <div className="grid grid-cols-3 bg-secondary/50 p-4 text-center font-semibold text-sm">
                 <span>{lang === "ar" ? "الميزة" : "Feature"}</span>
-                <span className="text-accent">Matsy Academy</span>
+                <span className="text-accent">Maisy Academy</span>
                 <span className="text-muted-foreground">{lang === "ar" ? "منصات أخرى" : lang === "fr" ? "Autres" : "Others"}</span>
               </div>
               {[

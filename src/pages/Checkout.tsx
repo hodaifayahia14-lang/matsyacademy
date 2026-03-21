@@ -105,7 +105,7 @@ export default function Checkout() {
                   {lang === "ar" ? "معلومات الحساب البريدي:" : "CCP Account Info:"}
                 </p>
                 <p>{lang === "ar" ? "رقم الحساب: 1234567890 / المفتاح: 12" : "Account: 1234567890 / Key: 12"}</p>
-                <p>{lang === "ar" ? "باسم: أكاديمية ماتسي" : "Name: Matsy Academy"}</p>
+                <p>{lang === "ar" ? "باسم: أكاديمية ماتسي" : "Name: Maisy Academy"}</p>
               </div>
             )}
           </div>

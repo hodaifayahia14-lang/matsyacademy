@@ -7,7 +7,7 @@ import { Star, Users, BookOpen } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const fallbackInstructors = [
-  { id: "fallback-1", name: "Dr. Ahmed Matsy", role_en: "HSE Expert & Founder", role_fr: "Expert HSE & Fondateur", role_ar: "خبير السلامة والمؤسس", avatar: "https://randomuser.me/api/portraits/men/32.jpg", students: 500, courses: 2, rating: 4.9 },
+  { id: "fallback-1", name: "Dr. Ahmed Maisy", role_en: "HSE Expert & Founder", role_fr: "Expert HSE & Fondateur", role_ar: "خبير السلامة والمؤسس", avatar: "https://randomuser.me/api/portraits/men/32.jpg", students: 500, courses: 2, rating: 4.9 },
   { id: "fallback-2", name: "Sheikh Ibrahim Khalil", role_en: "Religious Guidance Expert", role_fr: "Expert en Guide Religieux", role_ar: "خبير الإرشاد الديني", avatar: "https://randomuser.me/api/portraits/men/75.jpg", students: 312, courses: 1, rating: 4.9 },
   { id: "fallback-3", name: "Mme. Sarah Benali", role_en: "Education Advisor", role_fr: "Conseillère Éducative", role_ar: "مستشارة تعليمية", avatar: "https://randomuser.me/api/portraits/women/44.jpg", students: 200, courses: 0, rating: 4.8 },
   { id: "fallback-4", name: "M. Rachid Toumi", role_en: "Certified HSE Inspector", role_fr: "Inspecteur HSE Certifié", role_ar: "مفتش أمن معتمد", avatar: "https://randomuser.me/api/portraits/men/52.jpg", students: 178, courses: 0, rating: 4.8 },

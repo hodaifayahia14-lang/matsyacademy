@@ -34,7 +34,7 @@ export default function ForgotPassword() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="mx-auto mb-4">
-            <span className="font-display text-2xl font-bold text-primary">Matsy<span className="text-foreground"> Academy</span></span>
+            <span className="font-display text-2xl font-bold text-primary">Maisy<span className="text-foreground"> Academy</span></span>
           </Link>
           <CardTitle className="text-2xl">{t("auth.resetPassword")}</CardTitle>
           <CardDescription>{sent ? t("auth.checkEmail") : t("auth.resetDesc")}</CardDescription>

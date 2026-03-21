@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, BookOpen, Award, Target, Eye, Shield, CheckCircle, GraduationCap, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import matsyLogo from "@/assets/matsy-logo.png";
+import maisyLogo from "@/assets/maisy-logo.png";
 
 const team = [
-  { name: "Dr. Ahmed Matsy", role_en: "Founder & CEO", role_fr: "Fondateur & PDG", role_ar: "المؤسس والرئيس التنفيذي", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+  { name: "Dr. Ahmed Maisy", role_en: "Founder & CEO", role_fr: "Fondateur & PDG", role_ar: "المؤسس والرئيس التنفيذي", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
   { name: "Sheikh Ibrahim Khalil", role_en: "Head of Religious Guidance", role_fr: "Responsable Guide Religieux", role_ar: "رئيس الإرشاد الديني", avatar: "https://randomuser.me/api/portraits/men/75.jpg" },
   { name: "Mme. Sarah Benali", role_en: "Education Advisor", role_fr: "Conseillère Éducative", role_ar: "مستشارة تعليمية", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
 ];
@@ -44,7 +44,7 @@ export default function About() {
       {/* Hero */}
       <section className="bg-secondary/50 py-20">
         <div className="container text-center">
-          <img src={matsyLogo} alt="Matsy Academy" className="mx-auto mb-6 h-20 w-20 rounded-2xl object-contain shadow-lg" />
+          <img src={maisyLogo} alt="Maisy Academy" className="mx-auto mb-6 h-20 w-20 rounded-2xl object-contain shadow-lg" />
           <h1 className="mb-4 font-display text-4xl font-bold text-foreground">{t("about.title")}</h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("about.subtitle")}</p>
         </div>
@@ -97,7 +97,7 @@ export default function About() {
       <section className="py-16">
         <div className="container">
           <h2 className="mb-10 text-center font-display text-3xl font-bold text-foreground">
-            {lang === "ar" ? "لماذا تختار أكاديمية مايسي؟" : lang === "fr" ? "Pourquoi choisir Matsy Academy ?" : "Why Choose Matsy Academy?"}
+            {lang === "ar" ? "لماذا تختار أكاديمية مايسي؟" : lang === "fr" ? "Pourquoi choisir Maisy Academy ?" : "Why Choose Maisy Academy?"}
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {whyChoose.map((item, i) => {
@@ -131,8 +131,8 @@ export default function About() {
             </h3>
             <p className="text-sm text-muted-foreground">
               {lang === "ar" ? "أكاديمية مايسي معتمدة رسمياً ومرخصة لتقديم دورات تدريبية معتمدة"
-                : lang === "fr" ? "Matsy Academy est officiellement agréée pour dispenser des formations certifiées"
-                : "Matsy Academy is officially accredited to deliver certified training programs"}
+                : lang === "fr" ? "Maisy Academy est officiellement agréée pour dispenser des formations certifiées"
+                : "Maisy Academy is officially accredited to deliver certified training programs"}
             </p>
           </div>
         </div>
@@ -180,7 +180,7 @@ export default function About() {
             {lang === "ar" ? "ابدأ رحلتك التعليمية اليوم" : lang === "fr" ? "Commencez votre parcours aujourd'hui" : "Start Your Learning Journey Today"}
           </h2>
           <p className="mb-8 text-primary-foreground/80">
-            {lang === "ar" ? "انضم إلى أكثر من 500 طالب في أكاديمية مايسي" : lang === "fr" ? "Rejoignez plus de 500 étudiants à Matsy Academy" : "Join 500+ students at Matsy Academy"}
+            {lang === "ar" ? "انضم إلى أكثر من 500 طالب في أكاديمية مايسي" : lang === "fr" ? "Rejoignez plus de 500 étudiants à Maisy Academy" : "Join 500+ students at Maisy Academy"}
           </p>
           <div className="flex justify-center gap-4">
             <Link to="/courses">

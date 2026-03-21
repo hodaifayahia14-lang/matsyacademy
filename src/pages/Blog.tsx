@@ -60,7 +60,7 @@ export default function Blog() {
                   <div className="p-5">
                     <div className="mb-3 flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{post.published_at ? new Date(post.published_at).toLocaleDateString() : ""}</span>
-                      <span className="flex items-center gap-1"><User className="h-3.5 w-3.5" />{(post.profiles as any)?.name || "Matsy Academy"}</span>
+                      <span className="flex items-center gap-1"><User className="h-3.5 w-3.5" />{(post.profiles as any)?.name || "Maisy Academy"}</span>
                     </div>
                     <h3 className="mb-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">{title}</h3>
                     <p className="text-sm text-muted-foreground">{excerpt}</p>

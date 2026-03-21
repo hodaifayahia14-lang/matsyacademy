@@ -38,7 +38,7 @@ function DashboardSidebar({ items, groupLabel }: DashboardLayoutProps) {
         <div className="flex h-14 items-center gap-2 border-b px-4">
           <Link to="/" className="flex items-center gap-2">
             {!collapsed ? (
-              <span className="font-display text-lg font-bold text-primary">Matsy<span className="text-foreground"> Academy</span></span>
+              <span className="font-display text-lg font-bold text-primary">Maisy<span className="text-foreground"> Academy</span></span>
             ) : (
               <span className="font-display text-lg font-bold text-primary">M</span>
             )}
