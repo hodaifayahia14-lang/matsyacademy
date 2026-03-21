@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import matsyLogo from "@/assets/matsy-logo.png";
 
 const schema = z.object({
   email: z.string().trim().email("Invalid email address"),
@@ -21,14 +22,22 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function Login() {
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn, signInWithGoogle, user, roles } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
   const [showPass, setShowPass] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || "/";
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && roles.length > 0) {
+      const dest = from || getDashboardPath(roles);
+      navigate(dest, { replace: true });
+    }
+  }, [user, roles]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -39,8 +48,12 @@ export default function Login() {
     setSubmitting(true);
     const { error } = await signIn(data.email, data.password);
     setSubmitting(false);
-    if (error) { toast.error(error.message); }
-    else { toast.success(t("auth.welcomeBack")); navigate(from, { replace: true }); }
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success(t("auth.welcomeBack"));
+      // Navigation handled by useEffect above when roles load
+    }
   };
 
   return (
@@ -48,7 +61,7 @@ export default function Login() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="mx-auto mb-4">
-            <span className="font-display text-2xl font-bold text-primary">Matsy<span className="text-foreground"> Academy</span></span>
+            <img src={matsyLogo} alt="Matsy Academy" className="mx-auto h-16 w-16 rounded-xl object-contain" />
           </Link>
           <CardTitle className="text-2xl">{t("auth.welcomeBack")}</CardTitle>
           <CardDescription>{t("auth.signInContinue")}</CardDescription>
@@ -102,4 +115,10 @@ export default function Login() {
       </Card>
     </div>
   );
+}
+
+function getDashboardPath(roles: string[]): string {
+  if (roles.includes("admin")) return "/dashboard/admin";
+  if (roles.includes("instructor")) return "/dashboard/instructor";
+  return "/dashboard/student";
 }

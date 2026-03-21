@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Facebook, Twitter, Linkedin, Youtube } from "lucide-react";
+import matsyLogo from "@/assets/matsy-logo.png";
 
 const socials = [
   { icon: Facebook, href: "#" },
@@ -31,6 +32,7 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link to="/" className="mb-4 flex items-center gap-2">
+              <img src={matsyLogo} alt="Matsy Academy" className="h-10 w-10 rounded-lg object-contain" />
               <span className="font-display text-xl font-bold">
                 <span className="text-accent">Matsy</span>
                 <span className="text-foreground"> Academy</span>
