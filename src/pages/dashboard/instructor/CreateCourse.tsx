@@ -235,13 +235,12 @@ export default function CreateCourse() {
                   {categories?.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              {productType === "book" && (
                 <div>
-                  <Label>{t("dashboard.instructor.selectLevel")}</Label>
-                  <select className={sel} value={level} onChange={(e) => setLevel(e.target.value)}>
-                    {levelOptions.map((l) => <option key={l} value={l}>{l === "beginner" ? (lang === "ar" ? "مبتدئ" : l) : l === "intermediate" ? (lang === "ar" ? "متوسط" : l) : (lang === "ar" ? "متقدم" : l)}</option>)}
-                  </select>
+                  <Label>{lang === "ar" ? "عدد الصفحات" : lang === "fr" ? "Nombre de pages" : "Page Count"}</Label>
+                  <Input type="number" value={pageCount || ""} onChange={(e) => setPageCount(parseInt(e.target.value) || 0)} placeholder="320" />
                 </div>
+              )}
                 <div>
                   <Label>{t("dashboard.instructor.selectLanguage")}</Label>
                   <select className={sel} value={language} onChange={(e) => setLanguage(e.target.value)}>
