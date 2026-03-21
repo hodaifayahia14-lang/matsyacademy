@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import CourseCard from "@/components/CourseCard";
-import { mockCourses, mockCategories } from "@/data/mockData";
+import { useCourses, useCategories } from "@/hooks/useCourses";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
 import heroSlide1 from "@/assets/hero-slide-1.jpg";
 import heroSlide2 from "@/assets/hero-slide-2.jpg";
@@ -61,6 +61,8 @@ export default function HomePage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
   const [activeCat, setActiveCat] = useState("All");
+  const { courses: dbCourses, loading: coursesLoading } = useCourses();
+  const dbCategories = useCategories();
   const heroSlides = [heroSlide1, heroSlide2, heroSlide3];
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -116,8 +118,8 @@ export default function HomePage() {
     { icon: Headphones, title: lang === "ar" ? "دعم مستمر" : lang === "fr" ? "Support Continu" : "Ongoing Support", desc: lang === "ar" ? "فريق دعم متاح لمساعدتك" : lang === "fr" ? "Une équipe de support disponible pour vous aider" : "A support team available to help you" },
   ];
 
-  const courses = activeCat === "All" ? mockCourses : mockCourses.filter((c) => c.category === activeCat);
-  const featuredCourses = activeCat === "All" ? courses : courses;
+  const filteredCourses = activeCat === "All" ? dbCourses : dbCourses.filter((c) => c.category_name === activeCat);
+  const featuredCourses = filteredCourses;
 
   return (
     <div className="overflow-hidden">
@@ -258,7 +260,7 @@ export default function HomePage() {
 
           {/* Category filters */}
           <div className="mb-10 flex flex-wrap justify-center gap-3">
-            {[{ name: "All", name_en: "All", name_fr: "Tous", name_ar: "الكل" }, ...mockCategories].map((cat) => {
+            {[{ name: "All", name_en: "All", name_fr: "Tous", name_ar: "الكل" }, ...dbCategories].map((cat: any) => {
               const catLabel = getLocalized(cat, "name", lang);
               return (
                 <button key={cat.name} onClick={() => setActiveCat(cat.name)}

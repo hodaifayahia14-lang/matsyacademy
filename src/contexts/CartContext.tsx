@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/sonner";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 interface CartItem {
   id: string;
   course_id: string;
@@ -48,10 +50,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = async (courseId: string) => {
     if (!user) return;
+    if (!UUID_RE.test(courseId)) {
+      toast.error("Invalid product ID");
+      return;
+    }
     const { error } = await supabase.from("cart_items").insert({ user_id: user.id, course_id: courseId });
     if (error) {
       if (error.code === "23505") toast.info("Already in cart");
-      else toast.error("Failed to add to cart");
+      else toast.error(error.message || "Failed to add to cart");
       return;
     }
     toast.success("Added to cart");
