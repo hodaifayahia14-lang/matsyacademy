@@ -245,14 +245,17 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="mb-8 flex flex-wrap gap-2">
-            {courseCategories.map((cat) => (
-              <button key={cat} onClick={() => setActiveCat(cat)}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                  activeCat === cat ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary"
-                }`}>
-                {cat === "All" ? t("catalog.all") : cat}
-              </button>
-            ))}
+            {[{ name: "All", name_en: "All", name_fr: "Tous", name_ar: "الكل" }, ...mockCategories].map((cat) => {
+              const catLabel = getLocalized(cat, "name", lang);
+              return (
+                <button key={cat.name} onClick={() => setActiveCat(cat.name)}
+                  className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                    activeCat === cat.name ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                  }`}>
+                  {catLabel}
+                </button>
+              );
+            })}
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredCourses.map((c, i) => (
