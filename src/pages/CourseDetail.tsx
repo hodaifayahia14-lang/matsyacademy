@@ -127,11 +127,11 @@ export default function CourseDetail() {
       <div className="border-b bg-secondary/30">
         <div className="container py-3">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-primary">{t("navbar.home")}</Link>
+            <Link to="/" className="hover:text-primary shrink-0">{t("navbar.home")}</Link>
             <span>/</span>
-            <Link to="/courses" className="hover:text-primary">{t("navbar.courses")}</Link>
+            <Link to="/courses" className="hover:text-primary shrink-0">{t("navbar.courses")}</Link>
             <span>/</span>
-            <span className="text-foreground">{title}</span>
+            <span className="text-foreground truncate max-w-[150px] sm:max-w-none">{title}</span>
           </div>
         </div>
       </div>
