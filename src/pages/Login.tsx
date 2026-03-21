@@ -39,28 +39,22 @@ export default function Login() {
     setSubmitting(true);
     const { error } = await signIn(data.email, data.password);
     setSubmitting(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success(t("auth.welcomeBack"));
-      navigate(from, { replace: true });
-    }
+    if (error) { toast.error(error.message); }
+    else { toast.success(t("auth.welcomeBack")); navigate(from, { replace: true }); }
   };
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md border-border bg-card">
+      <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <Link to="/" className="mx-auto mb-4 flex items-center gap-2">
-            <span className="font-display text-2xl font-bold text-gold">
-              Matsy<span className="text-primary"> Academy</span>
-            </span>
+          <Link to="/" className="mx-auto mb-4">
+            <span className="font-display text-2xl font-bold text-primary">Matsy<span className="text-foreground"> Academy</span></span>
           </Link>
-          <CardTitle className="text-2xl text-foreground">{t("auth.welcomeBack")}</CardTitle>
+          <CardTitle className="text-2xl">{t("auth.welcomeBack")}</CardTitle>
           <CardDescription>{t("auth.signInContinue")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <Button variant="outline" className="w-full border-border text-foreground hover:bg-secondary" onClick={signInWithGoogle}>
+          <Button variant="outline" className="w-full" onClick={signInWithGoogle}>
             <svg className="me-2 h-4 w-4" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -69,56 +63,40 @@ export default function Login() {
             </svg>
             {t("auth.continueGoogle")}
           </Button>
-
           <div className="relative">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">{t("auth.orEmail")}</span>
-            </div>
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">{t("auth.orEmail")}</span></div>
           </div>
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField control={form.control} name="email" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("auth.email")}</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Mail className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input placeholder="you@example.com" className="ps-10" {...field} />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <FormItem><FormLabel>{t("auth.email")}</FormLabel><FormControl>
+                  <div className="relative"><Mail className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" /><Input placeholder="you@example.com" className="ps-10" {...field} /></div>
+                </FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="password" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("auth.password")}</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Lock className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input type={showPass ? "text" : "password"} placeholder="••••••••" className="ps-10 pe-10" {...field} />
-                      <button type="button" onClick={() => setShowPass(!showPass)} className="absolute end-3 top-3 text-muted-foreground hover:text-foreground">
-                        {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <FormItem><FormLabel>{t("auth.password")}</FormLabel><FormControl>
+                  <div className="relative">
+                    <Lock className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input type={showPass ? "text" : "password"} placeholder="••••••••" className="ps-10 pe-10" {...field} />
+                    <button type="button" onClick={() => setShowPass(!showPass)} className="absolute end-3 top-3 text-muted-foreground hover:text-foreground">
+                      {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </FormControl><FormMessage /></FormItem>
               )} />
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-sm"><Checkbox />{t("auth.rememberMe")}</label>
-                <Link to="/forgot-password" className="text-sm text-gold hover:underline">{t("auth.forgotPassword")}</Link>
+                <Link to="/forgot-password" className="text-sm text-primary hover:underline">{t("auth.forgotPassword")}</Link>
               </div>
-              <Button type="submit" className="w-full bg-primary border border-gold/30" disabled={submitting}>
+              <Button type="submit" className="w-full" disabled={submitting}>
                 {submitting ? t("auth.signingIn") : t("auth.signIn")}
               </Button>
             </form>
           </Form>
-
           <p className="text-center text-sm text-muted-foreground">
             {t("auth.noAccount")}{" "}
-            <Link to="/register" className="text-gold hover:underline font-medium">{t("auth.signUp")}</Link>
+            <Link to="/register" className="text-primary hover:underline font-medium">{t("auth.signUp")}</Link>
           </p>
         </CardContent>
       </Card>
