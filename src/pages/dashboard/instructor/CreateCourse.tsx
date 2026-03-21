@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
-import { Plus, X, ChevronRight, ChevronLeft, Check, Image, Video, GripVertical, BookOpen, DollarSign, Eye } from "lucide-react";
+import { Plus, X, ChevronRight, ChevronLeft, Check, Image, Video, GripVertical, BookOpen, DollarSign, Eye, GraduationCap, FileText } from "lucide-react";
 
 const stepNames = [
   { key: "basic", icon: BookOpen },
