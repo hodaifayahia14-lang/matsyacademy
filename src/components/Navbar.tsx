@@ -106,6 +106,7 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden items-center gap-2 md:flex">
+          <LanguageSwitcher />
           <Button variant="ghost" size="icon" className="text-muted-foreground">
             <Search className="h-4 w-4" />
           </Button>
