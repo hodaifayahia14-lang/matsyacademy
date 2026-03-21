@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CourseCard from "@/components/CourseCard";
@@ -10,10 +11,10 @@ const levels = ["All Levels", "Beginner", "Intermediate", "Advanced"];
 const priceFilters = ["All", "Free", "Paid"];
 const languages = ["All", "English", "French", "Arabic"];
 const sortOptions = ["Newest", "Most Popular", "Highest Rated"];
-
 const PER_PAGE = 21;
 
 export default function CourseCatalog() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [category, setCategory] = useState(searchParams.get("category") || "All");
@@ -39,22 +40,15 @@ export default function CourseCatalog() {
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-
   const hasFilters = category !== "All" || level !== "All Levels" || price !== "All" || language !== "All" || search;
 
-  const clearFilters = () => {
-    setSearch(""); setCategory("All"); setLevel("All Levels"); setPrice("All"); setLanguage("All"); setPage(1);
-    setSearchParams({});
-  };
+  const clearFilters = () => { setSearch(""); setCategory("All"); setLevel("All Levels"); setPrice("All"); setLanguage("All"); setPage(1); setSearchParams({}); };
 
   const Select = ({ value, onChange, options, label }: { value: string; onChange: (v: string) => void; options: string[]; label: string }) => (
     <div>
       <label className="mb-1 block text-xs font-medium text-muted-foreground">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => { onChange(e.target.value); setPage(1); }}
-        className="w-full rounded-lg border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-      >
+      <select value={value} onChange={(e) => { onChange(e.target.value); setPage(1); }}
+        className="w-full rounded-lg border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
         {options.map((o) => <option key={o}>{o}</option>)}
       </select>
     </div>
@@ -62,61 +56,49 @@ export default function CourseCatalog() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-hero-gradient py-12">
+      <div className="bg-primary py-12">
         <div className="container text-center">
-          <h1 className="mb-2 font-display text-3xl font-bold text-primary-foreground">Course Catalog</h1>
-          <p className="text-primary-foreground/70">Discover {mockCourses.length}+ courses to boost your skills</p>
+          <h1 className="mb-2 font-display text-3xl font-bold text-primary-foreground">{t("catalog.title")}</h1>
+          <p className="text-primary-foreground/70">{t("catalog.subtitle", { count: mockCourses.length })}</p>
         </div>
       </div>
 
       <div className="container py-8">
-        {/* Search & Filter Bar */}
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                placeholder="Search courses..."
-                className="w-full rounded-lg border bg-card py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+              <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                placeholder={t("catalog.searchPlaceholder")}
+                className="w-full rounded-lg border bg-card py-2.5 ps-10 pe-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
           <Button variant="outline" className="gap-2 md:hidden" onClick={() => setShowFilters(!showFilters)}>
-            <SlidersHorizontal className="h-4 w-4" /> Filters
+            <SlidersHorizontal className="h-4 w-4" /> {t("catalog.filters")}
           </Button>
           <div className={`grid grid-cols-2 gap-3 md:flex md:gap-3 ${showFilters ? "" : "hidden md:flex"}`}>
-            <Select value={category} onChange={setCategory} options={["All", ...mockCategories.map((c) => c.name)]} label="Category" />
-            <Select value={level} onChange={setLevel} options={levels} label="Level" />
-            <Select value={price} onChange={setPrice} options={priceFilters} label="Price" />
-            <Select value={language} onChange={setLanguage} options={languages} label="Language" />
-            <Select value={sort} onChange={setSort} options={sortOptions} label="Sort By" />
+            <Select value={category} onChange={setCategory} options={["All", ...mockCategories.map((c) => c.name)]} label={t("catalog.category")} />
+            <Select value={level} onChange={setLevel} options={levels} label={t("catalog.level")} />
+            <Select value={price} onChange={setPrice} options={priceFilters} label={t("catalog.price")} />
+            <Select value={language} onChange={setLanguage} options={languages} label={t("catalog.language")} />
+            <Select value={sort} onChange={setSort} options={sortOptions} label={t("catalog.sortBy")} />
           </div>
         </div>
 
         {hasFilters && (
           <div className="mb-4">
             <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground" onClick={clearFilters}>
-              <X className="h-3 w-3" /> Clear all filters
+              <X className="h-3 w-3" /> {t("catalog.clearFilters")}
             </Button>
           </div>
         )}
 
-        {/* Results */}
-        <p className="mb-6 text-sm text-muted-foreground">{filtered.length} courses found</p>
+        <p className="mb-6 text-sm text-muted-foreground">{t("catalog.coursesFound", { count: filtered.length })}</p>
 
         {paginated.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {paginated.map((c, i) => (
-              <motion.div
-                key={c.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.03 }}
-              >
+              <motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
                 <CourseCard course={c} />
               </motion.div>
             ))}
@@ -124,29 +106,19 @@ export default function CourseCatalog() {
         ) : (
           <div className="py-20 text-center">
             <Search className="mx-auto mb-4 h-12 w-12 text-muted-foreground/40" />
-            <h3 className="mb-2 font-display text-lg font-semibold">No courses found</h3>
-            <p className="text-sm text-muted-foreground">Try adjusting your filters or search terms.</p>
+            <h3 className="mb-2 font-display text-lg font-semibold">{t("catalog.noResults")}</h3>
+            <p className="text-sm text-muted-foreground">{t("catalog.noResultsDesc")}</p>
           </div>
         )}
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="mt-8 flex items-center justify-center gap-2">
-            <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</Button>
+            <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>{t("catalog.previous")}</Button>
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
               const p = i + 1;
-              return (
-                <Button
-                  key={p}
-                  variant={p === page ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setPage(p)}
-                >
-                  {p}
-                </Button>
-              );
+              return <Button key={p} variant={p === page ? "default" : "outline"} size="sm" onClick={() => setPage(p)}>{p}</Button>;
             })}
-            <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next</Button>
+            <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>{t("catalog.next")}</Button>
           </div>
         )}
       </div>

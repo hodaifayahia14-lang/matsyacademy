@@ -39,13 +39,7 @@ export default function QA() {
       const { error } = await supabase.from("qa_questions").insert({ user_id: user!.id, title, body });
       if (error) throw error;
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["qa-questions"] });
-      toast.success(t("qa.questionPosted"));
-      setShowForm(false);
-      setTitle("");
-      setBody("");
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["qa-questions"] }); toast.success(t("qa.questionPosted")); setShowForm(false); setTitle(""); setBody(""); },
     onError: () => toast.error("Error posting question"),
   });
 
@@ -57,26 +51,24 @@ export default function QA() {
 
   return (
     <div className="min-h-screen">
-      <section className="py-12">
+      <section className="bg-secondary/50 py-12">
         <div className="container text-center">
-          <h1 className="mb-2 font-display text-3xl font-bold text-gold">{t("qa.title")}</h1>
+          <h1 className="mb-2 font-display text-3xl font-bold text-foreground">{t("qa.title")}</h1>
           <p className="text-muted-foreground">{t("qa.subtitle")}</p>
         </div>
       </section>
 
-      <div className="container pb-20">
+      <div className="container py-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex gap-2">
             {filters.map((f) => (
-              <Button key={f.key} variant={filter === f.key ? "default" : "outline"} size="sm"
-                className={filter === f.key ? "bg-primary border-gold/30" : "border-border text-muted-foreground"}
-                onClick={() => setFilter(f.key)}>
+              <Button key={f.key} variant={filter === f.key ? "default" : "outline"} size="sm" onClick={() => setFilter(f.key)}>
                 {f.label}
               </Button>
             ))}
           </div>
           {user && (
-            <Button size="sm" className="bg-primary border border-gold/30" onClick={() => setShowForm(!showForm)}>
+            <Button size="sm" onClick={() => setShowForm(!showForm)}>
               <Plus className="me-1 h-4 w-4" /> {t("qa.askQuestion")}
             </Button>
           )}
@@ -85,10 +77,10 @@ export default function QA() {
         <AnimatePresence>
           {showForm && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-              className="mb-6 overflow-hidden rounded-xl border border-border bg-card p-6">
+              className="mb-6 overflow-hidden rounded-xl border bg-card p-6">
               <Input placeholder={t("qa.titlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} className="mb-3" />
               <Textarea placeholder={t("qa.bodyPlaceholder")} value={body} onChange={(e) => setBody(e.target.value)} rows={4} className="mb-3" />
-              <Button onClick={() => createQuestion.mutate()} disabled={!title.trim() || !body.trim()} className="bg-primary border border-gold/30">
+              <Button onClick={() => createQuestion.mutate()} disabled={!title.trim() || !body.trim()}>
                 {t("qa.submit")}
               </Button>
             </motion.div>
@@ -105,17 +97,17 @@ export default function QA() {
         ) : (
           <div className="space-y-4">
             {questions.map((q: any) => (
-              <div key={q.id} className="rounded-xl border border-border bg-card p-6 transition-all hover:border-gold/30">
+              <div key={q.id} className="rounded-xl border bg-card p-6 transition-all hover:shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="flex flex-col items-center gap-1 text-center">
-                    <ThumbsUp className="h-5 w-5 text-gold" />
-                    <span className="text-sm font-bold text-gold">{q.upvotes}</span>
+                    <ThumbsUp className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-bold text-primary">{q.upvotes}</span>
                   </div>
                   <div className="flex-1">
                     <div className="mb-1 flex items-center gap-2">
                       <h3 className="font-display text-lg font-semibold text-foreground">{q.title}</h3>
                       {q.is_answered && (
-                        <Badge className="bg-primary/20 text-primary border-primary/30">
+                        <Badge variant="secondary" className="text-primary">
                           <CheckCircle className="me-1 h-3 w-3" /> {t("qa.answered")}
                         </Badge>
                       )}
