@@ -158,10 +158,10 @@ export default function CourseDetail() {
               </div>
             </motion.div>
 
-            <div className="mb-6 flex gap-1 rounded-lg bg-secondary p-1">
+            <div className="mb-6 flex gap-1 rounded-lg bg-secondary p-1 overflow-x-auto">
               {tabs.map((tab) => (
                 <button key={tab} onClick={() => setActiveTab(tab)}
-                  className={`flex-1 rounded-md px-4 py-2.5 text-sm font-medium capitalize transition-colors ${activeTab === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+                  className={`flex-1 min-w-fit whitespace-nowrap rounded-md px-3 py-2 text-xs font-medium capitalize transition-colors sm:px-4 sm:py-2.5 sm:text-sm ${activeTab === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
                   {tabLabels[tab]}
                 </button>
               ))}
