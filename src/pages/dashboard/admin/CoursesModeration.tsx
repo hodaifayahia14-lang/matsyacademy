@@ -125,7 +125,7 @@ export default function CoursesModeration() {
             </TableRow>
           ))}
           {!items.length && (
-            <TableRow><TableCell colSpan={6} className="py-8 text-center text-muted-foreground">No courses found</TableCell></TableRow>
+            <TableRow><TableCell colSpan={7} className="py-8 text-center text-muted-foreground">No courses found</TableCell></TableRow>
           )}
         </TableBody>
       </Table>
