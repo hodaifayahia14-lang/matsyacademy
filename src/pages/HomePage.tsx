@@ -61,17 +61,6 @@ export default function HomePage() {
   const [activeCat, setActiveCat] = useState("All");
   const { courses: dbCourses, loading: coursesLoading } = useCourses();
   const dbCategories = useCategories();
-  const heroSlides = [heroSlide1, heroSlide2, heroSlide3];
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  }, [heroSlides.length]);
-
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
-    return () => clearInterval(timer);
-  }, [nextSlide]);
 
   const stats = [
     { icon: Users, value: "+500", labelKey: "stats.students" },
