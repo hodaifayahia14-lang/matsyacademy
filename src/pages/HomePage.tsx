@@ -11,9 +11,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import CourseCard from "@/components/CourseCard";
 import { useCourses, useCategories } from "@/hooks/useCourses";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
-import heroSlide1 from "@/assets/hero-slide-1.jpg";
-import heroSlide2 from "@/assets/hero-slide-2.jpg";
-import heroSlide3 from "@/assets/hero-slide-3.jpg";
+import heroEducators from "@/assets/hero-educators.png";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
@@ -63,17 +61,6 @@ export default function HomePage() {
   const [activeCat, setActiveCat] = useState("All");
   const { courses: dbCourses, loading: coursesLoading } = useCourses();
   const dbCategories = useCategories();
-  const heroSlides = [heroSlide1, heroSlide2, heroSlide3];
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  }, [heroSlides.length]);
-
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
-    return () => clearInterval(timer);
-  }, [nextSlide]);
 
   const stats = [
     { icon: Users, value: "+500", labelKey: "stats.students" },
@@ -123,108 +110,158 @@ export default function HomePage() {
 
   return (
     <div className="overflow-hidden">
-      {/* ═══════════════════ HERO ═══════════════════ */}
-      <section className="relative min-h-[90vh] flex items-center">
-        <div className="absolute inset-0 overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentSlide}
-              src={heroSlides[currentSlide]}
-              alt=""
-              className="h-full w-full object-cover"
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-            />
-          </AnimatePresence>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/35" />
+      {/* ═══════════════════ HERO — EduThink Style ═══════════════════ */}
+      <section className="relative min-h-[85vh] flex items-center bg-background overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-16 start-[10%] opacity-10">
+          <Sparkles className="h-16 w-16 text-accent" />
+        </div>
+        <div className="absolute top-1/3 end-[35%] opacity-5">
+          <Sparkles className="h-24 w-24 text-primary" />
+        </div>
+        {/* Subtle curved lines behind the image */}
+        <div className="absolute end-0 top-0 h-full w-1/2 hidden lg:block">
+          <svg className="absolute inset-0 h-full w-full opacity-[0.06]" viewBox="0 0 500 700" fill="none">
+            <circle cx="350" cy="350" r="300" stroke="hsl(var(--accent))" strokeWidth="1" />
+            <circle cx="350" cy="350" r="250" stroke="hsl(var(--accent))" strokeWidth="0.5" />
+            <circle cx="350" cy="350" r="200" stroke="hsl(var(--accent))" strokeWidth="0.5" />
+          </svg>
         </div>
 
-        {/* Slide indicators */}
-        <div className="absolute bottom-24 left-1/2 z-20 flex -translate-x-1/2 gap-2">
-          {heroSlides.map((_, i) => (
-            <button key={i} onClick={() => setCurrentSlide(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${i === currentSlide ? "w-8 bg-accent" : "w-2 bg-white/40"}`} />
-          ))}
-        </div>
+        <div className="container relative z-10 py-16 lg:py-24">
+          <div className="grid items-center gap-8 lg:grid-cols-2">
+            {/* Left — Text Content */}
+            <div className="order-2 lg:order-1">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+              >
+                <h1 className="mb-6 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl text-foreground">
+                  {lang === "ar" ? (
+                    <>
+                      اكتشف{" "}
+                      <span className="text-accent">+12</span>
+                      <br />
+                      دورة تدريبية معتمدة
+                      <br />
+                      من{" "}
+                      <span className="text-primary">أكاديمية مايسي</span>
+                    </>
+                  ) : lang === "fr" ? (
+                    <>
+                      Découvrez{" "}
+                      <span className="text-accent">+12</span>
+                      <br />
+                      Formations Certifiées
+                      <br />
+                      de{" "}
+                      <span className="text-primary">Maisy Academy</span>
+                    </>
+                  ) : (
+                    <>
+                      Get{" "}
+                      <span className="text-accent">+12</span>
+                      <br />
+                      Best Certified Courses
+                      <br />
+                      From{" "}
+                      <span className="text-primary">Maisy Academy</span>
+                    </>
+                  )}
+                </h1>
+              </motion.div>
 
-        <div className="container relative z-10 py-20 lg:py-32">
-          <div className="mx-auto max-w-3xl text-center">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-sm text-white">
-              <Sparkles className="h-4 w-4 text-[hsl(var(--gold-light))]" />
-              {lang === "ar" ? "منصة تعليمية معتمدة" : lang === "fr" ? "Plateforme Éducative Certifiée" : "Certified Education Platform"}
-            </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="mb-8 max-w-lg text-lg text-muted-foreground"
+              >
+                {lang === "ar"
+                  ? "أفضل منصة تعليمية جزائرية تقدم تكوينات مرنة، دورات معتمدة، ومدربين خبراء."
+                  : lang === "fr"
+                  ? "La meilleure plateforme éducative algérienne offrant des formations flexibles, des cours certifiés et des formateurs experts."
+                  : "Best Algerian education platform offering flexible learning, certified courses, and expert instructors."}
+              </motion.p>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-6 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
-            >
-              <span className="text-[hsl(var(--gold-light))]">
-                {lang === "ar" ? "أكاديمية مايسي" : "Maisy Academy"}
-              </span>
-              <br />
-              <span className="text-white">
-                {lang === "ar" ? "للتدريب والتطوير المهني" : lang === "fr" ? "Formation & Développement Professionnel" : "Professional Training & Development"}
-              </span>
-            </motion.h1>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <Link to="/courses">
+                  <Button size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 rounded-full shadow-lg">
+                    {lang === "ar" ? "تصفح الدورات" : lang === "fr" ? "Trouver des Cours" : "Find Courses"}
+                    <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </Link>
+              </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}
-              className="mb-10 text-lg text-white/80 md:text-xl"
-            >
-              {lang === "ar"
-                ? "دورات وكتب معتمدة في السلامة المهنية والإرشاد الديني — +500 طالب مسجل"
-                : lang === "fr"
-                ? "Cours et livres certifiés en sécurité HSE et guidance religieuse — +500 étudiants"
-                : "Certified courses & books in HSE safety and religious guidance — +500 students"}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
-              className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-            >
-              <Link to="/register">
-                <Button size="lg" className="gap-2 bg-[hsl(var(--crimson))] hover:bg-[hsl(var(--crimson))]/90 text-white border border-[hsl(var(--gold-light))]/30 shadow-lg text-lg px-8 py-6">
-                  {lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now"} <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/courses">
-                <Button size="lg" variant="outline" className="gap-2 border-white/40 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 text-lg px-8 py-6">
-                  {lang === "ar" ? "استعرض المنتجات" : lang === "fr" ? "Parcourir les Produits" : "Browse Products"}
-                </Button>
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
-              className="mt-12 flex items-center justify-center gap-4"
-            >
-              <div className="flex -space-x-3 rtl:space-x-reverse">
-                {[32, 75, 44, 52, 21].map((id, idx) => (
-                  <img key={id} src={`https://randomuser.me/api/portraits/${idx % 2 === 0 ? 'men' : 'women'}/${id}.jpg`} alt=""
-                    className="h-10 w-10 rounded-full border-2 border-white/50 object-cover" />
-                ))}
-              </div>
-              <div className="text-start">
-                <div className="flex items-center gap-1 mb-0.5">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-3.5 w-3.5 fill-[hsl(var(--gold-light))] text-[hsl(var(--gold-light))]" />)}
+              {/* Instructor avatars */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="mt-12"
+              >
+                <p className="mb-2 text-sm font-semibold text-foreground">
+                  {lang === "ar" ? "+500 طالب مسجل" : lang === "fr" ? "+500 Étudiants" : "+500 Students"}
+                </p>
+                <div className="flex items-center gap-1">
+                  <div className="flex -space-x-2 rtl:space-x-reverse">
+                    {[32, 75, 44].map((id, idx) => (
+                      <img
+                        key={id}
+                        src={`https://randomuser.me/api/portraits/${idx % 2 === 0 ? "men" : "women"}/${id}.jpg`}
+                        alt=""
+                        className="h-10 w-10 rounded-full border-2 border-background object-cover"
+                      />
+                    ))}
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border bg-secondary text-xs font-semibold text-muted-foreground">
+                    +
+                  </div>
                 </div>
-                <p className="text-sm text-white/70">+500 {t("stats.students")} • 4.9/5</p>
+              </motion.div>
+            </div>
+
+            {/* Right — Hero Image */}
+            <motion.div
+              className="order-1 lg:order-2 flex justify-center lg:justify-end"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <div className="relative">
+                {/* Decorative colored block behind image */}
+                <div className="absolute -bottom-4 -start-4 h-32 w-24 rounded-2xl bg-accent/20" />
+                <div className="absolute -top-4 -end-4 h-32 w-24 rounded-2xl bg-primary/10" />
+                <img
+                  src={heroEducators}
+                  alt="Maisy Academy Educators"
+                  className="relative z-10 h-auto w-full max-w-md lg:max-w-lg xl:max-w-xl object-contain drop-shadow-2xl"
+                />
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
 
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2">
-            <ChevronDown className="h-8 w-8 text-white/50" />
-          </motion.div>
+      {/* ═══════════════════ MARQUEE BAR (Dark Accent) ═══════════════════ */}
+      <section className="bg-primary py-4 overflow-hidden">
+        <div className="flex gap-16 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: "fit-content" }}>
+          {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
+            <span key={i} className="flex items-center gap-2 whitespace-nowrap text-base font-semibold text-primary-foreground">
+              <Sparkles className="h-4 w-4 text-accent" />
+              {item.replace("⭐ ", "")}
+            </span>
+          ))}
         </div>
       </section>
 
       {/* ═══════════════════ STATS BAR ═══════════════════ */}
-      <section className="relative -mt-16 z-20">
+      <section className="py-12">
         <div className="container">
           <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
             <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
@@ -233,15 +270,6 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════ MARQUEE ═══════════════════ */}
-      <section className="py-6 overflow-hidden border-y border-border bg-secondary/50 mt-12">
-        <div className="flex gap-12 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: "fit-content" }}>
-          {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
-            <span key={i} className="whitespace-nowrap text-base font-semibold text-accent">{item}</span>
-          ))}
         </div>
       </section>
 
