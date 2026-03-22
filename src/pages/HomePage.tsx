@@ -11,9 +11,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import CourseCard from "@/components/CourseCard";
 import { useCourses, useCategories } from "@/hooks/useCourses";
 import { TestimonialsColumn, type Testimonial } from "@/components/ui/testimonials-columns";
-import heroSlide1 from "@/assets/hero-slide-1.jpg";
-import heroSlide2 from "@/assets/hero-slide-2.jpg";
-import heroSlide3 from "@/assets/hero-slide-3.jpg";
+import heroEducators from "@/assets/hero-educators.png";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
