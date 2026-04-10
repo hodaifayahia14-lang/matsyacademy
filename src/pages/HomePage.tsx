@@ -9,7 +9,6 @@ import {
   Mail, CheckCircle, Heart, Target, Lightbulb, Trophy,
   Calendar, MapPin, Phone, MessageCircle, Instagram, Facebook, Twitter,
 } from "lucide-react";
-} from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import CourseCard from "@/components/CourseCard";
 import { useCourses, useCategories } from "@/hooks/useCourses";
@@ -585,6 +584,8 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
         </div>
+      </section>
+
       {/* ═══════════════════ FOOTER PREVIEW ═══════════════════ */}
       <section className="py-12 bg-secondary/30 border-t border-border">
         <div className="container">

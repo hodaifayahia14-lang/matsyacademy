@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
       JSON.stringify({ message: "Q&A data seeded successfully", questions: insertedQuestions.length, answers: answers.length }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (error) {
+  } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
