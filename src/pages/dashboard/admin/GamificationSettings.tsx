@@ -64,7 +64,7 @@ export default function GamificationSettings() {
     mutationFn: async (enabled: boolean) => {
       await supabase.from("gamification_settings").update({ enabled }).eq("id", settings!.id);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success("Updated"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success(t("تم التحديث", "Mis à jour", "Updated")); },
   });
 
   // Save settings
@@ -73,7 +73,7 @@ export default function GamificationSettings() {
       const { id, created_at, updated_at, ...rest } = localSettings;
       await supabase.from("gamification_settings").update(rest).eq("id", id);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success("Settings saved"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success(t("تم حفظ الإعدادات", "Paramètres enregistrés", "Settings saved")); },
   });
 
   // Save rule
