@@ -15,9 +15,9 @@ import maisyLogo from "@/assets/maisy-logo-v2.png";
 const navLinks = [
   { labelKey: "navbar.home", to: "/" },
   { labelKey: "navbar.courses", to: "/courses" },
-  { labelKey: "navbar.instructors", to: "/instructors" },
   { labelKey: "navbar.about", to: "/about" },
   { labelKey: "navbar.contactUs", to: "/contact" },
+  { labelKey: "navbar.becomeInstructor", to: "/register" },
 ];
 
 export default function Navbar() {
@@ -55,7 +55,8 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2.5 shrink-0">
           <img src={maisyLogo} alt="Maisy Academy" className="h-10 w-10 object-contain" />
           <div className="flex flex-col leading-tight">
-            <span className="font-display text-lg font-bold text-primary">أكاديمية مايسي</span>
+            <span className="font-display text-base font-bold text-primary">أكاديمية</span>
+            <span className="font-display text-base font-bold text-primary -mt-1">مايسي</span>
           </div>
         </Link>
 
