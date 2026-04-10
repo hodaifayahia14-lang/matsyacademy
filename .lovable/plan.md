@@ -1,139 +1,92 @@
 
 
-# Platform Restructuring: Staff-Only Auth, Public Order Form, Agent Gamification
+# Implement Figma Design from Stitch Export — Full Redesign with Responsiveness, i18n, and RTL
 
 ## Overview
-Transform the platform from an LMS with student/instructor/admin roles into a **public course catalog** with a **staff-only backend** (Admin + Confirmation Agent) and a **public order form** (no login required to buy). Add gamification for confirmation agents.
+Extract the Stitch Figma export, analyze all page designs, and re-implement every page to match the design pixel-perfectly. Add full responsiveness (desktop/tablet/mobile), complete trilingual support (AR/FR/EN), and proper RTL mirroring — all while keeping existing Supabase functionality intact.
 
----
+## Step 1: Extract and Analyze the Stitch Design Files
+- Extract `stitch_3.zip` to `/tmp/stitch_design/`
+- List all pages/folders (e.g., `stitch/maisy_academy_home_page/`, etc.)
+- Open each page's HTML to understand the exact layout, colors, spacing, typography, and component structure
+- Extract all design assets (images, icons) and copy relevant ones to `src/assets/`
 
-## Database Changes
+## Step 2: Identify Design Tokens and Update Theme
+- Extract exact colors, fonts, spacing, border-radius, shadows from the Stitch CSS
+- Update `src/index.css` CSS variables to match the Figma design exactly
+- Update `tailwind.config.ts` if custom values are needed
+- Ensure Cairo font for Arabic, Playfair Display + Inter for EN/FR
 
-### 1. Add `confirmation_agent` to `app_role` enum
-```sql
-ALTER TYPE public.app_role ADD VALUE 'confirmation_agent';
-```
+## Step 3: Rebuild Public Pages to Match Design
+Restyle each page component to faithfully match the Stitch export:
+- **HomePage** — Hero, stats, categories, featured courses, testimonials, CTA, newsletter
+- **CourseCatalog** — Grid layout, filters, search
+- **CourseDetail** — Course info, curriculum, order form sidebar
+- **OrderForm** — Standalone order page
+- **About** — Mission, vision, team
+- **Blog / BlogDetail** — Article grid, detail layout
+- **Contact** — Contact form and info
+- **Instructors / InstructorDetail** — Instructor cards and profiles
+- **QA** — Q&A listing
+- **Instructions** — Step-by-step guide
+- **Terms** — Legal text
 
-### 2. Create `orders` table (public order form submissions)
-| Column | Type | Notes |
-|--------|------|-------|
-| id | uuid PK | |
-| course_id | uuid | FK to courses |
-| full_name | text | required |
-| phone | text | required, Algerian format |
-| wilaya_code | int | 1-58 |
-| wilaya_name | text | |
-| status_label | text | Student/Employee/Unemployed/Business Owner/Other |
-| order_status | text | pending/called/confirmed/cancelled |
-| assigned_agent_id | uuid | nullable, FK to profiles |
-| confirmed_by | uuid | nullable |
-| confirmed_at | timestamptz | nullable |
-| notes | text | nullable |
-| created_at | timestamptz | default now() |
+Each page will use:
+- Responsive breakpoints: `lg:` (1280+), `md:` (768+), default (375+)
+- Single-column grids on mobile, multi-column on desktop
+- Horizontal scroll for tables on mobile
 
-RLS: Public can INSERT (no auth). Authenticated admin/agent can SELECT/UPDATE.
+## Step 4: Rebuild Navbar and Footer
+- Match Stitch design exactly for desktop and mobile layouts
+- Mobile: hamburger menu with drawer/sheet
+- Language switcher visible in both Navbar and mobile drawer
+- Footer: match column layout, collapse to stacked on mobile
 
-### 3. Create `agent_rewards` table
-| Column | Type |
-|--------|------|
-| id | uuid PK |
-| agent_id | uuid |
-| gift_name | text |
-| description | text |
-| awarded_at | timestamptz |
-| awarded_by | uuid |
+## Step 5: Rebuild Dashboard Layouts
+- **Admin Dashboard**: Match sidebar design, collapse to drawer on mobile
+- **Agent Dashboard**: Same treatment
+- All dashboard pages (Orders, Leaderboard, Users, Courses, etc.) restyled to match
+- Tables use horizontal scroll on mobile
+- Sidebar collapses to icon mode or drawer depending on design
 
-RLS: Admin can ALL. Agents can SELECT own.
+## Step 6: Complete Multilingual Support
+Expand all three translation files (`en.json`, `fr.json`, `ar.json`) to cover:
+- All new dashboard labels (Orders, Leaderboard, Agent, Rewards)
+- Order form fields and validation messages
+- Table headers, chart titles, button labels
+- Error messages, success toasts
+- Every hardcoded string in every component
 
-### 4. Enable realtime on `orders` table
+## Step 7: RTL Layout Perfection
+- Verify every `flex`, `grid`, `padding`, `margin` mirrors correctly in RTL
+- Use logical properties (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`) instead of `ml-`/`mr-`
+- Mirror chevrons, arrows, and directional icons
+- Test sidebar position (right side in RTL)
+- Test mobile drawer direction
 
----
-
-## Frontend Changes
-
-### Step 1: Remove public auth pages & student/instructor dashboards
-- Remove `/login`, `/register`, `/forgot-password`, `/reset-password` routes from public routes
-- Remove `/dashboard/student/*` and `/dashboard/instructor/*` routes from App.tsx
-- Remove Login/Register/ForgotPassword links from Navbar
-- Keep Cart/Checkout concept but replace with the new Order Form flow
-
-### Step 2: Add staff login at `/admin/login`
-- Single login page at `/admin/login` (no signup, no Google, no forgot password)
-- Email + password only
-- On success, redirect to `/dashboard/admin` (admin) or `/dashboard/agent` (confirmation_agent)
-- Update `ProtectedRoute` to redirect unauthenticated to `/admin/login` instead of `/login`
-
-### Step 3: Create public Order Form page (`/order/:courseId`)
-- No login required
-- Fields: Full Name, Phone (05/06/07 format validation), Wilaya dropdown (58 wilayas), Status dropdown
-- Shows course name + price at top
-- On submit: insert into `orders` table (anon insert allowed via RLS)
-- Success: show thank-you message with order number
-
-### Step 4: Update CourseDetail "Buy/Enroll" button
-- Instead of requiring login, navigate to `/order/:courseId`
-- Remove cart-based flow for public users
-
-### Step 5: Remove Navbar auth UI for public visitors
-- Remove Sign In / Sign Up / Profile dropdown for non-staff
-- Keep language switcher, categories, pages links
-
-### Step 6: Create Agent Dashboard (`/dashboard/agent/*`)
-- **Orders Queue**: Table of orders assigned to this agent (filterable by status)
-- **Call & Confirm**: Agent clicks an order → marks as "called" → marks as "confirmed"
-- **My Stats**: Personal confirmation count, rate, rank
-- **My Rewards**: List of gifts received
-
-### Step 7: Add Orders Management to Admin Dashboard
-- New sidebar item: "Orders" — full list of all orders
-- Assign orders to agents (bulk or individual)
-- Filter by status, wilaya, date
-- View agent performance
-
-### Step 8: Create Gamification/Leaderboard page
-- Accessible from both Admin and Agent dashboards
-- **Leaderboard table**: Agent name, confirmed count (week/month/all), rate, rank
-- **Top performer badge**: 🥇 highlight
-- **Admin**: can award gifts from this page (modal: gift name, description)
-- **Agent**: read-only view of leaderboard + own rewards
-
-### Step 9: Remove Create Course from Admin Dashboard
-- Remove "courses/create" route from AdminDashboard
-- Remove "Create Course" button from CoursesModeration page
-- Admin can still edit existing courses but not create new ones via wizard
-
----
-
-## Files to Create
-- `src/pages/AdminLogin.tsx` — staff-only login
-- `src/pages/OrderForm.tsx` — public order form with wilaya/status dropdowns
-- `src/pages/OrderThankYou.tsx` — order confirmation
-- `src/pages/dashboard/agent/AgentDashboard.tsx` — agent layout + routes
-- `src/pages/dashboard/agent/AgentOrders.tsx` — orders queue
-- `src/pages/dashboard/agent/AgentStats.tsx` — personal stats
-- `src/pages/dashboard/agent/AgentRewards.tsx` — rewards received
-- `src/pages/dashboard/admin/OrdersManagement.tsx` — admin orders view
-- `src/pages/dashboard/admin/Leaderboard.tsx` — gamification leaderboard
-- `src/data/algerianWilayas.ts` — static list of 58 wilayas
-
-## Files to Modify
-- `src/App.tsx` — restructure routes
-- `src/components/Navbar.tsx` — remove auth UI for public
-- `src/components/ProtectedRoute.tsx` — support `confirmation_agent` role, redirect to `/admin/login`
-- `src/pages/CourseDetail.tsx` — change enroll button to go to `/order/:id`
-- `src/pages/dashboard/admin/AdminDashboard.tsx` — add Orders + Leaderboard sidebar items, remove CreateCourse route
-- `src/contexts/AuthContext.tsx` — update `getDashboardPath` to handle `confirmation_agent`
-
-## Files to Remove/Deprecate (remove routes, keep files for now)
-- `/login`, `/register`, `/forgot-password`, `/reset-password` routes
-- `/dashboard/student/*`, `/dashboard/instructor/*` routes
-- `/cart`, `/checkout`, `/thank-you` routes (replaced by order form)
-
----
+## Step 8: Ensure All Functionality Remains Connected
+No functionality changes — only visual. Verify:
+- Public order form still inserts into `orders` table
+- Admin dashboard CRUD operations work
+- Agent order queue and confirmation flow work
+- Leaderboard and rewards system work
+- Course creation with image upload works
+- Language persistence in localStorage works
 
 ## Technical Notes
-- The `orders` table needs an anon INSERT RLS policy so unauthenticated visitors can submit orders
-- Agent assignment uses `assigned_agent_id` — admin assigns from the orders management page
-- Gamification stats are computed via SQL queries (COUNT, GROUP BY agent) — no separate stats table needed
-- The 58 Algerian wilayas are a static constant (01-Adrar through 58-El Bayadh)
+- All design changes are CSS/JSX only — no database or API changes needed
+- Existing Supabase queries, RLS policies, and auth flow remain untouched
+- The Stitch export serves as **visual reference only** — we rebuild in React/Tailwind, not copy raw HTML
+- Assets from the Stitch export (images, icons) will be copied to `src/assets/` as needed
+
+## Files Modified (estimated ~25-30 files)
+- `src/index.css` — theme variables
+- `tailwind.config.ts` — custom design tokens
+- `src/components/Navbar.tsx` — full redesign
+- `src/components/Footer.tsx` — full redesign
+- `src/components/DashboardLayout.tsx` — responsive sidebar
+- `src/components/CourseCard.tsx` — card redesign
+- All pages in `src/pages/` — visual overhaul
+- All dashboard pages — visual overhaul
+- `src/i18n/en.json`, `fr.json`, `ar.json` — complete translations
 
