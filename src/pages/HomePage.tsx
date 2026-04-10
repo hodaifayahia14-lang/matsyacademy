@@ -584,6 +584,8 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
         </div>
+      </section>
+
       {/* ═══════════════════ FOOTER PREVIEW ═══════════════════ */}
       <section className="py-12 bg-secondary/30 border-t border-border">
         <div className="container">
