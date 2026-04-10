@@ -278,46 +278,69 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ CATEGORIES ═══════════════════ */}
-      {dbCategories.length > 0 && (
-        <section className="py-16 lg:py-20">
-          <div className="container">
-            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
-              className="mb-10 text-center">
-              <h2 className="mb-3 font-display text-2xl sm:text-3xl font-bold">
-                <span className="text-gradient-purple">{lang === "ar" ? "استكشف التصنيفات" : lang === "fr" ? "Explorer les Catégories" : "Explore Categories"}</span>
-              </h2>
-              <p className="text-muted-foreground text-sm max-w-md mx-auto">
-                {lang === "ar" ? "اختر المجال الذي يناسبك وابدأ التعلم" : "Choose your field and start learning"}
-              </p>
-              <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-accent" />
-            </motion.div>
+      <section className="py-16 lg:py-20">
+        <div className="container">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
+            className="mb-10 text-center">
+            <span className="inline-flex items-center gap-1.5 text-accent text-sm font-semibold mb-2">
+              <Sparkles className="h-4 w-4" />
+              {lang === "ar" ? "مجالات التعلم" : lang === "fr" ? "Domaines" : "Learning Fields"}
+            </span>
+            <h2 className="mb-3 font-display text-2xl sm:text-3xl font-bold">
+              <span className="text-gradient-purple">{lang === "ar" ? "استكشف التصنيفات" : lang === "fr" ? "Explorer les Catégories" : "Explore Categories"}</span>
+            </h2>
+            <p className="text-muted-foreground text-sm max-w-md mx-auto">
+              {lang === "ar" ? "اختر المجال الذي يناسبك وابدأ التعلم" : lang === "fr" ? "Choisissez votre domaine et commencez" : "Choose your field and start learning"}
+            </p>
+            <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-accent" />
+          </motion.div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-              {dbCategories.slice(0, 6).map((cat, i) => {
+          {dbCategories.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {dbCategories.slice(0, 8).map((cat, i) => {
                 const name = cat[`name_${lang}` as keyof typeof cat] || cat.name;
+                const gradients = [
+                  "from-purple-500/10 to-purple-600/5",
+                  "from-amber-500/10 to-amber-600/5",
+                  "from-emerald-500/10 to-emerald-600/5",
+                  "from-blue-500/10 to-blue-600/5",
+                  "from-rose-500/10 to-rose-600/5",
+                  "from-teal-500/10 to-teal-600/5",
+                  "from-indigo-500/10 to-indigo-600/5",
+                  "from-orange-500/10 to-orange-600/5",
+                ];
+                const iconBgs = [
+                  "bg-purple-100 dark:bg-purple-900/30",
+                  "bg-amber-100 dark:bg-amber-900/30",
+                  "bg-emerald-100 dark:bg-emerald-900/30",
+                  "bg-blue-100 dark:bg-blue-900/30",
+                  "bg-rose-100 dark:bg-rose-900/30",
+                  "bg-teal-100 dark:bg-teal-900/30",
+                  "bg-indigo-100 dark:bg-indigo-900/30",
+                  "bg-orange-100 dark:bg-orange-900/30",
+                ];
                 return (
                   <motion.div key={cat.id} variants={scaleIn} initial="hidden" whileInView="visible" custom={i}
                     viewport={{ once: true }}>
                     <Link to={`/courses?category=${cat.slug}`}
-                      className="group relative flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-2 overflow-hidden"
+                      className={`group relative flex items-center gap-4 rounded-2xl border border-border bg-gradient-to-br ${gradients[i % gradients.length]} p-5 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 overflow-hidden`}
                     >
-                      {/* Background gradient on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                      {/* Icon with enhanced animation */}
-                      <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl group-hover:bg-primary/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                      <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl ${iconBgs[i % iconBgs.length]} text-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                         {cat.icon || "📚"}
-                        <div className="absolute inset-0 rounded-2xl bg-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
                       </div>
 
-                      {/* Title with underline animation */}
-                      <span className="relative text-sm font-semibold text-foreground text-center group-hover:text-primary transition-colors">
-                        {name}
-                        <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-accent group-hover:w-full group-hover:left-0 transition-all duration-300" />
-                      </span>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                          {name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {lang === "ar" ? "اكتشف الدورات" : lang === "fr" ? "Découvrir les cours" : "Discover courses"}
+                        </p>
+                      </div>
 
-                      {/* Subtle sparkle effect */}
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+
+                      <div className="absolute top-2 end-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <Sparkles className="h-3 w-3 text-accent animate-pulse" />
                       </div>
                     </Link>
@@ -325,9 +348,13 @@ export default function HomePage() {
                 );
               })}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <p className="text-center text-muted-foreground py-8">
+              {lang === "ar" ? "لا توجد تصنيفات حالياً" : "No categories available yet"}
+            </p>
+          )}
+        </div>
+      </section>
 
       {/* ═══════════════════ FEATURED COURSES ═══════════════════ */}
       <section className="py-16 lg:py-20 bg-secondary/20">
