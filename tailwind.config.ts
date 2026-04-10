@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         sans: ['"Poppins"', '"Cairo"', 'system-ui', 'sans-serif'],
         display: ['"Poppins"', '"Cairo"', 'sans-serif'],
-        arabic: ['"Cairo"', 'system-ui', 'sans-serif'],
+        arabic: ['"Playpen Sans Arabic"', '"Cairo"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
