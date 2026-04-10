@@ -69,7 +69,7 @@ export default function HomePage() {
   const instructor = useCounter(35);
   const cert = useCounter(2800);
 
-  const statsRef = student.ref;
+  
 
   const stats = [
     { value: `${student.count.toLocaleString()}+`, label: lang === "ar" ? "طالب نشط" : lang === "fr" ? "Étudiants Actifs" : "Active Students", icon: Users, color: "from-[hsl(270,52%,34%)] to-[hsl(280,45%,50%)]", ref: student.ref },
@@ -98,7 +98,7 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-      <section ref={statsRef} className="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
+      <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
         {/* Background image with overlay */}
         <div className="absolute inset-0">
           <img src={heroStudents} alt="" className="h-full w-full object-cover" width={1920} height={1080} />
@@ -205,7 +205,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ STATS BAR (mobile) ═══════════════════ */}
-      <section ref={statsRef} className="lg:hidden py-8 bg-card border-b border-border">
+      <section className="lg:hidden py-8 bg-card border-b border-border">
         <div className="container">
           <div className="grid grid-cols-2 gap-4">
             {stats.map(({ value, label, icon: Icon, color }, i) => (
