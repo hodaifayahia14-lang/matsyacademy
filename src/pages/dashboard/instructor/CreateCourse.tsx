@@ -54,6 +54,10 @@ export default function CreateCourse() {
   // Step 2 — Media
   const [coverImage, setCoverImage] = useState("");
   const [promoVideo, setPromoVideo] = useState("");
+  const [courseImages, setCourseImages] = useState<{ url: string; name: string }[]>([]);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Step 3 — Description
   const [description, setDescription] = useState("");
