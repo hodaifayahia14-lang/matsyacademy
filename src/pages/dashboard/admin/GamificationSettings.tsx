@@ -223,14 +223,15 @@ export default function GamificationSettings() {
           onChange={setLocalSettings}
           onSave={() => saveSettings.mutate()}
           saving={saveSettings.isPending}
+          lang={lang}
         />
       )}
 
       {/* Badge Gallery */}
-      <BadgeGallery rules={rules} />
+      <BadgeGallery rules={rules} lang={lang} />
 
       {/* Reward Log */}
-      <RewardHistoryLog rules={rules} />
+      <RewardHistoryLog rules={rules} lang={lang} />
 
       {/* Form Drawer */}
       <MilestoneFormDrawer
@@ -238,6 +239,7 @@ export default function GamificationSettings() {
         onClose={() => { setDrawerOpen(false); setEditingRule(null); }}
         onSave={(rule) => saveRule.mutate(rule)}
         editingRule={editingRule}
+        lang={lang}
       />
     </div>
   );

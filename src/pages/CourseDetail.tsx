@@ -376,11 +376,11 @@ export default function CourseDetail() {
   const totalHours = Math.floor(totalMinutes / 60);
 
   const tabs = ["overview", "curriculum", "instructor", "reviews"] as const;
-  const tabLabels: Record<string, string> = {
-    overview: T(lang, "نظرة عامة", "Aperçu", "Overview"),
-    curriculum: T(lang, "المقرر الدراسي", "Programme", "Curriculum"),
-    instructor: T(lang, "المدرب", "Formateur", "Instructor"),
-    reviews: T(lang, "التقييمات", "Avis", "Reviews"),
+  const tabConfig: Record<string, { label: string; icon: React.ReactNode }> = {
+    overview: { label: T(lang, "نظرة عامة", "Aperçu", "Overview"), icon: <Star className="h-4 w-4" /> },
+    curriculum: { label: T(lang, "المقرر الدراسي", "Programme", "Curriculum"), icon: <BookOpen className="h-4 w-4" /> },
+    instructor: { label: T(lang, "المدرب", "Formateur", "Instructor"), icon: <Users className="h-4 w-4" /> },
+    reviews: { label: T(lang, "التقييمات", "Avis", "Reviews"), icon: <Shield className="h-4 w-4" /> },
   };
 
   const learningOutcomes = course.learning_outcomes || [];
