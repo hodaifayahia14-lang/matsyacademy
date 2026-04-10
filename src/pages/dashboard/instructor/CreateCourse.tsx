@@ -320,15 +320,107 @@ export default function CreateCourse() {
           {/* Step 2 — Media */}
           {step === 1 && (
             <>
+              {/* Photo Upload Area */}
               <div>
-                <Label>{t("dashboard.instructor.coverImage")}</Label>
-                <Input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} placeholder="https://..." />
-                {coverImage && (
-                  <div className="mt-3 aspect-video overflow-hidden rounded-lg border bg-secondary">
-                    <img src={coverImage} alt="Preview" className="h-full w-full object-cover" onError={(e) => (e.currentTarget.style.display = "none")} />
+                <Label className="mb-2 block">{lang === "ar" ? "صور المنتج" : lang === "fr" ? "Photos du produit" : "Product Photos"}</Label>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  {lang === "ar" ? "ارفع صورة واحدة أو أكثر، واختر الصورة الرئيسية التي ستظهر في الواجهة" : "Upload one or more photos, then select the main one to display on the front page"}
+                </p>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e.target.files)}
+                />
+
+                {/* Upload dropzone */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="mb-4 flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-8 transition-colors hover:border-primary/50 hover:bg-primary/10 disabled:opacity-50"
+                >
+                  {uploading ? (
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  ) : (
+                    <Upload className="h-8 w-8 text-primary/60" />
+                  )}
+                  <div className="text-center">
+                    <p className="font-medium text-foreground">
+                      {uploading ? (lang === "ar" ? "جاري الرفع..." : "Uploading...") : (lang === "ar" ? "اضغط لرفع الصور" : "Click to upload photos")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">PNG, JPG, WEBP</p>
+                  </div>
+                </button>
+
+                {/* Image gallery */}
+                {courseImages.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {courseImages.map((img, i) => (
+                      <div
+                        key={i}
+                        className={`group relative aspect-square overflow-hidden rounded-xl border-2 transition-all ${
+                          i === mainImageIndex
+                            ? "border-primary ring-2 ring-primary/20 shadow-md"
+                            : "border-border hover:border-primary/40"
+                        }`}
+                      >
+                        <img src={img.url} alt={img.name} className="h-full w-full object-cover" />
+
+                        {/* Main badge */}
+                        {i === mainImageIndex && (
+                          <div className="absolute start-2 top-2 flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow">
+                            <Star className="h-3 w-3" />
+                            {lang === "ar" ? "الرئيسية" : "Main"}
+                          </div>
+                        )}
+
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                          {i !== mainImageIndex && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="h-8 gap-1 text-xs"
+                              onClick={() => setAsMainImage(i)}
+                            >
+                              <Star className="h-3 w-3" />
+                              {lang === "ar" ? "اجعلها رئيسية" : "Set as main"}
+                            </Button>
+                          )}
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            className="h-8 w-8"
+                            onClick={() => removeImage(i)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Add more button */}
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                    >
+                      <Plus className="h-6 w-6" />
+                    </button>
                   </div>
                 )}
               </div>
+
+              {/* Manual URL fallback */}
+              <div>
+                <Label>{lang === "ar" ? "أو أدخل رابط الصورة يدوياً" : "Or enter image URL manually"}</Label>
+                <Input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} placeholder="https://..." />
+              </div>
+
               {productType === "course" && (
                 <div>
                   <Label>{t("dashboard.instructor.promoVideo")}</Label>
