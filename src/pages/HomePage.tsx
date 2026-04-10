@@ -67,10 +67,10 @@ export default function HomePage() {
   const { courses: dbCourses } = useCourses();
   const dbCategories = useCategories();
 
-  const student = useCounter(5000);
-  const course = useCounter(120);
-  const instructor = useCounter(35);
-  const cert = useCounter(2800);
+  const student = useCounter(5000, true);
+  const course = useCounter(120, true);
+  const instructor = useCounter(35, true);
+  const cert = useCounter(2800, true);
 
   
 
