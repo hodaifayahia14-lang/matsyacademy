@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, ChevronDown, LogOut, User, Phone, ShoppingCart, Search } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -16,10 +15,9 @@ import maisyLogo from "@/assets/maisy-logo.png";
 const navLinks = [
   { labelKey: "navbar.home", to: "/" },
   { labelKey: "navbar.courses", to: "/courses" },
-  { labelKey: "navbar.about", to: "/about" },
+  { labelKey: "navbar.becomeInstructor", to: "/register" },
+  { labelKey: "navbar.partnerships", to: "/about" },
   { labelKey: "navbar.contactUs", to: "/contact" },
-  { labelKey: "navbar.instructors", to: "/instructors" },
-  { labelKey: "navbar.blog", to: "/blog" },
 ];
 
 export default function Navbar() {
@@ -29,7 +27,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { user, profile, roles, signOut } = useAuth();
-  const { cartCount } = useCart();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10);
@@ -52,29 +49,28 @@ export default function Navbar() {
   return (
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
       scrolled
-        ? "bg-card/95 backdrop-blur-md shadow-header border-b border-border"
-        : "bg-card"
+        ? "gradient-purple shadow-lg"
+        : "gradient-purple"
     }`}>
       <div className="container flex h-16 items-center justify-between gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={maisyLogo} alt="Maisy Academy" className="h-9 w-9 rounded-lg object-contain" />
-          <span className="font-display text-xl font-bold">
-            <span className="text-primary">أكاديمية مايسي</span>
-            {" "}
-            <span className="hidden sm:inline text-foreground/60 text-sm">Maisy Academy</span>
-          </span>
+          <img src={maisyLogo} alt="Maisy Academy" className="h-10 w-10 rounded-lg object-contain" />
+          <div className="flex flex-col leading-tight">
+            <span className="font-display text-lg font-bold text-white">أكاديمية مايسي</span>
+            <span className="text-[10px] text-white/50">Maisy Academy</span>
+          </div>
         </Link>
 
-        {/* Desktop Nav */}
+        {/* Desktop Nav — center */}
         <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map(({ labelKey, to }) => (
             <Link key={to} to={to}>
               <Button variant="ghost" size="sm"
                 className={`text-sm transition-colors ${
                   isActive(to)
-                    ? "text-primary font-semibold border-b-2 border-primary rounded-none"
-                    : "text-foreground/70 hover:text-primary hover:bg-primary/5"
+                    ? "text-accent font-semibold"
+                    : "text-white/80 hover:text-accent hover:bg-white/10"
                 }`}>
                 {t(labelKey)}
               </Button>
@@ -85,14 +81,14 @@ export default function Navbar() {
         {/* Right Actions */}
         <div className="hidden items-center gap-2 lg:flex">
           <LanguageSwitcher />
-          
+
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">{initials}</AvatarFallback>
+                    <AvatarFallback className="bg-accent text-accent-foreground text-xs">{initials}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
@@ -107,18 +103,11 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex items-center gap-2">
-              <Link to="/login">
-                <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/5">
-                  {t("navbar.login")}
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button size="sm" className="gradient-gold text-accent-foreground font-semibold hover:opacity-90">
-                  {t("navbar.signUp")}
-                </Button>
-              </Link>
-            </div>
+            <Link to="/register">
+              <Button size="sm" className="gradient-gold text-accent-foreground font-bold hover:opacity-90 rounded-lg px-6">
+                {t("navbar.startLearning")}
+              </Button>
+            </Link>
           )}
         </div>
 
@@ -129,11 +118,11 @@ export default function Navbar() {
             <Button variant="ghost" size="icon" className="rounded-full" onClick={() => navigate(dashboardPath)}>
               <Avatar className="h-7 w-7">
                 <AvatarImage src={profile?.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-[10px]">{initials}</AvatarFallback>
+                <AvatarFallback className="bg-accent text-accent-foreground text-[10px]">{initials}</AvatarFallback>
               </Avatar>
             </Button>
           )}
-          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
+          <Button variant="ghost" size="icon" className="text-white" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -143,29 +132,24 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-border bg-card lg:hidden">
+            className="overflow-hidden border-t border-white/10 bg-purple-deep lg:hidden">
             <div className="container flex flex-col gap-1 py-4">
               {navLinks.map(({ labelKey, to }) => (
                 <Link key={to} to={to}
                   className={`rounded-lg px-4 py-2.5 text-sm transition-colors ${
-                    isActive(to) ? "bg-primary/10 text-primary font-semibold" : "text-foreground/70 hover:bg-secondary hover:text-primary"
+                    isActive(to) ? "bg-white/10 text-accent font-semibold" : "text-white/70 hover:bg-white/5 hover:text-accent"
                   }`}>
                   {t(labelKey)}
                 </Link>
               ))}
-              <div className="my-2 border-t border-border" />
+              <div className="my-2 border-t border-white/10" />
               {!user && (
-                <div className="flex gap-2">
-                  <Link to="/login" className="flex-1">
-                    <Button variant="outline" className="w-full border-primary text-primary">{t("navbar.login")}</Button>
-                  </Link>
-                  <Link to="/register" className="flex-1">
-                    <Button className="w-full gradient-gold text-accent-foreground">{t("navbar.signUp")}</Button>
-                  </Link>
-                </div>
+                <Link to="/register">
+                  <Button className="w-full gradient-gold text-accent-foreground font-bold">{t("navbar.startLearning")}</Button>
+                </Link>
               )}
               {user && (
-                <Button variant="ghost" className="justify-start text-destructive" onClick={handleSignOut}>
+                <Button variant="ghost" className="justify-start text-red-300" onClick={handleSignOut}>
                   <LogOut className="me-2 h-4 w-4" /> {t("navbar.signOut")}
                 </Button>
               )}
