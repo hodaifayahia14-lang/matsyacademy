@@ -15,8 +15,8 @@ import maisyLogo from "@/assets/maisy-logo-v2.png";
 const navLinks = [
   { labelKey: "navbar.home", to: "/" },
   { labelKey: "navbar.courses", to: "/courses" },
-  { labelKey: "navbar.becomeInstructor", to: "/register" },
-  { labelKey: "navbar.partnerships", to: "/about" },
+  { labelKey: "navbar.instructors", to: "/instructors" },
+  { labelKey: "navbar.about", to: "/about" },
   { labelKey: "navbar.contactUs", to: "/contact" },
 ];
 
@@ -47,30 +47,27 @@ export default function Navbar() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-      scrolled
-        ? "gradient-purple shadow-lg"
-        : "gradient-purple"
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 bg-card border-b border-border ${
+      scrolled ? "shadow-header" : ""
     }`}>
       <div className="container flex h-16 items-center justify-between gap-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={maisyLogo} alt="Maisy Academy" className="h-10 w-10 rounded-lg object-contain" />
+        <Link to="/" className="flex items-center gap-2.5 shrink-0">
+          <img src={maisyLogo} alt="Maisy Academy" className="h-10 w-10 object-contain" />
           <div className="flex flex-col leading-tight">
-            <span className="font-display text-lg font-bold text-white">أكاديمية مايسي</span>
-            <span className="text-[10px] text-white/50">Maisy Academy</span>
+            <span className="font-display text-lg font-bold text-primary">أكاديمية مايسي</span>
           </div>
         </Link>
 
-        {/* Desktop Nav — center */}
+        {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map(({ labelKey, to }) => (
             <Link key={to} to={to}>
               <Button variant="ghost" size="sm"
-                className={`text-sm transition-colors ${
+                className={`text-sm font-medium transition-colors ${
                   isActive(to)
-                    ? "text-accent font-semibold"
-                    : "text-white/80 hover:text-accent hover:bg-white/10"
+                    ? "text-primary font-semibold"
+                    : "text-foreground/70 hover:text-primary hover:bg-primary/5"
                 }`}>
                 {t(labelKey)}
               </Button>
@@ -88,7 +85,7 @@ export default function Navbar() {
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-accent text-accent-foreground text-xs">{initials}</AvatarFallback>
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">{initials}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
@@ -103,11 +100,18 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/register">
-              <Button size="sm" className="gradient-gold text-accent-foreground font-bold hover:opacity-90 rounded-lg px-6">
-                {t("navbar.startLearning")}
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link to="/login">
+                <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/5 rounded-lg">
+                  {t("navbar.login")}
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm" className="gradient-gold text-accent-foreground font-semibold hover:opacity-90 rounded-lg">
+                  {t("navbar.signUp")}
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
 
@@ -118,11 +122,11 @@ export default function Navbar() {
             <Button variant="ghost" size="icon" className="rounded-full" onClick={() => navigate(dashboardPath)}>
               <Avatar className="h-7 w-7">
                 <AvatarImage src={profile?.avatar_url || undefined} />
-                <AvatarFallback className="bg-accent text-accent-foreground text-[10px]">{initials}</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground text-[10px]">{initials}</AvatarFallback>
               </Avatar>
             </Button>
           )}
-          <Button variant="ghost" size="icon" className="text-white" onClick={() => setMobileOpen(!mobileOpen)}>
+          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -132,21 +136,26 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-white/10 gradient-purple lg:hidden">
+            className="overflow-hidden border-t border-border bg-card lg:hidden">
             <div className="container flex flex-col gap-1 py-4">
               {navLinks.map(({ labelKey, to }) => (
                 <Link key={to} to={to}
                   className={`rounded-lg px-4 py-2.5 text-sm transition-colors ${
-                    isActive(to) ? "bg-white/10 text-accent font-semibold" : "text-white/70 hover:bg-white/5 hover:text-accent"
+                    isActive(to) ? "bg-primary/10 text-primary font-semibold" : "text-foreground/70 hover:bg-secondary hover:text-primary"
                   }`}>
                   {t(labelKey)}
                 </Link>
               ))}
-              <div className="my-2 border-t border-white/10" />
+              <div className="my-2 border-t border-border" />
               {!user && (
-                <Link to="/register">
-                  <Button className="w-full gradient-gold text-accent-foreground font-bold">{t("navbar.startLearning")}</Button>
-                </Link>
+                <div className="flex gap-2">
+                  <Link to="/login" className="flex-1">
+                    <Button variant="outline" className="w-full border-primary text-primary">{t("navbar.login")}</Button>
+                  </Link>
+                  <Link to="/register" className="flex-1">
+                    <Button className="w-full gradient-gold text-accent-foreground font-semibold">{t("navbar.signUp")}</Button>
+                  </Link>
+                </div>
               )}
               {user && (
                 <Button variant="ghost" className="justify-start text-destructive" onClick={handleSignOut}>

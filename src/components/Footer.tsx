@@ -7,43 +7,54 @@ export default function Footer() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
-  const quickLinks = [
-    { label: t("navbar.courses"), to: "/courses" },
-    { label: t("navbar.becomeInstructor"), to: "/register" },
-    { label: t("footer.partnerships"), to: "/about" },
-    { label: t("navbar.contactUs"), to: "/contact" },
-  ];
-
   return (
-    <footer className="gradient-purple text-white">
-      {/* Main Footer */}
-      <div className="container py-12 lg:py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="border-t border-border bg-card">
+      {/* Main footer */}
+      <div className="container py-10 lg:py-14">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
             <Link to="/" className="mb-4 flex items-center gap-2">
-              <img src={maisyLogo} alt="Maisy Academy" className="h-10 w-10 rounded-lg object-contain" />
-              <div>
-                <span className="font-display text-lg font-bold text-white">أكاديمية مايسي</span>
-                <span className="block text-xs text-white/50">Maisy Academy</span>
-              </div>
+              <img src={maisyLogo} alt="Maisy Academy" className="h-10 w-10 object-contain" />
+              <span className="font-display text-lg font-bold text-primary">أكاديمية مايسي</span>
             </Link>
-            <p className="mb-6 max-w-xs text-sm text-white/60 leading-relaxed">
-              {lang === "ar" ? "أكاديمية مايسي لمنصة التعلم الرقمي لتطوير المهارات المهنية." 
-                : lang === "fr" ? "Maisy Academy, plateforme d'apprentissage numérique pour le développement professionnel."
-                : "Maisy Academy, digital learning platform for professional skills development."}
+            <p className="mb-4 max-w-xs text-sm text-muted-foreground leading-relaxed">
+              {lang === "ar" ? "أكاديمية مايسي دورة أكاديمية مايسي وسنني المعلوماعيات في العمار مقلي الجزائر"
+                : lang === "fr" ? "Maisy Academy - Plateforme d'apprentissage numérique pour le développement professionnel en Algérie."
+                : "Maisy Academy - Digital learning platform for professional development in Algeria."}
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Links col 1 */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-accent">
-              {lang === "ar" ? "الرئيسية" : lang === "fr" ? "Accueil" : "Home"}
+            <h4 className="mb-3 text-sm font-semibold text-foreground">
+              {lang === "ar" ? "الدورات" : lang === "fr" ? "Cours" : "Courses"}
             </h4>
-            <ul className="space-y-2.5">
-              {quickLinks.map(({ label, to }) => (
+            <ul className="space-y-2">
+              {[
+                { label: lang === "ar" ? "الأفضل مبيعاً" : lang === "fr" ? "Meilleures ventes" : "Best Sellers", to: "/courses" },
+                { label: lang === "ar" ? "التسويق الرقمي" : lang === "fr" ? "Marketing Digital" : "Digital Marketing", to: "/courses" },
+                { label: lang === "ar" ? "الأعمال" : lang === "fr" ? "Business" : "Business", to: "/courses" },
+              ].map(({ label, to }) => (
                 <li key={label}>
-                  <Link to={to} className="text-sm text-white/60 transition-colors hover:text-accent">{label}</Link>
+                  <Link to={to} className="text-sm text-muted-foreground transition-colors hover:text-primary">{label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Links col 2 */}
+          <div>
+            <h4 className="mb-3 text-sm font-semibold text-foreground">
+              {lang === "ar" ? "من نحن" : lang === "fr" ? "À propos" : "About"}
+            </h4>
+            <ul className="space-y-2">
+              {[
+                { label: t("navbar.about"), to: "/about" },
+                { label: t("navbar.contactUs"), to: "/contact" },
+              ].map(({ label, to }) => (
+                <li key={label}>
+                  <Link to={to} className="text-sm text-muted-foreground transition-colors hover:text-primary">{label}</Link>
                 </li>
               ))}
             </ul>
@@ -51,52 +62,40 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-accent">
-              {lang === "ar" ? "التواصل" : lang === "fr" ? "Contact" : "Contact"}
+            <h4 className="mb-3 text-sm font-semibold text-foreground">
+              {lang === "ar" ? "تسجيل الدخول" : lang === "fr" ? "Connexion" : "Login"}
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               <li>
-                <a href="tel:+23123559375" className="flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-accent">
-                  <Phone className="h-3.5 w-3.5 shrink-0" /> +23 123559375
+                <a href="tel:+9821355378" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary">
+                  <Phone className="h-3.5 w-3.5 shrink-0" /> +9821355378O
                 </a>
               </li>
               <li>
-                <a href="mailto:main@maacboos.com" className="flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-accent">
-                  <Mail className="h-3.5 w-3.5 shrink-0" /> main@maacboos.com
+                <a href="mailto:maisyacademy.com" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary">
+                  <Mail className="h-3.5 w-3.5 shrink-0" /> maisyacademy.com
                 </a>
               </li>
-              <li className="flex items-center gap-2 text-sm text-white/60">
+              <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-3.5 w-3.5 shrink-0" /> Maisy Academy
               </li>
             </ul>
           </div>
-
-          {/* Social + About */}
-          <div>
-            <h4 className="mb-4 text-sm font-semibold text-accent">
-              {lang === "ar" ? "الاجتماعي" : lang === "fr" ? "Réseaux" : "Social"}
-            </h4>
-            <p className="mb-4 text-sm text-white/60 leading-relaxed">
-              {lang === "ar" ? "تابعنا على منصات التواصل الاجتماعي والمنصات الاجتماعية التعليمية." 
-                : lang === "fr" ? "Suivez-nous sur les réseaux sociaux pour les dernières mises à jour."
-                : "Follow us on social media for the latest updates."}
-            </p>
-          </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-white/10">
+      {/* Bottom bar */}
+      <div className="border-t border-border">
         <div className="container py-4 flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-4">
-            {[Facebook, Twitter, Youtube, Instagram].map((Icon, i) => (
-              <a key={i} href="#" className="text-white/50 hover:text-accent transition-colors">
+          <div className="flex items-center gap-3">
+            {[Twitter, Facebook, Instagram, Youtube].map((Icon, i) => (
+              <a key={i} href="#" className="text-muted-foreground hover:text-primary transition-colors">
                 <Icon className="h-4 w-4" />
               </a>
             ))}
           </div>
-          <p className="text-xs text-white/40">
-            Maisy Academy • أكاديمية مايسي © {new Date().getFullYear()}
+          <p className="text-xs text-muted-foreground">
+            Maisy © أكاديمية Maisy
           </p>
         </div>
       </div>
