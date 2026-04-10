@@ -19,7 +19,6 @@ import Instructions from "@/pages/Instructions";
 import Blog from "@/pages/Blog";
 import Contact from "@/pages/Contact";
 import BlogDetail from "@/pages/BlogDetail";
-import BlogDetail from "@/pages/BlogDetail";
 import Terms from "@/pages/Terms";
 import CoursePlayer from "@/pages/CoursePlayer";
 import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard";
@@ -64,8 +63,7 @@ const App = () => (
                       <Route path="/about" element={<About />} />
                       <Route path="/qa" element={<QA />} />
                       <Route path="/instructions" element={<Instructions />} />
-                      <Route path="/instructors" element={<Instructors />} />
-                      <Route path="/instructors/:id" element={<InstructorDetail />} />
+                      <Route path="/blog" element={<Blog />} />
                       <Route path="/blog" element={<Blog />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/blog/:id" element={<BlogDetail />} />
