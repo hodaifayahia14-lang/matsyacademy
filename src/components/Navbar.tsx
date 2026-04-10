@@ -17,7 +17,6 @@ const navLinks = [
   { labelKey: "navbar.courses", to: "/courses" },
   { labelKey: "navbar.about", to: "/about" },
   { labelKey: "navbar.contactUs", to: "/contact" },
-  { labelKey: "navbar.becomeInstructor", to: "/register" },
 ];
 
 export default function Navbar() {
