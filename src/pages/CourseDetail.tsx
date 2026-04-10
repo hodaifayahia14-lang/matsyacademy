@@ -98,8 +98,39 @@ export default function CourseDetail() {
     ? (lang === "ar" ? "اشترِ الآن" : lang === "fr" ? "Acheter" : "Buy Now")
     : (lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now");
 
+  const validateOrderForm = () => {
+    const errors: Record<string, string> = {};
+    if (!formData.full_name.trim() || formData.full_name.trim().length < 3) errors.full_name = lang === "ar" ? "الاسم مطلوب (3 أحرف على الأقل)" : "Name required (min 3 chars)";
+    if (!/^0[567]\d{8}$/.test(formData.phone)) errors.phone = lang === "ar" ? "رقم هاتف غير صحيح" : "Invalid phone (05/06/07xxxxxxxx)";
+    if (!formData.wilaya_code) errors.wilaya_code = lang === "ar" ? "اختر الولاية" : "Select wilaya";
+    if (!formData.status_label) errors.status_label = lang === "ar" ? "اختر الحالة" : "Select status";
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleOrderSubmit = async () => {
+    if (!validateOrderForm() || !id) return;
+    setOrderSubmitting(true);
+    const wilaya = algerianWilayas.find(w => w.code === Number(formData.wilaya_code));
+    const { error } = await supabase.from("orders").insert({
+      course_id: id,
+      full_name: formData.full_name.trim(),
+      phone: formData.phone,
+      wilaya_code: Number(formData.wilaya_code),
+      wilaya_name: wilaya?.name || "",
+      status_label: formData.status_label,
+      order_status: "pending",
+    });
+    setOrderSubmitting(false);
+    if (error) {
+      toast.error(lang === "ar" ? "حدث خطأ، حاول مجدداً" : "Error, please try again");
+    } else {
+      setOrderSuccess(true);
+    }
+  };
+
   const handleEnroll = () => {
-    navigate(`/order/${id}`);
+    setShowOrderForm(true);
   };
 
   const toggleSection = (sectionId: string) => {
