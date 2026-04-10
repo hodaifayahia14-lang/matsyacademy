@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Search, SlidersHorizontal, X, Book, GraduationCap, ChevronLeft, ChevronRight, Code, BarChart3, Palette, Briefcase, Database, Globe, Tag, Flame, Award, TrendingUp, Star } from "lucide-react";
+import { Search, SlidersHorizontal, X, Book, BookOpen, GraduationCap, ChevronLeft, ChevronRight, Code, BarChart3, Palette, Briefcase, Database, Globe, Tag, Flame, Award, TrendingUp, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
