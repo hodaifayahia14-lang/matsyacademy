@@ -497,6 +497,7 @@ export default function CourseDetail() {
               </p>
             </motion.div>
           </div>
+        </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════
