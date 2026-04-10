@@ -247,169 +247,141 @@ export default function OrdersManagement() {
         </Dialog>
       </div>
 
-      {/* Main content: Table + Filter sidebar */}
-      <div className="flex gap-4 items-start">
-        {/* Table */}
-        <div className="flex-1 min-w-0">
-          {/* Search */}
-          <div className="relative mb-4">
-            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder={t("بحث...", "Rechercher...", "Search...")}
-              className="ps-10 rounded-xl bg-white border-border/50" value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
-          </div>
+      {/* Filters Row */}
+      <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-border/50 bg-white p-4 shadow-sm">
+        <div className="relative min-w-[180px] flex-1">
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input placeholder={t("بحث...", "Rechercher...", "Search...")}
+            className="ps-10 rounded-xl h-9 text-xs bg-secondary/30 border-border/50" value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
+        </div>
+        <Select value={filterStatus} onValueChange={v => { setFilterStatus(v); setPage(1); }}>
+          <SelectTrigger className="rounded-xl h-9 text-xs w-[140px]"><SelectValue placeholder={t("الحالة", "Statut", "Status")} /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("جميع الحالات", "Tous les statuts", "All Statuses")}</SelectItem>
+            <SelectItem value="pending">{t("في الانتظار", "En attente", "Pending")}</SelectItem>
+            <SelectItem value="called">{t("تم الاتصال", "Appelé", "Called")}</SelectItem>
+            <SelectItem value="confirmed">{t("مؤكد", "Confirmé", "Confirmed")}</SelectItem>
+            <SelectItem value="cancelled">{t("ملغى", "Annulé", "Cancelled")}</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterWilaya} onValueChange={v => { setFilterWilaya(v); setPage(1); }}>
+          <SelectTrigger className="rounded-xl h-9 text-xs w-[140px]"><SelectValue placeholder={t("الولاية", "Wilaya", "Wilaya")} /></SelectTrigger>
+          <SelectContent className="max-h-60">
+            <SelectItem value="all">{t("جميع الولايات", "Toutes", "All Wilayas")}</SelectItem>
+            {uniqueWilayas.map(w => <SelectItem key={w} value={w}>{w}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterCourse} onValueChange={v => { setFilterCourse(v); setPage(1); }}>
+          <SelectTrigger className="rounded-xl h-9 text-xs w-[140px]"><SelectValue placeholder={t("الدورة", "Cours", "Course")} /></SelectTrigger>
+          <SelectContent className="max-h-60">
+            <SelectItem value="all">{t("جميع الدورات", "Tous", "All Courses")}</SelectItem>
+            {courses?.map(c => <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterAgent} onValueChange={v => { setFilterAgent(v); setPage(1); }}>
+          <SelectTrigger className="rounded-xl h-9 text-xs w-[140px]"><SelectValue placeholder={t("الوكيل", "Agent", "Agent")} /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("جميع الوكلاء", "Tous", "All Agents")}</SelectItem>
+            {agents?.map((a: any) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Button
+          size="sm"
+          className="rounded-xl h-9 text-xs font-semibold px-4"
+          style={{ background: "linear-gradient(135deg, #C9971C, #E8B84A)", color: "#fff" }}
+          onClick={handleResetFilters}
+        >
+          {t("إعادة تعيين", "Réinitialiser", "Reset")}
+        </Button>
+      </div>
 
-          <div className="rounded-2xl bg-white border border-border/50 overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent" style={{ background: "#F8F6FC" }}>
-                    <TableHead className="text-xs font-bold text-foreground">{t("رقم الطلب", "N° Commande", "Order #")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("الطالب", "Étudiant", "Student")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("المراقبة", "Téléphone", "Phone")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("المتربر", "Wilaya", "Wilaya")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("المقدمن", "Produit", "Product")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("الحالة", "Statut", "Status")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("المؤكمون", "Confirmé par", "Confirmed By")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("التاريخ", "Date", "Date")}</TableHead>
-                    <TableHead className="text-xs font-bold text-foreground">{t("إجراءات", "Actions", "Actions")}</TableHead>
+      {/* Table */}
+      <div className="rounded-2xl bg-white border border-border/50 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent" style={{ background: "#F8F6FC" }}>
+                <TableHead className="text-xs font-bold text-foreground">{t("رقم الطلب", "N° Commande", "Order #")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("الطالب", "Étudiant", "Student")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("المراقبة", "Téléphone", "Phone")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("المتربر", "Wilaya", "Wilaya")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("المقدمن", "Produit", "Product")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("الحالة", "Statut", "Status")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("المؤكمون", "Confirmé par", "Confirmed By")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("التاريخ", "Date", "Date")}</TableHead>
+                <TableHead className="text-xs font-bold text-foreground">{t("إجراءات", "Actions", "Actions")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginated.map((o, idx) => {
+                const globalIdx = (page - 1) * PAGE_SIZE + idx;
+                const agent = agents?.find((a: any) => a.id === o.assigned_agent_id);
+                return (
+                  <TableRow key={o.id} className="hover:bg-purple-50/30 border-b border-border/30">
+                    <TableCell className="text-sm font-mono font-semibold text-foreground">{orderNum(o.id, globalIdx)}</TableCell>
+                    <TableCell className="text-sm font-medium text-foreground">{o.full_name}</TableCell>
+                    <TableCell dir="ltr" className="text-sm">
+                      <a href={`tel:${o.phone}`} className="text-primary hover:underline font-mono">{o.phone}</a>
+                    </TableCell>
+                    <TableCell className="text-sm text-foreground">{o.wilaya_name}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground max-w-[140px] truncate">{(o.courses as any)?.title || "—"}</TableCell>
+                    <TableCell>{statusBadge(o.order_status)}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{(agent as any)?.name || "—"}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{new Date(o.created_at).toLocaleDateString("en-GB")}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => { setSelectedOrder(o); setNoteText(o.notes || ""); }}
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-primary/10 transition-colors"
+                          title={t("عرض", "Voir", "View")}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => { setSelectedOrder(o); setNoteText(o.notes || ""); }}
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-[#C9971C] hover:bg-[#C9971C]/10 transition-colors"
+                          title={t("تعديل", "Modifier", "Edit")}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginated.map((o, idx) => {
-                    const globalIdx = (page - 1) * PAGE_SIZE + idx;
-                    const agent = agents?.find((a: any) => a.id === o.assigned_agent_id);
-                    return (
-                      <TableRow key={o.id} className="hover:bg-purple-50/30 border-b border-border/30">
-                        <TableCell className="text-sm font-mono font-semibold text-foreground">{orderNum(o.id, globalIdx)}</TableCell>
-                        <TableCell className="text-sm font-medium text-foreground">{o.full_name}</TableCell>
-                        <TableCell dir="ltr" className="text-sm">
-                          <a href={`tel:${o.phone}`} className="text-primary hover:underline font-mono">{o.phone}</a>
-                        </TableCell>
-                        <TableCell className="text-sm text-foreground">{o.wilaya_name}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground max-w-[140px] truncate">{(o.courses as any)?.title || "—"}</TableCell>
-                        <TableCell>{statusBadge(o.order_status)}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{(agent as any)?.name || "—"}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{new Date(o.created_at).toLocaleDateString("en-GB")}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={() => { setSelectedOrder(o); setNoteText(o.notes || ""); }}
-                              className="flex h-8 w-8 items-center justify-center rounded-full text-primary hover:bg-primary/10 transition-colors"
-                              title={t("عرض", "Voir", "View")}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => { setSelectedOrder(o); setNoteText(o.notes || ""); }}
-                              className="flex h-8 w-8 items-center justify-center rounded-full text-[#C9971C] hover:bg-[#C9971C]/10 transition-colors"
-                              title={t("تعديل", "Modifier", "Edit")}
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {!paginated.length && (
-                    <TableRow>
-                      <TableCell colSpan={9} className="py-12 text-center">
-                        <FileText className="mx-auto mb-2 h-10 w-10 text-muted-foreground/30" />
-                        <p className="text-muted-foreground">{t("لا توجد طلبات", "Aucune commande", "No orders")}</p>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Pagination */}
-            <div className="flex items-center justify-between border-t border-border/30 px-4 py-3">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page <= 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 text-muted-foreground hover:bg-secondary disabled:opacity-30 transition-colors"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page >= totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 text-muted-foreground hover:bg-secondary disabled:opacity-30 transition-colors"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {t(`الصفحة ${page} من ${totalPages}`, `Page ${page} sur ${totalPages}`, `Page ${page} of ${totalPages}`)}
-              </p>
-            </div>
-          </div>
+                );
+              })}
+              {!paginated.length && (
+                <TableRow>
+                  <TableCell colSpan={9} className="py-12 text-center">
+                    <FileText className="mx-auto mb-2 h-10 w-10 text-muted-foreground/30" />
+                    <p className="text-muted-foreground">{t("لا توجد طلبات", "Aucune commande", "No orders")}</p>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
 
-        {/* Filter Sidebar */}
-        <div className="hidden lg:block w-64 shrink-0 space-y-4 rounded-2xl border border-border/50 bg-white p-4 shadow-sm sticky top-4">
-          <h3 className="font-display text-sm font-bold text-foreground mb-3">{t("تصفية", "Filtrer", "Filter")}</h3>
-
-          {/* Status filter */}
-          <div>
-            <Label className="text-xs font-semibold mb-1.5 block">{t("حسب الحالة", "Par statut", "By Status")}</Label>
-            <Select value={filterStatus} onValueChange={v => { setFilterStatus(v); setPage(1); }}>
-              <SelectTrigger className="rounded-xl h-9 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("جميع الحالات", "Tous les statuts", "All Statuses")}</SelectItem>
-                <SelectItem value="pending">{t("في الانتظار", "En attente", "Pending")}</SelectItem>
-                <SelectItem value="called">{t("تم الاتصال", "Appelé", "Called")}</SelectItem>
-                <SelectItem value="confirmed">{t("مؤكد", "Confirmé", "Confirmed")}</SelectItem>
-                <SelectItem value="cancelled">{t("ملغى", "Annulé", "Cancelled")}</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Pagination */}
+        <div className="flex items-center justify-between border-t border-border/30 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 text-muted-foreground hover:bg-secondary disabled:opacity-30 transition-colors"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 text-muted-foreground hover:bg-secondary disabled:opacity-30 transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
           </div>
-
-          {/* Wilaya filter */}
-          <div>
-            <Label className="text-xs font-semibold mb-1.5 block">{t("حسب الولاية", "Par wilaya", "By Wilaya")}</Label>
-            <Select value={filterWilaya} onValueChange={v => { setFilterWilaya(v); setPage(1); }}>
-              <SelectTrigger className="rounded-xl h-9 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-60">
-                <SelectItem value="all">{t("جميع الولايات", "Toutes les wilayas", "All Wilayas")}</SelectItem>
-                {uniqueWilayas.map(w => <SelectItem key={w} value={w}>{w}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Course filter */}
-          <div>
-            <Label className="text-xs font-semibold mb-1.5 block">{t("حسب الدورة", "Par cours", "By Course")}</Label>
-            <Select value={filterCourse} onValueChange={v => { setFilterCourse(v); setPage(1); }}>
-              <SelectTrigger className="rounded-xl h-9 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent className="max-h-60">
-                <SelectItem value="all">{t("جميع الدورات", "Tous les cours", "All Courses")}</SelectItem>
-                {courses?.map(c => <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Agent filter */}
-          <div>
-            <Label className="text-xs font-semibold mb-1.5 block">{t("حسب الوكيل", "Par agent", "By Agent")}</Label>
-            <Select value={filterAgent} onValueChange={v => { setFilterAgent(v); setPage(1); }}>
-              <SelectTrigger className="rounded-xl h-9 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("جميع الوكلاء", "Tous les agents", "All Agents")}</SelectItem>
-                {agents?.map((a: any) => <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Button
-            className="w-full rounded-xl text-xs font-semibold"
-            style={{ background: "linear-gradient(135deg, #C9971C, #E8B84A)", color: "#fff" }}
-            onClick={handleResetFilters}
-          >
-            {t("إعادة تعيين", "Réinitialiser", "Reset Filters")}
-          </Button>
+          <p className="text-xs text-muted-foreground">
+            {t(`الصفحة ${page} من ${totalPages}`, `Page ${page} sur ${totalPages}`, `Page ${page} of ${totalPages}`)}
+          </p>
         </div>
       </div>
 
