@@ -129,133 +129,220 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-      <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
-        {/* Background image with overlay */}
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+        {/* Background with layered gradient */}
         <div className="absolute inset-0">
-          <img src={heroStudents} alt="" className="h-full w-full object-cover" width={1920} height={1080} />
-          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(270,60%,12%)]/90 via-[hsl(270,52%,20%)]/80 to-[hsl(270,52%,34%)]/60" />
+          <img src={heroStudents} alt="" className="h-full w-full object-cover scale-105" width={1920} height={1080} />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(270,60%,8%)]/95 via-[hsl(270,52%,16%)]/88 to-[hsl(280,45%,28%)]/70" />
+          {/* Subtle grid pattern overlay */}
+          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
         </div>
 
-        {/* Animated particles */}
+        {/* Floating orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(6)].map((_, i) => (
+          <motion.div className="absolute w-[500px] h-[500px] rounded-full bg-accent/[0.06] blur-[120px] -top-40 -end-40"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.div className="absolute w-[400px] h-[400px] rounded-full bg-primary/[0.08] blur-[100px] bottom-0 -start-20"
+            animate={{ scale: [1.1, 1, 1.1], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
+          {/* Small sparkling dots */}
+          {[...Array(12)].map((_, i) => (
             <motion.div key={i}
-              className="absolute rounded-full bg-accent/20"
-              style={{ width: 6 + i * 4, height: 6 + i * 4, top: `${15 + i * 14}%`, left: `${10 + i * 15}%` }}
-              animate={{ y: [0, -20, 0], opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 3 + i, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute rounded-full bg-white/30"
+              style={{ width: 2 + (i % 3), height: 2 + (i % 3), top: `${8 + i * 7}%`, left: `${5 + i * 8}%` }}
+              animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
+              transition={{ duration: 2 + (i % 4), repeat: Infinity, delay: i * 0.4, ease: "easeInOut" }}
             />
           ))}
         </div>
 
-        <div className="container relative z-10 py-20 lg:py-28">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="container relative z-10 py-20 lg:py-0">
+          <div className="grid lg:grid-cols-[1fr_auto] gap-16 items-center">
             {/* Left content */}
-            <div>
-              <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
-                <span className="inline-flex items-center gap-2 rounded-full bg-accent/20 border border-accent/30 px-4 py-1.5 text-accent text-sm font-semibold mb-6">
-                  <Sparkles className="h-4 w-4" />
-                  {lang === "ar" ? "أكاديمية مايسي" : "Maisy Academy"}
+            <div className="max-w-2xl">
+              {/* Academy badge */}
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.08] backdrop-blur-sm border border-white/[0.12] px-5 py-2 text-sm font-medium mb-8">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent/20">
+                    <Sparkles className="h-3 w-3 text-accent" />
+                  </span>
+                  <span className="text-white/80">{lang === "ar" ? "أكاديمية مايسي — منصة التعلم #1" : "Maisy Academy — #1 Learning Platform"}</span>
                 </span>
               </motion.div>
 
-              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }}
-                className="mb-6 font-display text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold leading-[1.15] text-white">
+              {/* Main heading */}
+              <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
+                className="mb-6 font-display text-4xl sm:text-5xl md:text-[3.5rem] lg:text-[4rem] font-extrabold leading-[1.08] tracking-tight text-white">
                 {lang === "ar" ? (
-                  <>ابدأ <span className="text-gradient-gold relative">
-                    رحلتك التعليمية
-                    <motion.div
-                      className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-accent/50 to-accent/30 rounded-full"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ delay: 1, duration: 0.8 }}
-                    />
-                  </span> اليوم مع أفضل المدربين</>
+                  <>ابدأ{" "}
+                    <span className="relative inline-block">
+                      <span className="text-gradient-gold">رحلتك التعليمية</span>
+                      <motion.svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none"
+                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 1 }}>
+                        <motion.path d="M2 6C50 2 150 2 198 6" stroke="hsl(42,72%,45%)" strokeWidth="3" strokeLinecap="round"
+                          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 1 }} />
+                      </motion.svg>
+                    </span>
+                    <br />اليوم مع أفضل المدربين
+                  </>
                 ) : lang === "fr" ? (
-                  <>Commencez Votre <span className="text-gradient-gold relative">
-                    Parcours Éducatif
-                    <motion.div
-                      className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-accent/50 to-accent/30 rounded-full"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ delay: 1, duration: 0.8 }}
-                    />
-                  </span> Aujourd'hui</>
+                  <>Commencez Votre{" "}
+                    <span className="relative inline-block">
+                      <span className="text-gradient-gold">Parcours Éducatif</span>
+                      <motion.svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
+                        <motion.path d="M2 6C50 2 150 2 198 6" stroke="hsl(42,72%,45%)" strokeWidth="3" strokeLinecap="round"
+                          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 1 }} />
+                      </motion.svg>
+                    </span>
+                    <br />Aujourd'hui
+                  </>
                 ) : (
-                  <>Start Your <span className="text-gradient-gold relative">
-                    Learning Journey
-                    <motion.div
-                      className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-accent/50 to-accent/30 rounded-full"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ delay: 1, duration: 0.8 }}
-                    />
-                  </span> Today with the Best</>
+                  <>Start Your{" "}
+                    <span className="relative inline-block">
+                      <span className="text-gradient-gold">Learning Journey</span>
+                      <motion.svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
+                        <motion.path d="M2 6C50 2 150 2 198 6" stroke="hsl(42,72%,45%)" strokeWidth="3" strokeLinecap="round"
+                          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.2, duration: 1 }} />
+                      </motion.svg>
+                    </span>
+                    <br />Today with the Best
+                  </>
                 )}
               </motion.h1>
 
-              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-                className="mb-8 text-white/70 text-base md:text-lg leading-relaxed max-w-lg">
+              {/* Subtitle */}
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }}
+                className="mb-10 text-white/60 text-base md:text-lg leading-relaxed max-w-xl">
                 {lang === "ar"
-                  ? "اكتشف مئات الدورات التدريبية المعتمدة في البرمجة والتصميم والأعمال وأكثر. تعلّم من خبراء واحصل على شهادات معترف بها."
+                  ? "اكتشف مئات الدورات التدريبية المعتمدة في البرمجة والتصميم والأعمال. تعلّم من خبراء واحصل على شهادات معترف بها."
                   : lang === "fr"
                   ? "Découvrez des centaines de cours certifiés en développement, design et business. Apprenez des experts et obtenez des certificats reconnus."
                   : "Discover hundreds of certified courses in development, design and business. Learn from experts and earn recognized certificates."}
               </motion.p>
 
-              {/* Search bar */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
-                className="mb-8 max-w-md">
-                <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden transition-all focus-within:bg-white/15 focus-within:border-accent/40">
-                  <input type="text"
-                    placeholder={lang === "ar" ? "ابحث عن دورة..." : lang === "fr" ? "Rechercher un cours..." : "Search for a course..."}
-                    className="flex-1 px-5 py-4 text-white placeholder:text-white/40 text-sm focus:outline-none bg-transparent" />
-                  <button className="flex items-center justify-center px-4 text-accent hover:text-accent/80 transition-colors">
-                    <Search className="h-5 w-5" />
-                  </button>
+              {/* Search bar — elevated */}
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                className="mb-8 max-w-lg">
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-accent/30 to-primary/30 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+                  <div className="relative flex items-center bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-2xl overflow-hidden transition-all focus-within:bg-white/[0.1] focus-within:border-white/25">
+                    <Search className="h-5 w-5 text-white/30 ms-5 shrink-0" />
+                    <input type="text"
+                      placeholder={lang === "ar" ? "ابحث عن دورة، مهارة، أو موضوع..." : lang === "fr" ? "Rechercher un cours, une compétence..." : "Search courses, skills, topics..."}
+                      className="flex-1 px-4 py-4 text-white placeholder:text-white/30 text-sm focus:outline-none bg-transparent" />
+                    <Button size="sm" className="gradient-gold text-accent-foreground font-semibold rounded-xl me-1.5 my-1.5 px-5 hover:opacity-90">
+                      {lang === "ar" ? "بحث" : lang === "fr" ? "Chercher" : "Search"}
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
 
               {/* CTA buttons */}
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-                className="flex flex-wrap items-center gap-4">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+                className="flex flex-wrap items-center gap-4 mb-10">
                 <Link to="/courses">
-                  <Button size="lg" className="gradient-gold text-accent-foreground font-bold text-sm px-8 py-6 rounded-xl shadow-lg shadow-accent/20 hover:opacity-90 hover:shadow-accent/30 transition-all">
+                  <Button size="lg" className="gradient-gold text-accent-foreground font-bold text-sm px-8 py-6 rounded-xl shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:scale-[1.02] transition-all duration-300">
                     {lang === "ar" ? "استكشف الدورات" : lang === "fr" ? "Découvrir les Cours" : "Explore Courses"}
                     <ArrowRight className="h-4 w-4 ms-2" />
                   </Button>
                 </Link>
-                <Link to="/register">
-                  <Button size="lg" className="bg-white text-primary font-bold text-sm px-8 py-6 rounded-xl shadow-lg hover:bg-white/90 transition-all">
-                    <Play className="h-4 w-4 me-2" />
-                    {lang === "ar" ? "شاهد الفيديو" : lang === "fr" ? "Voir la Vidéo" : "Watch Video"}
-                  </Button>
-                </Link>
+                <button className="group flex items-center gap-3 text-white/80 hover:text-white transition-colors">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white/20 bg-white/5 backdrop-blur-sm group-hover:border-accent/50 group-hover:bg-accent/10 transition-all duration-300">
+                    <Play className="h-5 w-5 ms-0.5" />
+                  </span>
+                  <span className="text-sm font-semibold">{lang === "ar" ? "شاهد الفيديو التعريفي" : lang === "fr" ? "Voir la Vidéo" : "Watch Intro Video"}</span>
+                </button>
+              </motion.div>
+
+              {/* Trust badges */}
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.8 }}
+                className="flex flex-wrap items-center gap-6 text-sm text-white/40">
+                <span className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-accent/70" />
+                  {lang === "ar" ? "شهادات معتمدة" : "Certified Courses"}
+                </span>
+                <span className="h-4 w-px bg-white/10" />
+                <span className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-accent/70" />
+                  {lang === "ar" ? "+5000 طالب" : "5,000+ Students"}
+                </span>
+                <span className="h-4 w-px bg-white/10" />
+                <span className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-accent/70 fill-accent/70" />
+                  {lang === "ar" ? "تقييم 4.9/5" : "4.9/5 Rating"}
+                </span>
               </motion.div>
             </div>
 
-            {/* Right: floating glass stats card */}
-            <motion.div initial={{ opacity: 0, scale: 0.9, x: 40 }} animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }} className="hidden lg:block">
-              <div className="glass-card rounded-3xl p-8 relative">
-                <div className="absolute -top-4 -end-4 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
-                <div className="absolute -bottom-6 -start-6 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
-                <div className="grid grid-cols-2 gap-6 relative z-10">
-                  {stats.map(({ value, label, icon: Icon, ref }, i) => (
-                    <motion.div key={i} ref={ref} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + i * 0.12 }}
-                      className="text-center p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors">
-                      <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/20">
-                        <Icon className="h-5 w-5 text-accent" />
-                      </div>
-                      <p className="text-2xl font-extrabold text-white mb-1">{value}</p>
-                      <p className="text-xs text-white/60">{label}</p>
-                    </motion.div>
-                  ))}
+            {/* Right: Modern stats dashboard card */}
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.5, ease: "easeOut" }} className="hidden lg:block w-[380px]">
+              <div className="relative">
+                {/* Glow behind card */}
+                <div className="absolute -inset-4 bg-gradient-to-br from-accent/15 to-primary/15 rounded-[2rem] blur-2xl" />
+
+                <div className="relative bg-white/[0.06] backdrop-blur-2xl rounded-3xl border border-white/[0.1] p-7 shadow-2xl shadow-black/20">
+                  {/* Card header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2.5 w-2.5 rounded-full bg-accent animate-pulse" />
+                      <span className="text-xs font-medium text-white/50 uppercase tracking-wider">
+                        {lang === "ar" ? "إحصائيات مباشرة" : "Live Statistics"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-white/5 rounded-full px-2.5 py-1">
+                      <TrendingUp className="h-3 w-3 text-success" />
+                      <span className="text-[10px] font-semibold text-success">+12%</span>
+                    </div>
+                  </div>
+
+                  {/* Stats grid */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {stats.map(({ value, label, icon: Icon, color, ref }, i) => (
+                      <motion.div key={i} ref={ref}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 + i * 0.1 }}
+                        className="group relative p-4 rounded-2xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] hover:border-white/[0.12] transition-all duration-300 cursor-default"
+                      >
+                        <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${color} shadow-lg`}>
+                          <Icon className="h-5 w-5 text-white" />
+                        </div>
+                        <p className="text-2xl font-extrabold text-white tracking-tight">{value}</p>
+                        <p className="text-[11px] text-white/40 mt-0.5 leading-tight">{label}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Mini chart decoration */}
+                  <div className="mt-5 pt-4 border-t border-white/[0.06]">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] text-white/40">{lang === "ar" ? "نمو شهري" : "Monthly Growth"}</span>
+                      <span className="text-[11px] font-semibold text-accent">+24%</span>
+                    </div>
+                    <div className="flex items-end gap-1 h-8">
+                      {[35, 50, 40, 65, 55, 75, 60, 80, 70, 90, 85, 95].map((h, i) => (
+                        <motion.div key={i}
+                          className="flex-1 rounded-sm bg-gradient-to-t from-accent/40 to-accent/80"
+                          initial={{ height: 0 }}
+                          animate={{ height: `${h}%` }}
+                          transition={{ delay: 1 + i * 0.06, duration: 0.5 }}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
           </div>
+        </div>
+
+        {/* Bottom curve */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+            <path d="M0 60V30C240 5 480 0 720 10C960 20 1200 45 1440 30V60H0Z" fill="hsl(var(--background))" />
+          </svg>
         </div>
       </section>
 
