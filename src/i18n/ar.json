@@ -14,6 +14,9 @@
     "signOut": "تسجيل الخروج",
     "contactUs": "اتصل بنا",
     "instructions": "التعليمات",
+    "becomeInstructor": "كن مدرباً",
+    "partnerships": "شراكات",
+    "startLearning": "ابدأ التعلم",
     "cat": { "bodyCare": "العناية الجسدية", "earlyChildhood": "تعليم الأطفال", "hse": "أمن ووقاية", "religious": "إرشاد ديني" }
   },
   "hero": {
@@ -35,7 +38,11 @@
     "quality": "محتوى عالي الجودة",
     "qualityDesc": "محتوى من خبراء محدث باستمرار.",
     "accredited": "اعتماد حكومي",
-    "accreditedDesc": "معترف به من وزارة التكوين المهني."
+    "accreditedDesc": "معترف به من وزارة التكوين المهني.",
+    "practical": "تطبيق عملي",
+    "practicalDesc": "دورات تجمع بين النظرية والتطبيق العملي.",
+    "multilingual": "دعم متعدد اللغات",
+    "multilingualDesc": "محتوى متاح بالعربية والفرنسية والإنجليزية."
   },
   "howItWorks": { "title": "تعلم مع أكثر من 200 مؤسسة ومعلم عالمي", "subtitle": "التعلم بسهولة في ثلاث خطوات", "where": "أين أريد", "whereDesc": "تعلم من أي مكان.", "when": "متى أريد", "whenDesc": "الوصول إلى دوراتك على مدار الساعة.", "pace": "بالسرعة التي تناسبني", "paceDesc": "لا ضغط. تقدم بالسرعة المناسبة." },
   "learningFocused": { "title": "تعلم يركز على أهدافك", "subtitle": "تعلم من أفضل المعلمين" },
@@ -44,7 +51,7 @@
   "mentors": { "title": "تعرف على مدربينا المهرة", "subtitle": "تعلم من خبراء الصناعة بسنوات من الخبرة.", "classCompleted": "فصل مكتمل", "satisfaction": "معدل الرضا" },
   "testimonials": { "title": "ماذا يقول طلابنا", "subtitle": "يشيد طلابنا بتجربة التعلم التحويلية التي نقدمها." },
   "newsletter": { "title": "ابقَ على اطلاع", "subtitle": "اشترك في نشرتنا الإخبارية.", "placeholder": "أدخل بريدك الإلكتروني", "subscribe": "اشترك" },
-  "footer": { "platform": "المنصة", "support": "الدعم", "becomeInstructor": "كن مدرباً", "instructions": "التعليمات", "terms": "شروط الخدمة", "description": "أكاديمية مايسي — المنصة الرائدة للتعلم عبر الإنترنت والتدريب والتطوير المهني.", "contact": "اتصل بنا" },
+  "footer": { "platform": "المنصة", "support": "الدعم", "becomeInstructor": "كن مدرباً", "instructions": "التعليمات", "terms": "شروط الخدمة", "description": "أكاديمية مايسي — المنصة الرائدة للتعلم عبر الإنترنت والتدريب والتطوير المهني.", "contact": "اتصل بنا", "partnerships": "شراكات" },
   "about": { "title": "عن أكاديمية مايسي", "subtitle": "تمكين المتعلمين من خلال التعليم الجيد.", "mission": "مهمتنا", "missionText": "دمقرطة التعليم من خلال دورات عالية الجودة.", "vision": "رؤيتنا", "visionText": "أن نصبح المنصة الرائدة للتدريب في العالم العربي.", "team": "فريقنا" },
   "qa": { "title": "أسئلة وأجوبة", "subtitle": "اطرح أسئلتك واحصل على إجابات من المجتمع", "recent": "الأحدث", "popular": "الأكثر شعبية", "unanswered": "بدون إجابة", "askQuestion": "اطرح سؤالاً", "titlePlaceholder": "عنوان السؤال...", "bodyPlaceholder": "صف سؤالك بالتفصيل...", "submit": "إرسال", "questionPosted": "تم نشر السؤال!", "noQuestions": "لا توجد أسئلة بعد", "answered": "تمت الإجابة" },
   "instructions": { "title": "تعليمات المنصة", "subtitle": "تعلم كيفية استخدام أكاديمية مايسي خطوة بخطوة", "noInstructions": "لا توجد تعليمات متاحة حالياً", "markComplete": "تحديد كمكتمل", "completed": "مكتمل" },
