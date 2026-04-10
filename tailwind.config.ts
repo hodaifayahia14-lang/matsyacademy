@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Inter"', '"Cairo"', 'system-ui', 'sans-serif'],
-        display: ['"Playfair Display"', '"Cairo"', 'serif'],
+        sans: ['"Poppins"', '"Cairo"', 'system-ui', 'sans-serif'],
+        display: ['"Poppins"', '"Cairo"', 'sans-serif'],
         arabic: ['"Cairo"', 'system-ui', 'sans-serif'],
       },
       colors: {
