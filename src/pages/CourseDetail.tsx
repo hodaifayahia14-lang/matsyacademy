@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart, CheckCircle, User, Phone, MapPin } from "lucide-react";
+import { Star, Clock, Users, BookOpen, Globe, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart, CheckCircle, User, Phone, MapPin, Share2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -33,7 +33,7 @@ export default function CourseDetail() {
   const lang = i18n.language as "en" | "fr" | "ar";
   const { course, loading } = useCourseDetail(id);
   const [sections, setSections] = useState<SectionData[]>([]);
-  const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
+  const [activeTab, setActiveTab] = useState<"curriculum" | "overview" | "instructor">("curriculum");
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -86,17 +86,14 @@ export default function CourseDetail() {
   const description = course.description || "";
   const categoryName = getLocalized(course, "category_name", lang);
   const isBook = course.type === "book";
-  const priceText = Number(course.price) > 0 ? `${Number(course.price).toLocaleString()} DZD` : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
-
-  const levelLabel = course.level === "beginner"
-    ? (lang === "ar" ? "مبتدئ" : lang === "fr" ? "Débutant" : "Beginner")
-    : course.level === "intermediate"
-    ? (lang === "ar" ? "متوسط" : lang === "fr" ? "Intermédiaire" : "Intermediate")
-    : (lang === "ar" ? "متقدم" : lang === "fr" ? "Avancé" : "Advanced");
+  const price = Number(course.price);
+  const oldPrice = Math.round(price / 0.75);
+  const discountPercent = 25;
+  const priceText = price > 0 ? `${price.toLocaleString()}` : (lang === "ar" ? "مجاني" : lang === "fr" ? "Gratuit" : "Free");
 
   const enrollText = isBook
     ? (lang === "ar" ? "اشترِ الآن" : lang === "fr" ? "Acheter" : "Buy Now")
-    : (lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now");
+    : (lang === "ar" ? "اشترِ الآن" : lang === "fr" ? "S'inscrire" : "Buy Now");
 
   const validateOrderForm = () => {
     const errors: Record<string, string> = {};
@@ -130,9 +127,7 @@ export default function CourseDetail() {
     }
   };
 
-  const handleEnroll = () => {
-    setShowOrderForm(true);
-  };
+  const handleEnroll = () => { setShowOrderForm(true); };
 
   const toggleSection = (sectionId: string) => {
     setOpenSections((prev) => { const next = new Set(prev); next.has(sectionId) ? next.delete(sectionId) : next.add(sectionId); return next; });
@@ -141,61 +136,166 @@ export default function CourseDetail() {
   const totalLessons = sections.reduce((acc, s) => acc + s.lessons.length, 0);
   const lessonIcon = (type: string) => {
     if (type === "video") return <Play className="h-4 w-4 text-primary" />;
-    if (type === "quiz") return <HelpCircle className="h-4 w-4 text-warning" />;
+    if (type === "quiz") return <HelpCircle className="h-4 w-4 text-accent" />;
     return <FileText className="h-4 w-4 text-muted-foreground" />;
   };
 
-  const tabs = ["overview", "curriculum", "instructor", "reviews"] as const;
-  const tabLabels = { overview: t("courseDetail.overview"), curriculum: t("courseDetail.curriculum"), instructor: t("courseDetail.instructor"), reviews: t("courseDetail.reviews") };
+  const tabs = ["curriculum", "overview", "instructor"] as const;
+  const tabLabels: Record<string, string> = {
+    curriculum: lang === "ar" ? "المقرر الدراسي" : lang === "fr" ? "Programme" : "Curriculum",
+    overview: lang === "ar" ? "نظرة عامة" : lang === "fr" ? "Aperçu" : "Overview",
+    instructor: lang === "ar" ? "المدرس" : lang === "fr" ? "Formateur" : "Instructor",
+  };
 
   const learningOutcomes = course.learning_outcomes || [];
   const requirements = course.requirements || [];
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-secondary/30">
-        <div className="container py-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-primary shrink-0">{t("navbar.home")}</Link>
-            <span>/</span>
-            <Link to="/courses" className="hover:text-primary shrink-0">{t("navbar.courses")}</Link>
-            <span>/</span>
-            <span className="text-foreground truncate max-w-[150px] sm:max-w-none">{title}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="container py-4 sm:py-8">
-        <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+      {/* ═══════ HERO ═══════ */}
+      <section className="gradient-purple">
+        <div className="container py-10 lg:py-14">
+          <div className="grid gap-8 lg:grid-cols-2 items-center">
+            {/* Text side */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="mb-6 aspect-video overflow-hidden rounded-xl bg-secondary relative">
-                <img src={course.cover_image || "/placeholder.svg"} alt={title} className="h-full w-full object-cover" />
-              </div>
-              <div className="mb-2 flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{categoryName}</span>
-                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-muted-foreground">{levelLabel}</span>
-              </div>
-              <h1 className="mb-3 font-display text-xl font-bold text-foreground sm:text-2xl lg:text-3xl">{title}</h1>
-              <p className="mb-4 text-muted-foreground">{subtitle}</p>
-              <div className="mb-6 flex items-center gap-3">
-                {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-10 w-10 rounded-full border-2 border-primary/20" />}
-                <div>
-                  <span className="text-xs text-muted-foreground">{t("courseDetail.instructor")}</span>
-                  <p className="text-sm font-semibold text-foreground">{course.instructor_name}</p>
+              <h1 className="mb-5 font-display text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-white">
+                {title}
+              </h1>
+              {subtitle && <p className="mb-5 text-white/70 text-sm leading-relaxed">{subtitle}</p>}
+
+              {/* Rating */}
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className={`h-4 w-4 ${s <= 4 ? "fill-accent text-accent" : s === 5 ? "fill-accent/40 text-accent/40" : "text-white/30"}`} />
+                  ))}
                 </div>
+                <span className="text-sm font-semibold text-white">4.8 / 5</span>
+              </div>
+
+              {/* Instructor */}
+              <div className="flex items-center gap-3 mb-3">
+                {course.instructor_avatar && (
+                  <img src={course.instructor_avatar} alt="" className="h-8 w-8 rounded-full border-2 border-white/30" />
+                )}
+                <span className="text-sm text-white/80">
+                  {lang === "ar" ? "م." : ""} {course.instructor_name}
+                </span>
+              </div>
+
+              {/* Language badge */}
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs text-white/80">
+                <Globe className="h-3.5 w-3.5" />
+                {course.language === "ar" ? (lang === "ar" ? "العربية" : "Arabic") : course.language}
               </div>
             </motion.div>
 
-            <div className="mb-6 flex gap-1 rounded-lg bg-secondary p-1 overflow-x-auto">
+            {/* Video/Image preview */}
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}
+              className="relative rounded-xl overflow-hidden shadow-2xl aspect-video bg-foreground/10">
+              <img src={course.cover_image || "/placeholder.svg"} alt={title} className="h-full w-full object-cover" />
+              <div className="absolute inset-0 flex items-center justify-center bg-foreground/20">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 shadow-lg cursor-pointer hover:scale-110 transition-transform">
+                  <Play className="h-7 w-7 text-primary ms-1" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ CONTENT ═══════ */}
+      <div className="container py-8 lg:py-12">
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Main content */}
+          <div className="lg:col-span-2">
+            {/* Tabs */}
+            <div className="mb-6 flex gap-1 border-b border-border">
               {tabs.map((tab) => (
                 <button key={tab} onClick={() => setActiveTab(tab)}
-                  className={`flex-1 min-w-fit whitespace-nowrap rounded-md px-3 py-2 text-xs font-medium capitalize transition-colors sm:px-4 sm:py-2.5 sm:text-sm ${activeTab === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+                  className={`px-5 py-3 text-sm font-semibold transition-colors border-b-2 -mb-px ${
+                    activeTab === tab
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}>
                   {tabLabels[tab]}
                 </button>
               ))}
             </div>
 
+            {/* Curriculum Tab */}
+            {activeTab === "curriculum" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                {isBook ? (
+                  <div className="py-8 text-center text-muted-foreground">
+                    {lang === "ar" ? `هذا كتاب يحتوي على ${course.page_count || ""} صفحة` : `This is a book with ${course.page_count || ""} pages`}
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-4">
+                      <h3 className="font-display text-lg font-bold text-foreground mb-1">
+                        {lang === "ar" ? "المقرر الدراسي" : "Curriculum"}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {lang === "ar" ? "مقدمة في تصميم تجربة المستخدم" : subtitle || description?.slice(0, 60)}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      {sections.map((section, idx) => (
+                        <div key={section.id} className="overflow-hidden rounded-lg border border-border">
+                          <button onClick={() => toggleSection(section.id)}
+                            className={`flex w-full items-center justify-between px-4 py-3.5 text-start transition-colors ${
+                              openSections.has(section.id) ? "bg-primary text-primary-foreground" : "bg-card hover:bg-secondary/50"
+                            }`}>
+                            <span className="text-sm font-semibold">{section.title}</span>
+                            {openSections.has(section.id) ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          </button>
+                          <AnimatePresence>
+                            {openSections.has(section.id) && (
+                              <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden">
+                                <div className="divide-y divide-border">
+                                  {section.lessons.map((lesson, li) => (
+                                    <div key={lesson.id} className="flex items-center justify-between px-4 py-3 hover:bg-secondary/30 transition-colors">
+                                      <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2">
+                                          <CheckCircle className="h-4 w-4 text-primary/40" />
+                                          <Star className="h-3.5 w-3.5 text-muted-foreground/40" />
+                                          <Info className="h-3.5 w-3.5 text-muted-foreground/40" />
+                                        </div>
+                                        <div>
+                                          <span className="text-sm font-medium">{idx + 1}.{li + 1} {lesson.title}</span>
+                                          {lesson.is_preview && (
+                                            <span className="ms-2 rounded bg-primary/10 text-primary px-2 py-0.5 text-xs">{t("courseDetail.preview")}</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                        <Clock className="h-3.5 w-3.5" />
+                                        <span>{Math.floor(lesson.duration_minutes / 60)}h {lesson.duration_minutes % 60}m</span>
+                                        {lesson.type === "video" && <Play className="h-3.5 w-3.5" />}
+                                      </div>
+                                    </div>
+                                  ))}
+                                  {/* Expression badge */}
+                                  <div className="px-4 py-2 text-end">
+                                    <span className="text-xs text-primary cursor-pointer hover:underline">
+                                      + {lang === "ar" ? "التعبير الوفي" : "View all"}
+                                    </span>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </motion.div>
+            )}
+
+            {/* Overview Tab */}
             {activeTab === "overview" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
                 {learningOutcomes.length > 0 && (
@@ -225,54 +325,10 @@ export default function CourseDetail() {
               </motion.div>
             )}
 
-            {activeTab === "curriculum" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                {isBook ? (
-                  <div className="py-8 text-center text-muted-foreground">
-                    {lang === "ar" ? `هذا كتاب يحتوي على ${course.page_count || ""} صفحة` : `This is a book with ${course.page_count || ""} pages`}
-                  </div>
-                ) : (
-                  <>
-                    <div className="mb-4 flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        {sections.length} {t("courseDetail.sections")} • {totalLessons} {t("courseDetail.totalLessons")}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      {sections.map((section) => (
-                        <div key={section.id} className="overflow-hidden rounded-lg border">
-                          <button onClick={() => toggleSection(section.id)} className="flex w-full items-center justify-between bg-secondary/50 px-4 py-3.5 text-start hover:bg-secondary transition-colors">
-                            <span className="text-sm font-semibold">{section.title}</span>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <span>{section.lessons.length} {t("catalog.lessons")}</span>
-                              {openSections.has(section.id) ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                            </div>
-                          </button>
-                          {openSections.has(section.id) && (
-                            <div className="divide-y">
-                              {section.lessons.map((lesson) => (
-                                <div key={lesson.id} className="flex items-center justify-between px-4 py-3 hover:bg-secondary/30 transition-colors">
-                                  <div className="flex items-center gap-3">
-                                    {lessonIcon(lesson.type)}
-                                    <span className="text-sm">{lesson.title}</span>
-                                    {lesson.is_preview && <span className="rounded bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium">{t("courseDetail.preview")}</span>}
-                                  </div>
-                                  <span className="text-xs text-muted-foreground">{lesson.duration_minutes}m</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </motion.div>
-            )}
-
+            {/* Instructor Tab */}
             {activeTab === "instructor" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="flex flex-col items-center gap-4 rounded-xl border p-4 sm:flex-row sm:items-start sm:gap-6 sm:p-6">
+                <div className="flex flex-col items-center gap-4 rounded-xl border p-6 sm:flex-row sm:items-start sm:gap-6">
                   {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-20 w-20 rounded-full border-2 border-primary/20 sm:h-24 sm:w-24" />}
                   <div className="flex-1 text-center sm:text-start">
                     <h3 className="mb-1 font-display text-lg font-bold sm:text-xl">{course.instructor_name}</h3>
@@ -281,66 +337,65 @@ export default function CourseDetail() {
                 </div>
               </motion.div>
             )}
-
-            {activeTab === "reviews" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="py-8 text-center text-muted-foreground">
-                  {lang === "ar" ? "لا توجد مراجعات حالياً" : "No reviews yet"}
-                </div>
-              </motion.div>
-            )}
           </div>
 
-          {/* Sidebar */}
+          {/* ═══════ PRICE SIDEBAR ═══════ */}
           <div className="lg:col-span-1">
-            <div className="sticky top-20 space-y-4">
+            <div className="sticky top-20">
               <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
                 {/* Price header */}
-                <div className="bg-primary/5 px-4 py-5 text-center sm:px-6">
-                  <p className="font-display text-3xl font-bold text-primary">{priceText}</p>
+                <div className="bg-purple-light px-5 py-6 text-center">
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="font-display text-3xl font-bold text-primary">
+                      {price > 0 ? `${lang === "ar" ? "د.ج" : "DZD"} ${priceText}` : priceText}
+                    </span>
+                  </div>
+                  {price > 0 && (
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {lang === "ar" ? `خصم ${discountPercent}% (كان د.ج ${oldPrice.toLocaleString()})` : `${discountPercent}% off (was ${oldPrice.toLocaleString()} DZD)`}
+                    </p>
+                  )}
                 </div>
 
-                <div className="p-4 sm:p-6">
+                <div className="p-5 space-y-4">
+                  {/* Features list */}
+                  <ul className="space-y-3">
+                    {[
+                      lang === "ar" ? "دخول مدى الحياة" : "Lifetime access",
+                      lang === "ar" ? "شهادة إتمام" : "Completion certificate",
+                      lang === "ar" ? "وصول عبر الهاتف" : "Mobile access",
+                    ].map((feat) => (
+                      <li key={feat} className="flex items-center gap-2.5 text-sm text-foreground">
+                        <Check className="h-4 w-4 text-primary shrink-0" />
+                        {feat}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA */}
                   <AnimatePresence mode="wait">
                     {orderSuccess ? (
-                      <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="py-6 text-center space-y-3">
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-                          <CheckCircle className="h-8 w-8 text-green-600" />
+                      <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="py-4 text-center space-y-3">
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
+                          <CheckCircle className="h-7 w-7 text-green-600" />
                         </div>
-                        <h3 className="font-display text-lg font-bold">
-                          {lang === "ar" ? "تم إرسال طلبك!" : "Order Submitted!"}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {lang === "ar" ? "سيتم التواصل معك قريباً" : "We'll contact you soon"}
-                        </p>
+                        <h3 className="font-display text-base font-bold">{lang === "ar" ? "تم إرسال طلبك!" : "Order Submitted!"}</h3>
+                        <p className="text-xs text-muted-foreground">{lang === "ar" ? "سيتم التواصل معك قريباً" : "We'll contact you soon"}</p>
                       </motion.div>
                     ) : showOrderForm ? (
                       <motion.div key="form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-                        <h3 className="font-display text-base font-bold text-center mb-1">
-                          {lang === "ar" ? "أكمل طلبك" : lang === "fr" ? "Complétez votre commande" : "Complete Your Order"}
-                        </h3>
+                        <h3 className="font-display text-sm font-bold text-center">{lang === "ar" ? "أكمل طلبك" : "Complete Your Order"}</h3>
                         <div>
                           <div className="relative">
                             <User className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              placeholder={lang === "ar" ? "الاسم الكامل" : "Full Name"}
-                              className="ps-10"
-                              value={formData.full_name}
-                              onChange={e => setFormData(p => ({ ...p, full_name: e.target.value }))}
-                            />
+                            <Input placeholder={lang === "ar" ? "الاسم الكامل" : "Full Name"} className="ps-10" value={formData.full_name} onChange={e => setFormData(p => ({ ...p, full_name: e.target.value }))} />
                           </div>
                           {formErrors.full_name && <p className="text-xs text-destructive mt-1">{formErrors.full_name}</p>}
                         </div>
                         <div>
                           <div className="relative">
                             <Phone className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              placeholder="05xxxxxxxx"
-                              dir="ltr"
-                              className="ps-10"
-                              value={formData.phone}
-                              onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                            />
+                            <Input placeholder="05xxxxxxxx" dir="ltr" className="ps-10" value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))} />
                           </div>
                           {formErrors.phone && <p className="text-xs text-destructive mt-1">{formErrors.phone}</p>}
                         </div>
@@ -354,9 +409,7 @@ export default function CourseDetail() {
                             </SelectTrigger>
                             <SelectContent className="max-h-60">
                               {algerianWilayas.map(w => (
-                                <SelectItem key={w.code} value={String(w.code)}>
-                                  {String(w.code).padStart(2, "0")} - {w.name}
-                                </SelectItem>
+                                <SelectItem key={w.code} value={String(w.code)}>{String(w.code).padStart(2, "0")} - {w.name}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
@@ -365,72 +418,47 @@ export default function CourseDetail() {
                         <div>
                           <div className="relative">
                             <MapPin className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              placeholder={lang === "ar" ? "البلدية" : lang === "fr" ? "Commune" : "Municipality"}
-                              className="ps-10"
-                              value={formData.baladiya}
-                              onChange={e => setFormData(p => ({ ...p, baladiya: e.target.value }))}
-                            />
+                            <Input placeholder={lang === "ar" ? "البلدية" : "Municipality"} className="ps-10" value={formData.baladiya} onChange={e => setFormData(p => ({ ...p, baladiya: e.target.value }))} />
                           </div>
-                          {formErrors.baladiya && <p className="text-xs text-destructive mt-1">{formErrors.baladiya}</p>}
                         </div>
                         <div>
                           <Select onValueChange={val => setFormData(p => ({ ...p, status_label: val }))} value={formData.status_label}>
-                            <SelectTrigger>
-                              <SelectValue placeholder={lang === "ar" ? "الحالة المهنية" : "Professional Status"} />
-                            </SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder={lang === "ar" ? "الحالة المهنية" : "Professional Status"} /></SelectTrigger>
                             <SelectContent>
                               {statusOptions.map(s => (
-                                <SelectItem key={s.value} value={s.value}>
-                                  {lang === "ar" ? s.labelAr : lang === "fr" ? s.labelFr : s.labelEn}
-                                </SelectItem>
+                                <SelectItem key={s.value} value={s.value}>{lang === "ar" ? s.labelAr : lang === "fr" ? s.labelFr : s.labelEn}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                           {formErrors.status_label && <p className="text-xs text-destructive mt-1">{formErrors.status_label}</p>}
                         </div>
-                        <Button className="w-full gap-2" size="lg" onClick={handleOrderSubmit} disabled={orderSubmitting}>
-                          {orderSubmitting
-                            ? (lang === "ar" ? "جاري الإرسال..." : "Submitting...")
-                            : (lang === "ar" ? "تأكيد الطلب" : lang === "fr" ? "Confirmer la commande" : "Confirm Order")}
+                        <Button className="w-full gradient-gold text-accent-foreground font-bold" size="lg" onClick={handleOrderSubmit} disabled={orderSubmitting}>
+                          {orderSubmitting ? (lang === "ar" ? "جاري الإرسال..." : "Submitting...") : (lang === "ar" ? "تأكيد الطلب" : "Confirm Order")}
                         </Button>
-                        <button onClick={() => setShowOrderForm(false)} className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors">
+                        <button onClick={() => setShowOrderForm(false)} className="w-full text-center text-xs text-muted-foreground hover:text-foreground">
                           {lang === "ar" ? "رجوع" : "Back"}
                         </button>
                       </motion.div>
                     ) : (
                       <motion.div key="cta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
-                        <Button className="w-full gap-2" size="lg" onClick={handleEnroll}>
+                        <Button className="w-full gradient-gold text-accent-foreground font-bold text-base" size="lg" onClick={handleEnroll}>
                           {enrollText}
                         </Button>
-                        <p className="text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
+
+                        {/* Add to cart + Share row */}
+                        <div className="flex items-center justify-center gap-6 pt-1">
+                          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+                            <ShoppingCart className="h-4 w-4" />
+                            {lang === "ar" ? "إضافة للسلة" : "Add to cart"}
+                          </button>
+                          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
+                            <Share2 className="h-4 w-4" />
+                            {lang === "ar" ? "مشاركة" : "Share"}
+                          </button>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-
-                  {/* Course info */}
-                  <div className="space-y-3 border-t pt-4 mt-4">
-                    {[
-                      ...(isBook && course.page_count ? [{ icon: BookOpen, label: `${course.page_count} ${lang === "ar" ? "صفحة" : "pages"}` }] : []),
-                      ...(!isBook ? [{ icon: BookOpen, label: `${totalLessons} ${t("catalog.lessons")}` }] : []),
-                      { icon: Globe, label: course.language },
-                      { icon: Shield, label: t("courseDetail.certificate") },
-                    ].map(({ icon: Icon, label }) => (
-                      <div key={label} className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <Icon className="h-4 w-4 text-primary" />{label}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-xl border bg-card p-5">
-                <div className="flex items-center gap-3">
-                  {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-12 w-12 rounded-full" />}
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{course.instructor_name}</p>
-                    <p className="text-xs text-muted-foreground">{t("courseDetail.expertInstructor")}</p>
-                  </div>
                 </div>
               </div>
             </div>
