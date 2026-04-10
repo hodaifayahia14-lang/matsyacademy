@@ -114,7 +114,9 @@ export default function BlogDetail() {
       {/* Cover Image */}
       {post.cover_image && (
         <div className="container max-w-4xl -mt-0">
-          <img src={post.cover_image} alt={title} className="w-full rounded-b-xl object-cover" style={{ maxHeight: 400 }} />
+          <img src={post.cover_image} alt={title} className="w-full rounded-b-xl object-cover bg-muted" style={{ maxHeight: 400 }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            referrerPolicy="no-referrer" />
         </div>
       )}
 
