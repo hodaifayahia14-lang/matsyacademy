@@ -6,13 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { algerianWilayas, statusOptions } from "@/data/algerianWilayas";
 import { CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 const schema = z.object({
   full_name: z.string().trim().min(3, "الاسم مطلوب (3 أحرف على الأقل)"),
@@ -68,20 +68,33 @@ export default function OrderForm() {
   if (success) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center px-4">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="py-12 space-y-4">
-            <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
-            <h2 className="font-display text-2xl font-bold">
-              {lang === "ar" ? "تم إرسال طلبك بنجاح!" : lang === "fr" ? "Commande envoyée avec succès!" : "Order submitted successfully!"}
-            </h2>
-            <p className="text-muted-foreground">
-              {lang === "ar" ? "سيتم التواصل معك قريباً لتأكيد الطلب" : lang === "fr" ? "Nous vous contacterons bientôt pour confirmer" : "We will contact you shortly to confirm"}
-            </p>
-            <Link to="/courses"><Button variant="outline">
-              {lang === "ar" ? "تصفح المزيد من الدورات" : "Browse more courses"}
-            </Button></Link>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-md rounded-2xl p-1"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)))",
+          }}
+        >
+          <div className="rounded-xl bg-card px-6 py-10 text-center space-y-5">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle className="h-9 w-9 text-green-500" />
+            </div>
+            <div>
+              <h2 className="font-display text-xl font-bold text-foreground mb-2">
+                {lang === "ar" ? "تم إرسال طلبك بنجاح!" : lang === "fr" ? "Commande envoyée avec succès !" : "Order submitted successfully!"}
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                {lang === "ar" ? "سيتصل بك فريقنا قريباً." : lang === "fr" ? "Notre équipe vous contactera bientôt." : "Our team will contact you soon."}
+              </p>
+            </div>
+            <Link to={courseId ? `/courses/${courseId}` : "/courses"}>
+              <Button className="w-full gradient-gold text-accent-foreground font-bold rounded-full" size="lg">
+                {lang === "ar" ? "العودة إلى الدورة" : "Back to Course"}
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
       </div>
     );
   }
@@ -91,45 +104,48 @@ export default function OrderForm() {
     : (lang === "ar" ? "مجاني" : "Free");
 
   return (
-    <div className="container max-w-lg py-8 sm:py-12">
-      {course && (
-        <Card className="mb-6">
-          <CardContent className="flex items-center gap-4 py-4">
-            {course.cover_image && <img src={course.cover_image} alt="" className="h-16 w-16 rounded-lg object-cover" />}
-            <div className="flex-1">
-              <p className="font-semibold">{course.title}</p>
-              <p className="text-lg font-bold text-primary">{priceText}</p>
+    <div className="flex min-h-[70vh] items-center justify-center px-4 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md rounded-2xl bg-card shadow-2xl overflow-hidden"
+      >
+        {/* Course info header */}
+        {course && (
+          <div className="flex items-center gap-4 px-6 pt-6 pb-4 border-b border-border">
+            {course.cover_image && (
+              <img src={course.cover_image} alt="" className="h-16 w-16 rounded-lg object-cover shrink-0" />
+            )}
+            <div className="flex-1 min-w-0 text-end">
+              <p className="font-display font-bold text-sm text-foreground truncate">{course.title}</p>
+              <p className="text-accent font-bold text-sm mt-0.5">{priceText}</p>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{lang === "ar" ? "نموذج الطلب" : lang === "fr" ? "Formulaire de commande" : "Order Form"}</CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Form */}
+        <div className="px-6 py-5">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField control={form.control} name="full_name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{lang === "ar" ? "الاسم الكامل" : "Full Name"}</FormLabel>
-                  <FormControl><Input placeholder={lang === "ar" ? "أدخل اسمك الكامل" : "Enter your full name"} {...field} /></FormControl>
+                  <FormLabel className="text-end block font-semibold">{lang === "ar" ? "الاسم الكامل" : "Full Name"}</FormLabel>
+                  <FormControl><Input placeholder={lang === "ar" ? "محمد أحمد" : "Enter your full name"} className="rounded-lg" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <FormField control={form.control} name="phone" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{lang === "ar" ? "رقم الهاتف" : "Phone Number"}</FormLabel>
-                  <FormControl><Input placeholder="05xxxxxxxx" dir="ltr" {...field} /></FormControl>
+                  <FormLabel className="text-end block font-semibold">{lang === "ar" ? "رقم الهاتف" : "Phone Number"}</FormLabel>
+                  <FormControl><Input placeholder="05XXXXXXXX" dir="ltr" className="rounded-lg" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <FormField control={form.control} name="wilaya_code" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{lang === "ar" ? "الولاية" : "Wilaya"}</FormLabel>
+                  <FormLabel className="text-end block font-semibold">{lang === "ar" ? "الولاية" : "Wilaya"}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl><SelectTrigger><SelectValue placeholder={lang === "ar" ? "اختر الولاية" : "Select wilaya"} /></SelectTrigger></FormControl>
+                    <FormControl><SelectTrigger className="rounded-lg"><SelectValue placeholder={lang === "ar" ? "الجزائر" : "Select wilaya"} /></SelectTrigger></FormControl>
                     <SelectContent className="max-h-60">
                       {algerianWilayas.map(w => (
                         <SelectItem key={w.code} value={String(w.code)}>
@@ -143,16 +159,16 @@ export default function OrderForm() {
               )} />
               <FormField control={form.control} name="baladiya" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{lang === "ar" ? "البلدية" : lang === "fr" ? "Commune" : "Municipality"}</FormLabel>
-                  <FormControl><Input placeholder={lang === "ar" ? "أدخل اسم البلدية" : lang === "fr" ? "Entrez la commune" : "Enter municipality"} {...field} /></FormControl>
+                  <FormLabel className="text-end block font-semibold">{lang === "ar" ? "البلدية" : "Municipality"}</FormLabel>
+                  <FormControl><Input placeholder={lang === "ar" ? "سيدي امحمد" : "Enter municipality"} className="rounded-lg" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
               <FormField control={form.control} name="status_label" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{lang === "ar" ? "الحالة المهنية" : "Status"}</FormLabel>
+                  <FormLabel className="text-end block font-semibold">{lang === "ar" ? "الحالة المهنية" : "Status"}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl><SelectTrigger><SelectValue placeholder={lang === "ar" ? "اختر الحالة" : "Select status"} /></SelectTrigger></FormControl>
+                    <FormControl><SelectTrigger className="rounded-lg"><SelectValue placeholder={lang === "ar" ? "اختر الحالة" : "Select status"} /></SelectTrigger></FormControl>
                     <SelectContent>
                       {statusOptions.map(s => (
                         <SelectItem key={s.value} value={s.value}>
@@ -164,15 +180,23 @@ export default function OrderForm() {
                   <FormMessage />
                 </FormItem>
               )} />
-              <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+              <Button
+                type="submit"
+                className="w-full font-bold rounded-full text-white"
+                size="lg"
+                disabled={submitting}
+                style={{
+                  background: "linear-gradient(90deg, hsl(var(--accent)), hsl(var(--primary)))",
+                }}
+              >
                 {submitting
                   ? (lang === "ar" ? "جاري الإرسال..." : "Submitting...")
-                  : (lang === "ar" ? "إرسال الطلب" : lang === "fr" ? "Envoyer la commande" : "Submit Order")}
+                  : (lang === "ar" ? "تأكيد الطلب / Confirmer la commande" : "Confirm Order")}
               </Button>
             </form>
           </Form>
-        </CardContent>
-      </Card>
+        </div>
+      </motion.div>
     </div>
   );
 }
