@@ -9,19 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/sonner";
-import { Plus, X, ChevronRight, ChevronLeft, Check, Image, Video, GripVertical, BookOpen, DollarSign, Eye, GraduationCap, FileText, Upload, Star, Trash2, Loader2 } from "lucide-react";
-
-const stepNames = [
-  { key: "basic", icon: BookOpen },
-  { key: "media", icon: Image },
-  { key: "description", icon: BookOpen },
-  { key: "curriculum", icon: GripVertical },
-  { key: "pricing", icon: DollarSign },
-  { key: "review", icon: Eye },
-];
+import { Plus, X, Check, Image as ImageIcon, GripVertical, BookOpen, DollarSign, GraduationCap, FileText, Upload, Star, Trash2, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const levelOptions = ["beginner", "intermediate", "advanced"];
 const langOptions = ["en", "fr", "ar"];
@@ -32,8 +23,9 @@ interface SectionDraft {
 }
 
 export default function CreateCourse() {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const lang = i18n.language as "en" | "fr" | "ar";
+  const t = (ar: string, fr: string, en: string) => lang === "ar" ? ar : lang === "fr" ? fr : en;
   const { user, roles } = useAuth();
   const navigate = useNavigate();
   const isAdmin = roles.includes("admin");
@@ -50,26 +42,22 @@ export default function CreateCourse() {
   const [tags, setTags] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [fileUrl, setFileUrl] = useState("");
-
-  // Step 2 — Media
+  const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState("");
-  const [promoVideo, setPromoVideo] = useState("");
   const [courseImages, setCourseImages] = useState<{ url: string; name: string }[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Step 3 — Description
-  const [description, setDescription] = useState("");
+  // Step 2 — Content
+  const [promoVideo, setPromoVideo] = useState("");
   const [outcomes, setOutcomes] = useState<string[]>([""]);
   const [requirements, setRequirements] = useState<string[]>([""]);
-
-  // Step 4 — Curriculum
   const [sections, setSections] = useState<SectionDraft[]>([
     { title: "", lessons: [{ title: "", type: "video", duration: 10, content: "" }] },
   ]);
 
-  // Step 5 — Pricing
+  // Step 3 — Pricing
   const [isFree, setIsFree] = useState(true);
   const [price, setPrice] = useState(0);
   const [cpfEligible, setCpfEligible] = useState(false);
@@ -82,19 +70,16 @@ export default function CreateCourse() {
     },
   });
 
-  const stepLabels: Record<string, string> = {
-    basic: lang === "ar" ? "المعلومات الأساسية" : lang === "fr" ? "Infos de Base" : "Basic Info",
-    media: lang === "ar" ? "الوسائط" : lang === "fr" ? "Médias" : "Media",
-    description: lang === "ar" ? "الوصف" : lang === "fr" ? "Description" : "Description",
-    curriculum: lang === "ar" ? "المنهج" : lang === "fr" ? "Programme" : "Curriculum",
-    pricing: lang === "ar" ? "التسعير" : lang === "fr" ? "Tarification" : "Pricing",
-    review: lang === "ar" ? "المراجعة" : lang === "fr" ? "Révision" : "Review",
-  };
+  const steps = [
+    { key: "basic", label: t("المعلومات الأساسية", "Informations de base", "Basic Info") },
+    { key: "content", label: t("المحتوى", "Contenu", "Content") },
+    { key: "pricing", label: t("التسعير", "Tarification", "Pricing") },
+    { key: "publish", label: t("نشر", "Publier", "Publish") },
+  ];
 
   const canAdvance = () => {
-    if (step === 0) return title.trim().length >= 3;
-    if (step === 2) return description.trim().length >= 10;
-    if (step === 3 && productType === "course") return sections.some((s) => s.title && s.lessons.some((l) => l.title));
+    if (step === 0) return title.trim().length >= 3 && description.trim().length >= 10;
+    if (step === 1 && productType === "course") return sections.some((s) => s.title && s.lessons.some((l) => l.title));
     return true;
   };
 
@@ -107,16 +92,12 @@ export default function CreateCourse() {
       const ext = file.name.split(".").pop();
       const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from("course-images").upload(path, file);
-      if (error) {
-        toast.error(`Failed to upload ${file.name}`);
-        continue;
-      }
+      if (error) { toast.error(`Failed to upload ${file.name}`); continue; }
       const { data: urlData } = supabase.storage.from("course-images").getPublicUrl(path);
       newImages.push({ url: urlData.publicUrl, name: file.name });
     }
     setCourseImages(prev => {
       const updated = [...prev, ...newImages];
-      // If no main image set yet, use the first uploaded
       if (prev.length === 0 && updated.length > 0) {
         setCoverImage(updated[0].url);
         setMainImageIndex(0);
@@ -130,12 +111,8 @@ export default function CreateCourse() {
   const removeImage = (index: number) => {
     setCourseImages(prev => {
       const updated = prev.filter((_, i) => i !== index);
-      if (index === mainImageIndex) {
-        setMainImageIndex(0);
-        setCoverImage(updated[0]?.url || "");
-      } else if (index < mainImageIndex) {
-        setMainImageIndex(mainImageIndex - 1);
-      }
+      if (index === mainImageIndex) { setMainImageIndex(0); setCoverImage(updated[0]?.url || ""); }
+      else if (index < mainImageIndex) { setMainImageIndex(mainImageIndex - 1); }
       return updated;
     });
   };
@@ -168,7 +145,6 @@ export default function CreateCourse() {
       } as any).select().single();
       if (error) throw error;
 
-      // Only create sections/lessons for courses, not books
       if (productType === "course") {
         for (let si = 0; si < sections.length; si++) {
           const sec = sections[si];
@@ -189,12 +165,12 @@ export default function CreateCourse() {
         }
       }
 
-      const productLabel = productType === "book" ? (lang === "ar" ? "الكتاب" : "Book") : (lang === "ar" ? "الدورة" : "Course");
+      const productLabel = productType === "book" ? t("الكتاب", "Livre", "Book") : t("الدورة", "Cours", "Course");
       toast.success(asDraft
-        ? (lang === "ar" ? `تم حفظ مسودة ${productLabel}` : `${productLabel} draft saved`)
+        ? t(`تم حفظ مسودة ${productLabel}`, `Brouillon de ${productLabel} enregistré`, `${productLabel} draft saved`)
         : isAdmin
-        ? (lang === "ar" ? `تم نشر ${productLabel}` : `${productLabel} published`)
-        : (lang === "ar" ? `تم إرسال ${productLabel} للمراجعة` : `${productLabel} submitted for review`));
+        ? t(`تم نشر ${productLabel}`, `${productLabel} publié`, `${productLabel} published`)
+        : t(`تم إرسال ${productLabel} للمراجعة`, `${productLabel} soumis pour révision`, `${productLabel} submitted for review`));
       navigate(isAdmin ? "/dashboard/admin/courses" : "/dashboard/instructor");
     } catch (err: any) {
       toast.error(err.message);
@@ -212,426 +188,418 @@ export default function CreateCourse() {
     setSections(copy);
   };
 
-  const sel = "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
   const totalLessons = sections.reduce((a, s) => a + s.lessons.length, 0);
-  const progressPercent = ((step + 1) / stepNames.length) * 100;
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="mb-2 font-display text-2xl font-bold">
-        {productType === "book" ? (lang === "ar" ? "إضافة كتاب جديد" : lang === "fr" ? "Ajouter un Livre" : "Add New Book") : t("dashboard.instructor.createCourse")}
+    <div className="max-w-3xl mx-auto">
+      {/* Title */}
+      <h1 className="mb-6 text-center font-display text-2xl font-bold text-foreground">
+        {productType === "book" ? t("إضافة كتاب جديد", "Ajouter un Livre", "Add New Book") : t("إنشاء دورة جديدة", "Créer un nouveau cours", "Create New Course")}
       </h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        {lang === "ar" ? "أنشئ محتوى جديد خطوة بخطوة" : lang === "fr" ? "Créez du contenu étape par étape" : "Create new content step by step"}
-      </p>
+
+      {/* Arrow Stepper */}
+      <div className="mb-8 flex items-stretch overflow-hidden rounded-xl border border-border">
+        {steps.map((s, i) => {
+          const isActive = i === step;
+          const isDone = i < step;
+          return (
+            <button
+              key={s.key}
+              onClick={() => i <= step && setStep(i)}
+              className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-2 text-sm font-semibold transition-all
+                ${isActive ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground" : isDone ? "bg-primary/10 text-primary cursor-pointer" : "bg-muted/50 text-muted-foreground"}
+              `}
+              disabled={i > step}
+            >
+              {isDone && <Check className="h-4 w-4" />}
+              <span className="flex items-center gap-1.5">
+                <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold
+                  ${isActive ? "bg-primary-foreground/20 text-primary-foreground" : isDone ? "bg-primary/20 text-primary" : "bg-muted-foreground/20 text-muted-foreground"}
+                `}>
+                  {i + 1}
+                </span>
+                <span className="hidden sm:inline">{s.label}</span>
+              </span>
+              {/* Arrow separator */}
+              {i < steps.length - 1 && (
+                <svg className="absolute -end-3 top-0 z-10 h-full w-6" viewBox="0 0 24 48" fill="none" preserveAspectRatio="none">
+                  <path d="M0 0L20 24L0 48" fill={isActive ? "hsl(var(--primary) / 0.8)" : isDone ? "hsl(var(--primary) / 0.1)" : "hsl(var(--muted) / 0.5)"} />
+                </svg>
+              )}
+            </button>
+          );
+        })}
+      </div>
 
       {/* Product Type Selector */}
-      <div className="mb-6 flex gap-3">
-        <button onClick={() => setProductType("course")}
-          className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${productType === "course" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30"}`}>
-          <GraduationCap className="h-4 w-4" />
-          {lang === "ar" ? "دورة تدريبية" : lang === "fr" ? "Cours" : "Course"}
-        </button>
-        <button onClick={() => setProductType("book")}
-          className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${productType === "book" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30"}`}>
-          <BookOpen className="h-4 w-4" />
-          {lang === "ar" ? "كتاب" : lang === "fr" ? "Livre" : "Book"}
-        </button>
-      </div>
-
-      {/* Progress */}
-      <div className="mb-8">
-        <div className="mb-3 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{stepLabels[stepNames[step].key]}</span>
-          <span>{step + 1}/{stepNames.length}</span>
+      {step === 0 && (
+        <div className="mb-6 flex gap-3">
+          <button onClick={() => setProductType("course")}
+            className={`flex items-center gap-2 rounded-xl border-2 px-5 py-3 text-sm font-semibold transition-all ${productType === "course" ? "border-primary bg-primary/10 text-primary shadow-sm" : "border-border text-muted-foreground hover:border-primary/30"}`}>
+            <GraduationCap className="h-5 w-5" />
+            {t("دورة تدريبية", "Cours", "Course")}
+          </button>
+          <button onClick={() => setProductType("book")}
+            className={`flex items-center gap-2 rounded-xl border-2 px-5 py-3 text-sm font-semibold transition-all ${productType === "book" ? "border-primary bg-primary/10 text-primary shadow-sm" : "border-border text-muted-foreground hover:border-primary/30"}`}>
+            <BookOpen className="h-5 w-5" />
+            {t("كتاب", "Livre", "Book")}
+          </button>
         </div>
-        <Progress value={progressPercent} className="h-2" />
-        <div className="mt-3 flex justify-between">
-          {stepNames.map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <button key={s.key} onClick={() => i <= step && setStep(i)}
-                className={`flex flex-col items-center gap-1 text-xs transition-colors ${
-                  i === step ? "text-primary font-semibold" : i < step ? "text-primary/60 cursor-pointer" : "text-muted-foreground/40"
-                }`}>
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-                  i < step ? "bg-primary text-primary-foreground" : i === step ? "bg-primary/10 text-primary ring-2 ring-primary" : "bg-muted text-muted-foreground"
-                }`}>
-                  {i < step ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
-                </div>
-                <span className="hidden sm:block">{stepLabels[s.key]}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{stepLabels[stepNames[step].key]}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Step 1 — Basic Info */}
+      {/* Form Content */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.2 }}
+          className="rounded-2xl border border-border bg-card p-6 shadow-sm"
+        >
+          {/* STEP 1 — Basic Info */}
           {step === 0 && (
-            <>
+            <div className="space-y-5">
+              {/* Title */}
               <div>
-                <Label>{t("dashboard.instructor.courseTitle")} *</Label>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={lang === "ar" ? "مثال: دورة السلامة المهنية الشاملة" : "e.g. Complete HSE Safety Course"} />
-                <p className="mt-1 text-xs text-muted-foreground">{title.length}/120 {lang === "ar" ? "حرف" : "characters"}</p>
-              </div>
-              <div>
-                <Label>{t("dashboard.instructor.courseSubtitle")}</Label>
-                <Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder={lang === "ar" ? "وصف مختصر للدورة" : "Brief course description"} />
-              </div>
-              <div>
-                <Label>{t("dashboard.instructor.selectCategory")}</Label>
-                <select className={sel} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-                  <option value="">{t("dashboard.instructor.selectCategory")}</option>
-                  {categories?.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>{t("dashboard.instructor.selectLevel")}</Label>
-                  <select className={sel} value={level} onChange={(e) => setLevel(e.target.value)}>
-                    {levelOptions.map((l) => <option key={l} value={l}>{l === "beginner" ? (lang === "ar" ? "مبتدئ" : l) : l === "intermediate" ? (lang === "ar" ? "متوسط" : l) : (lang === "ar" ? "متقدم" : l)}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <Label>{t("dashboard.instructor.selectLanguage")}</Label>
-                  <select className={sel} value={language} onChange={(e) => setLanguage(e.target.value)}>
-                    {langOptions.map((l) => <option key={l} value={l}>{l === "ar" ? "العربية" : l === "fr" ? "Français" : "English"}</option>)}
-                  </select>
-                </div>
-              </div>
-              {productType === "book" && (
-                <div>
-                  <Label>{lang === "ar" ? "عدد الصفحات" : lang === "fr" ? "Nombre de pages" : "Page Count"}</Label>
-                  <Input type="number" value={pageCount || ""} onChange={(e) => setPageCount(parseInt(e.target.value) || 0)} placeholder="320" />
-                </div>
-              )}
-              <div>
-                <Label>{t("dashboard.instructor.tags")}</Label>
-                <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="HSE, safety, سلامة" />
-              </div>
-            </>
-          )}
-
-          {/* Step 2 — Media */}
-          {step === 1 && (
-            <>
-              {/* Photo Upload Area */}
-              <div>
-                <Label className="mb-2 block">{lang === "ar" ? "صور المنتج" : lang === "fr" ? "Photos du produit" : "Product Photos"}</Label>
-                <p className="mb-3 text-xs text-muted-foreground">
-                  {lang === "ar" ? "ارفع صورة واحدة أو أكثر، واختر الصورة الرئيسية التي ستظهر في الواجهة" : "Upload one or more photos, then select the main one to display on the front page"}
-                </p>
-
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => handleImageUpload(e.target.files)}
+                <Label className="mb-1.5 block text-sm font-semibold">{t("عنوان الدورة", "Titre du cours", "Course Title")} <span className="text-destructive">*</span></Label>
+                <Textarea
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder={t("مثال: دورة السلامة المهنية الشاملة", "Ex: Cours complet de sécurité au travail", "e.g. Complete HSE Safety Course")}
+                  rows={2}
+                  className="resize-none text-base"
                 />
+                <p className="mt-1 text-xs text-muted-foreground">{title.length}/120 {t("حرف", "caractères", "characters")}</p>
+              </div>
 
-                {/* Upload dropzone */}
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                  className="mb-4 flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-8 transition-colors hover:border-primary/50 hover:bg-primary/10 disabled:opacity-50"
-                >
-                  {uploading ? (
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  ) : (
-                    <Upload className="h-8 w-8 text-primary/60" />
-                  )}
-                  <div className="text-center">
-                    <p className="font-medium text-foreground">
-                      {uploading ? (lang === "ar" ? "جاري الرفع..." : "Uploading...") : (lang === "ar" ? "اضغط لرفع الصور" : "Click to upload photos")}
-                    </p>
-                    <p className="text-xs text-muted-foreground">PNG, JPG, WEBP</p>
-                  </div>
-                </button>
-
-                {/* Image gallery */}
-                {courseImages.length > 0 && (
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    {courseImages.map((img, i) => (
-                      <div
-                        key={i}
-                        className={`group relative aspect-square overflow-hidden rounded-xl border-2 transition-all ${
-                          i === mainImageIndex
-                            ? "border-primary ring-2 ring-primary/20 shadow-md"
-                            : "border-border hover:border-primary/40"
-                        }`}
-                      >
-                        <img src={img.url} alt={img.name} className="h-full w-full object-cover" />
-
-                        {/* Main badge */}
-                        {i === mainImageIndex && (
-                          <div className="absolute start-2 top-2 flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow">
-                            <Star className="h-3 w-3" />
-                            {lang === "ar" ? "الرئيسية" : "Main"}
-                          </div>
-                        )}
-
-                        {/* Hover overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                          {i !== mainImageIndex && (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              className="h-8 gap-1 text-xs"
-                              onClick={() => setAsMainImage(i)}
-                            >
-                              <Star className="h-3 w-3" />
-                              {lang === "ar" ? "اجعلها رئيسية" : "Set as main"}
-                            </Button>
-                          )}
-                          <Button
-                            size="icon"
-                            variant="destructive"
-                            className="h-8 w-8"
-                            onClick={() => removeImage(i)}
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      </div>
+              {/* Category */}
+              <div>
+                <Label className="mb-1.5 block text-sm font-semibold">{t("الفئة", "Catégorie", "Category")}</Label>
+                <Select value={categoryId} onValueChange={setCategoryId}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder={t("اختر الفئة...", "Choisir une catégorie...", "Select category...")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories?.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{lang === "ar" ? c.name_ar : lang === "fr" ? c.name_fr : c.name_en}</SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                    {/* Add more button */}
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-                    >
-                      <Plus className="h-6 w-6" />
-                    </button>
+              {/* Description */}
+              <div>
+                <Label className="mb-1.5 block text-sm font-semibold">{t("وصف الدورة", "Description du cours", "Course Description")} <span className="text-destructive">*</span></Label>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={6}
+                  placeholder={t("اكتب وصفاً تفصيلياً للدورة...", "Rédigez une description détaillée...", "Write a detailed course description...")}
+                  className="resize-none"
+                />
+                <p className="mt-1 text-xs text-muted-foreground">{description.length} {t("حرف", "caractères", "characters")}</p>
+              </div>
+
+              {/* Thumbnail Upload */}
+              <div>
+                <Label className="mb-1.5 block text-sm font-semibold">{t("تحميل صورة مصغرة", "Image miniature", "Upload Thumbnail")}</Label>
+                <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleImageUpload(e.target.files)} />
+
+                {courseImages.length === 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-10 transition-colors hover:border-primary/50 hover:bg-primary/10 disabled:opacity-50"
+                  >
+                    {uploading ? (
+                      <Loader2 className="h-10 w-10 animate-spin text-primary/60" />
+                    ) : (
+                      <ImageIcon className="h-10 w-10 text-primary/40" />
+                    )}
+                    <div className="text-center">
+                      <Button type="button" size="sm" className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:opacity-90">
+                        {t("اختيار ملف", "Choisir un fichier", "Choose File")}
+                      </Button>
+                      <p className="mt-2 text-xs text-muted-foreground">JPG, PNG, {t("الحد الأقصى", "taille max", "max")} 5MB</p>
+                    </div>
+                  </button>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {courseImages.map((img, i) => (
+                        <div key={i} className={`group relative aspect-square overflow-hidden rounded-xl border-2 transition-all ${
+                          i === mainImageIndex ? "border-primary ring-2 ring-primary/20 shadow-md" : "border-border hover:border-primary/40"
+                        }`}>
+                          <img src={img.url} alt={img.name} className="h-full w-full object-cover" />
+                          {i === mainImageIndex && (
+                            <div className="absolute start-2 top-2 flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow">
+                              <Star className="h-3 w-3" /> {t("الرئيسية", "Principal", "Main")}
+                            </div>
+                          )}
+                          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                            {i !== mainImageIndex && (
+                              <Button size="sm" variant="secondary" className="h-8 gap-1 text-xs" onClick={() => setAsMainImage(i)}>
+                                <Star className="h-3 w-3" /> {t("اجعلها رئيسية", "Principal", "Set as main")}
+                              </Button>
+                            )}
+                            <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => removeImage(i)}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => fileInputRef.current?.click()}
+                        className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary">
+                        <Plus className="h-6 w-6" />
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
+            </div>
+          )}
 
-              {/* Manual URL fallback */}
+          {/* STEP 2 — Content */}
+          {step === 1 && (
+            <div className="space-y-5">
+              {/* Extra fields */}
               <div>
-                <Label>{lang === "ar" ? "أو أدخل رابط الصورة يدوياً" : "Or enter image URL manually"}</Label>
-                <Input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} placeholder="https://..." />
+                <Label className="mb-1.5 block text-sm font-semibold">{t("العنوان الفرعي", "Sous-titre", "Subtitle")}</Label>
+                <Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder={t("وصف مختصر للدورة", "Brève description", "Brief course description")} />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="mb-1.5 block text-sm font-semibold">{t("المستوى", "Niveau", "Level")}</Label>
+                  <Select value={level} onValueChange={setLevel}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {levelOptions.map((l) => (
+                        <SelectItem key={l} value={l}>{l === "beginner" ? t("مبتدئ", "Débutant", "Beginner") : l === "intermediate" ? t("متوسط", "Intermédiaire", "Intermediate") : t("متقدم", "Avancé", "Advanced")}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="mb-1.5 block text-sm font-semibold">{t("اللغة", "Langue", "Language")}</Label>
+                  <Select value={language} onValueChange={setLanguage}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {langOptions.map((l) => (
+                        <SelectItem key={l} value={l}>{l === "ar" ? "العربية" : l === "fr" ? "Français" : "English"}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Label className="mb-1.5 block text-sm font-semibold">{t("الكلمات المفتاحية", "Mots-clés", "Tags")}</Label>
+                <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="HSE, safety, سلامة" />
+              </div>
+
+              {productType === "book" && (
+                <>
+                  <div>
+                    <Label className="mb-1.5 block text-sm font-semibold">{t("عدد الصفحات", "Nombre de pages", "Page Count")}</Label>
+                    <Input type="number" value={pageCount || ""} onChange={(e) => setPageCount(parseInt(e.target.value) || 0)} placeholder="320" />
+                  </div>
+                  <div>
+                    <Label className="mb-1.5 block text-sm font-semibold">{t("رابط ملف الكتاب (PDF)", "Lien du fichier (PDF)", "Book File URL (PDF)")}</Label>
+                    <Input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://..." />
+                    {fileUrl && (
+                      <div className="mt-2 flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
+                        <FileText className="h-5 w-5 text-primary" />
+                        <span className="truncate text-sm text-muted-foreground">{fileUrl}</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
 
               {productType === "course" && (
                 <div>
-                  <Label>{t("dashboard.instructor.promoVideo")}</Label>
+                  <Label className="mb-1.5 block text-sm font-semibold">{t("فيديو ترويجي", "Vidéo promotionnelle", "Promo Video")}</Label>
                   <Input value={promoVideo} onChange={(e) => setPromoVideo(e.target.value)} placeholder="https://youtube.com/..." />
-                  {promoVideo && (
-                    <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
-                      <Video className="h-5 w-5 text-primary" />
-                      <span className="truncate text-sm text-muted-foreground">{promoVideo}</span>
-                    </div>
-                  )}
                 </div>
               )}
-              {productType === "book" && (
-                <div>
-                  <Label>{lang === "ar" ? "رابط ملف الكتاب (PDF)" : lang === "fr" ? "Lien du fichier (PDF)" : "Book File URL (PDF)"}</Label>
-                  <Input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://..." />
-                  {fileUrl && (
-                    <div className="mt-3 flex items-center gap-2 rounded-lg border bg-secondary/50 p-3">
-                      <FileText className="h-5 w-5 text-primary" />
-                      <span className="truncate text-sm text-muted-foreground">{fileUrl}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
 
-          {/* Step 3 — Description */}
-          {step === 2 && (
-            <>
+              {/* Learning Outcomes */}
               <div>
-                <Label>{t("dashboard.instructor.courseDescription")} *</Label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={6} placeholder={lang === "ar" ? "اكتب وصفاً تفصيلياً للدورة..." : "Write a detailed course description..."} />
-                <p className="mt-1 text-xs text-muted-foreground">{description.length} {lang === "ar" ? "حرف" : "characters"}</p>
-              </div>
-              <div>
-                <Label>{t("dashboard.instructor.learningOutcomes")}</Label>
-                <p className="mb-2 text-xs text-muted-foreground">{lang === "ar" ? "ماذا سيتعلم الطالب من هذه الدورة؟" : "What will students learn from this course?"}</p>
+                <Label className="mb-1.5 block text-sm font-semibold">{t("أهداف التعلم", "Objectifs d'apprentissage", "Learning Outcomes")}</Label>
                 {outcomes.map((o, i) => (
                   <div key={i} className="mb-2 flex gap-2">
                     <span className="mt-2.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs text-primary">{i + 1}</span>
-                    <Input value={o} onChange={(e) => { const c = [...outcomes]; c[i] = e.target.value; setOutcomes(c); }} placeholder={lang === "ar" ? "مثال: فهم مبادئ السلامة المهنية" : "e.g. Understand workplace safety principles"} />
+                    <Input value={o} onChange={(e) => { const c = [...outcomes]; c[i] = e.target.value; setOutcomes(c); }} placeholder={t("مثال: فهم مبادئ السلامة", "Ex: Comprendre les principes de sécurité", "e.g. Understand safety principles")} />
                     <Button size="icon" variant="ghost" onClick={() => setOutcomes(outcomes.filter((_, j) => j !== i))}><X className="h-4 w-4" /></Button>
                   </div>
                 ))}
-                <Button size="sm" variant="outline" onClick={addOutcome}><Plus className="mr-1 h-4 w-4" /> {t("dashboard.instructor.addOutcome")}</Button>
+                <Button size="sm" variant="outline" onClick={addOutcome}><Plus className="me-1 h-4 w-4" /> {t("إضافة هدف", "Ajouter un objectif", "Add Outcome")}</Button>
               </div>
+
+              {/* Requirements */}
               <div>
-                <Label>{t("dashboard.instructor.requirementsList")}</Label>
+                <Label className="mb-1.5 block text-sm font-semibold">{t("المتطلبات", "Prérequis", "Requirements")}</Label>
                 {requirements.map((r, i) => (
                   <div key={i} className="mb-2 flex gap-2">
                     <Input value={r} onChange={(e) => { const c = [...requirements]; c[i] = e.target.value; setRequirements(c); }} />
                     <Button size="icon" variant="ghost" onClick={() => setRequirements(requirements.filter((_, j) => j !== i))}><X className="h-4 w-4" /></Button>
                   </div>
                 ))}
-                <Button size="sm" variant="outline" onClick={addRequirement}><Plus className="mr-1 h-4 w-4" /> {t("dashboard.instructor.addRequirement")}</Button>
+                <Button size="sm" variant="outline" onClick={addRequirement}><Plus className="me-1 h-4 w-4" /> {t("إضافة متطلب", "Ajouter un prérequis", "Add Requirement")}</Button>
               </div>
-            </>
-          )}
 
-          {/* Step 4 — Curriculum (courses only) */}
-          {step === 3 && productType === "course" && (
-            <>
-              <p className="text-sm text-muted-foreground mb-4">{lang === "ar" ? "نظّم محتوى دورتك في أقسام ودروس" : "Organize your course content into sections and lessons"}</p>
-              {sections.map((sec, si) => (
-                <div key={si} className="rounded-xl border bg-secondary/30 p-4 mb-4">
-                  <div className="mb-3 flex items-center gap-2">
-                    <GripVertical className="h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder={`${lang === "ar" ? "عنوان القسم" : "Section title"} ${si + 1}`}
-                      value={sec.title}
-                      onChange={(e) => { const c = [...sections]; c[si].title = e.target.value; setSections(c); }}
-                      className="font-medium"
-                    />
-                    <Button size="icon" variant="ghost" onClick={() => setSections(sections.filter((_, j) => j !== si))}><X className="h-4 w-4" /></Button>
-                  </div>
-                  {sec.lessons.map((les, li) => (
-                    <div key={li} className="mb-2 ms-6 rounded-lg border bg-card p-3">
-                      <div className="flex gap-2 mb-2">
-                        <Input
-                          placeholder={lang === "ar" ? "عنوان الدرس" : "Lesson title"}
-                          value={les.title}
-                          onChange={(e) => { const c = [...sections]; c[si].lessons[li].title = e.target.value; setSections(c); }}
-                          className="flex-1"
-                        />
-                        <select className="w-24 rounded-lg border border-input bg-background px-2 py-1 text-xs"
-                          value={les.type}
-                          onChange={(e) => { const c = [...sections]; c[si].lessons[li].type = e.target.value as any; setSections(c); }}>
-                          <option value="video">{lang === "ar" ? "فيديو" : "Video"}</option>
-                          <option value="text">{lang === "ar" ? "نص" : "Text"}</option>
-                          <option value="quiz">{lang === "ar" ? "اختبار" : "Quiz"}</option>
-                        </select>
-                        <Input type="number" className="w-20" value={les.duration} placeholder="min"
-                          onChange={(e) => { const c = [...sections]; c[si].lessons[li].duration = +e.target.value; setSections(c); }} />
-                        <Button size="icon" variant="ghost" onClick={() => {
-                          const c = [...sections]; c[si].lessons = c[si].lessons.filter((_, j) => j !== li); setSections(c);
-                        }}><X className="h-3 w-3" /></Button>
+              {/* Curriculum (courses only) */}
+              {productType === "course" && (
+                <div>
+                  <Label className="mb-2 block text-sm font-semibold">{t("المنهج الدراسي", "Programme", "Curriculum")}</Label>
+                  <p className="mb-3 text-xs text-muted-foreground">{t("نظّم محتوى دورتك في أقسام ودروس", "Organisez le contenu en sections et leçons", "Organize content into sections and lessons")}</p>
+                  {sections.map((sec, si) => (
+                    <div key={si} className="mb-4 rounded-xl border bg-muted/30 p-4">
+                      <div className="mb-3 flex items-center gap-2">
+                        <GripVertical className="h-4 w-4 text-muted-foreground" />
+                        <Input placeholder={`${t("عنوان القسم", "Titre de la section", "Section title")} ${si + 1}`} value={sec.title}
+                          onChange={(e) => { const c = [...sections]; c[si].title = e.target.value; setSections(c); }} className="font-medium" />
+                        <Button size="icon" variant="ghost" onClick={() => setSections(sections.filter((_, j) => j !== si))}><X className="h-4 w-4" /></Button>
                       </div>
-                      <Input placeholder={les.type === "video" ? "Video URL" : les.type === "text" ? (lang === "ar" ? "محتوى الدرس" : "Lesson content") : "Quiz ID"}
-                        value={les.content}
-                        onChange={(e) => { const c = [...sections]; c[si].lessons[li].content = e.target.value; setSections(c); }}
-                        className="text-xs" />
+                      {sec.lessons.map((les, li) => (
+                        <div key={li} className="mb-2 ms-6 rounded-lg border bg-card p-3">
+                          <div className="flex gap-2 mb-2">
+                            <Input placeholder={t("عنوان الدرس", "Titre de la leçon", "Lesson title")} value={les.title}
+                              onChange={(e) => { const c = [...sections]; c[si].lessons[li].title = e.target.value; setSections(c); }} className="flex-1" />
+                            <select className="w-24 rounded-lg border border-input bg-background px-2 py-1 text-xs" value={les.type}
+                              onChange={(e) => { const c = [...sections]; c[si].lessons[li].type = e.target.value as any; setSections(c); }}>
+                              <option value="video">{t("فيديو", "Vidéo", "Video")}</option>
+                              <option value="text">{t("نص", "Texte", "Text")}</option>
+                              <option value="quiz">{t("اختبار", "Quiz", "Quiz")}</option>
+                            </select>
+                            <Input type="number" className="w-20" value={les.duration} placeholder="min"
+                              onChange={(e) => { const c = [...sections]; c[si].lessons[li].duration = +e.target.value; setSections(c); }} />
+                            <Button size="icon" variant="ghost" onClick={() => {
+                              const c = [...sections]; c[si].lessons = c[si].lessons.filter((_, j) => j !== li); setSections(c);
+                            }}><X className="h-3 w-3" /></Button>
+                          </div>
+                          <Input placeholder={les.type === "video" ? "Video URL" : les.type === "text" ? t("محتوى الدرس", "Contenu", "Lesson content") : "Quiz ID"}
+                            value={les.content} onChange={(e) => { const c = [...sections]; c[si].lessons[li].content = e.target.value; setSections(c); }} className="text-xs" />
+                        </div>
+                      ))}
+                      <Button size="sm" variant="outline" className="ms-6 mt-2" onClick={() => addLesson(si)}>
+                        <Plus className="me-1 h-3 w-3" /> {t("إضافة درس", "Ajouter une leçon", "Add Lesson")}
+                      </Button>
                     </div>
                   ))}
-                  <Button size="sm" variant="outline" className="ms-6 mt-2" onClick={() => addLesson(si)}>
-                    <Plus className="mr-1 h-3 w-3" /> {t("dashboard.instructor.addLesson")}
+                  <Button size="sm" variant="outline" onClick={addSection}>
+                    <Plus className="me-1 h-4 w-4" /> {t("إضافة قسم", "Ajouter une section", "Add Section")}
                   </Button>
                 </div>
-              ))}
-              <Button size="sm" variant="outline" onClick={addSection}>
-                <Plus className="mr-1 h-4 w-4" /> {t("dashboard.instructor.addSection")}
-              </Button>
-            </>
-          )}
+              )}
 
-          {/* Step 4 — Book info (books only) */}
-          {step === 3 && productType === "book" && (
-            <div className="rounded-xl border bg-secondary/30 p-6 text-center">
-              <BookOpen className="mx-auto mb-3 h-12 w-12 text-primary/50" />
-              <h3 className="mb-2 font-semibold">{lang === "ar" ? "لا يوجد منهج مطلوب للكتب" : lang === "fr" ? "Pas de programme requis pour les livres" : "No curriculum needed for books"}</h3>
-              <p className="text-sm text-muted-foreground">{lang === "ar" ? "الكتب لا تحتاج لأقسام ودروس. انتقل للخطوة التالية." : "Books don't need sections and lessons. Continue to the next step."}</p>
+              {productType === "book" && (
+                <div className="rounded-xl border bg-muted/30 p-6 text-center">
+                  <BookOpen className="mx-auto mb-3 h-12 w-12 text-primary/50" />
+                  <h3 className="mb-2 font-semibold">{t("لا يوجد منهج مطلوب للكتب", "Pas de programme requis", "No curriculum needed for books")}</h3>
+                  <p className="text-sm text-muted-foreground">{t("الكتب لا تحتاج لأقسام ودروس.", "Les livres n'ont pas besoin de sections.", "Books don't need sections and lessons.")}</p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Step 5 — Pricing */}
-          {step === 4 && (
-            <>
-              <div className="flex items-center gap-3 rounded-lg border p-4">
+          {/* STEP 3 — Pricing */}
+          {step === 2 && (
+            <div className="space-y-5">
+              <div className="flex items-center gap-3 rounded-xl border p-4">
                 <Switch checked={isFree} onCheckedChange={setIsFree} />
                 <div>
-                  <Label className="text-base">{t("dashboard.instructor.freeToggle")}</Label>
-                  <p className="text-xs text-muted-foreground">{lang === "ar" ? "اجعل الدورة مجانية للجميع" : "Make this course free for everyone"}</p>
+                  <Label className="text-base font-semibold">{t("مجاني", "Gratuit", "Free")}</Label>
+                  <p className="text-xs text-muted-foreground">{t("اجعل المحتوى مجاني للجميع", "Rendre gratuit pour tous", "Make this free for everyone")}</p>
                 </div>
               </div>
               {!isFree && (
                 <div>
-                  <Label>{t("dashboard.instructor.coursePrice")} (DZD)</Label>
+                  <Label className="mb-1.5 block text-sm font-semibold">{t("السعر (د.ج)", "Prix (DZD)", "Price (DZD)")}</Label>
                   <div className="relative">
                     <DollarSign className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input type="number" value={price} onChange={(e) => setPrice(+e.target.value)} className="ps-10" placeholder="15000" />
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">{price > 0 ? `${price.toLocaleString()} DZD` : ""}</p>
+                  {price > 0 && <p className="mt-1 text-xs text-muted-foreground">{price.toLocaleString()} DZD</p>}
                 </div>
               )}
-              <div className="flex items-center gap-3 rounded-lg border p-4">
+              <div className="flex items-center gap-3 rounded-xl border p-4">
                 <Switch checked={cpfEligible} onCheckedChange={setCpfEligible} />
                 <div>
-                  <Label>{t("dashboard.instructor.cpfEligible")}</Label>
-                  <p className="text-xs text-muted-foreground">{lang === "ar" ? "هل الدورة مؤهلة للتمويل الحكومي؟" : "Is this course eligible for government funding?"}</p>
+                  <Label className="font-semibold">{t("مؤهل للتمويل الحكومي", "Éligible au financement", "CPF Eligible")}</Label>
+                  <p className="text-xs text-muted-foreground">{t("هل المحتوى مؤهل للتمويل الحكومي؟", "Éligible au financement public ?", "Eligible for government funding?")}</p>
                 </div>
               </div>
-            </>
+            </div>
           )}
 
-          {/* Step 6 — Review */}
-          {step === 5 && (
-            <div className="space-y-4">
-              <div className="rounded-xl border bg-secondary/30 overflow-hidden">
+          {/* STEP 4 — Review & Publish */}
+          {step === 3 && (
+            <div className="space-y-5">
+              <div className="rounded-xl border bg-muted/30 overflow-hidden">
                 {coverImage && (
                   <div className="aspect-video overflow-hidden">
                     <img src={coverImage} alt="" className="h-full w-full object-cover" />
                   </div>
                 )}
-                <div className="p-6 space-y-3">
-                  <h3 className="font-display text-xl font-bold text-foreground">{title || (lang === "ar" ? "بدون عنوان" : "Untitled")}</h3>
+                <div className="p-5 space-y-3">
+                  <h3 className="font-display text-xl font-bold text-foreground">{title || t("بدون عنوان", "Sans titre", "Untitled")}</h3>
                   {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
                   <div className="flex flex-wrap gap-2 text-xs">
                     <span className="rounded-full bg-primary/10 text-primary px-3 py-1 capitalize">{level}</span>
                     <span className="rounded-full bg-secondary px-3 py-1">{language === "ar" ? "العربية" : language === "fr" ? "Français" : "English"}</span>
-                    <span className="rounded-full bg-accent/10 text-accent px-3 py-1">{isFree ? (lang === "ar" ? "مجاني" : "Free") : `${price.toLocaleString()} DZD`}</span>
+                    <span className="rounded-full bg-accent/10 text-accent-foreground px-3 py-1">{isFree ? t("مجاني", "Gratuit", "Free") : `${price.toLocaleString()} DZD`}</span>
                   </div>
-                  <div className="pt-3 border-t grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                    <span>📚 {sections.length} {lang === "ar" ? "أقسام" : "sections"}</span>
-                    <span>📖 {totalLessons} {lang === "ar" ? "دروس" : "lessons"}</span>
-                    <span>🎯 {outcomes.filter(Boolean).length} {lang === "ar" ? "أهداف تعليمية" : "outcomes"}</span>
-                    <span>📋 {requirements.filter(Boolean).length} {lang === "ar" ? "متطلبات" : "requirements"}</span>
-                  </div>
+                  {productType === "course" && (
+                    <div className="pt-3 border-t grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                      <span>📚 {sections.length} {t("أقسام", "sections", "sections")}</span>
+                      <span>📖 {totalLessons} {t("دروس", "leçons", "lessons")}</span>
+                      <span>🎯 {outcomes.filter(Boolean).length} {t("أهداف", "objectifs", "outcomes")}</span>
+                      <span>📋 {requirements.filter(Boolean).length} {t("متطلبات", "prérequis", "requirements")}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               {description && (
-                <div className="rounded-lg border p-4">
-                  <h4 className="mb-2 font-semibold text-sm">{lang === "ar" ? "الوصف" : "Description"}</h4>
+                <div className="rounded-xl border p-4">
+                  <h4 className="mb-2 font-semibold text-sm">{t("الوصف", "Description", "Description")}</h4>
                   <p className="text-sm text-muted-foreground line-clamp-4">{description}</p>
                 </div>
               )}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Navigation */}
       <div className="mt-6 flex items-center justify-between">
-        <Button variant="outline" disabled={step === 0} onClick={() => setStep(step - 1)}>
-          <ChevronLeft className="mr-1 h-4 w-4" /> {t("dashboard.instructor.back")}
-        </Button>
-        <div className="flex gap-2">
-          {step === 5 ? (
-            <>
+        {step === 3 ? (
+          <>
+            <div className="flex gap-2">
               <Button variant="outline" onClick={() => handleSubmit(true)} disabled={submitting}>
-                {t("dashboard.instructor.saveDraft")}
+                {t("حفظ كمسودة", "Enregistrer brouillon", "Save Draft")}
               </Button>
-              <Button onClick={() => handleSubmit(false)} disabled={submitting || !title}>
-                {isAdmin ? (lang === "ar" ? "نشر مباشرة" : "Publish Now") : t("dashboard.instructor.publishCourse")}
+              <Button variant="ghost" onClick={() => setStep(step - 1)}>
+                {t("رجوع", "Retour", "Back")}
               </Button>
-            </>
-          ) : (
-            <Button onClick={() => setStep(step + 1)} disabled={!canAdvance()}>
-              {t("dashboard.instructor.next")} <ChevronRight className="ml-1 h-4 w-4" />
+            </div>
+            <Button onClick={() => handleSubmit(false)} disabled={submitting || !title}
+              className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-8">
+              {isAdmin ? t("نشر مباشرة", "Publier", "Publish Now") : t("إرسال للمراجعة", "Soumettre", "Submit for Review")}
             </Button>
-          )}
-        </div>
+          </>
+        ) : (
+          <>
+            <Button variant="ghost" onClick={() => step === 0 ? navigate(-1) : setStep(step - 1)}>
+              {step === 0 ? t("إلغاء", "Annuler", "Cancel") : t("رجوع", "Retour", "Back")}
+            </Button>
+            <Button onClick={() => setStep(step + 1)} disabled={!canAdvance()}
+              className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-8">
+              {t("التالي", "Suivant", "Next")}
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
