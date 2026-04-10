@@ -66,7 +66,7 @@ export default function Blog() {
               className="absolute inset-0 h-full w-full object-cover"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               loading="eager"
-              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
