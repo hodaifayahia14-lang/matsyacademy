@@ -39,7 +39,7 @@ export default function Navbar() {
   const handleSignOut = async () => { await signOut(); navigate("/"); };
 
   const dashboardPath = roles.includes("admin") ? "/dashboard/admin"
-    : roles.includes("instructor") ? "/dashboard/instructor" : "/dashboard/student";
+    : roles.includes("confirmation_agent") ? "/dashboard/agent" : "/dashboard/admin";
 
   const initials = profile?.name
     ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : "U";
