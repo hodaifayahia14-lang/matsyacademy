@@ -58,12 +58,17 @@ export default function Blog() {
     <div className="min-h-screen bg-[#f5f0eb]" dir={isRtl ? "rtl" : "ltr"}>
       {/* Featured Hero */}
       {featured && (
-        <div className="relative h-[380px] overflow-hidden">
-          <img
-            src={featured.cover_image || "/placeholder.svg"}
-            alt={getLocalized(featured, "title", lang)}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+        <div className="relative h-[380px] overflow-hidden bg-gradient-to-br from-[#5B2D8E] to-[#3a1d5e]">
+          {featured.cover_image && (
+            <img
+              src={featured.cover_image}
+              alt={getLocalized(featured, "title", lang)}
+              className="absolute inset-0 h-full w-full object-cover"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              loading="eager"
+              referrerPolicy="no-referrer"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           <div className="container relative flex h-full flex-col items-center justify-end pb-10 text-center text-white">
             <h1 className="mb-3 max-w-3xl font-display text-3xl font-bold md:text-4xl" style={{ color: "#C9971C" }}>
@@ -101,8 +106,9 @@ export default function Blog() {
                         <img
                           src={post.cover_image || "/placeholder.svg"}
                           alt={title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 bg-muted"
                           loading="lazy"
+                          onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                         />
                       </div>
                       <div className="p-4">
@@ -149,7 +155,8 @@ export default function Blog() {
                     <img
                       src={p.cover_image || "/placeholder.svg"}
                       alt=""
-                      className="h-12 w-16 shrink-0 rounded-lg object-cover"
+                      className="h-12 w-16 shrink-0 rounded-lg object-cover bg-muted"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                     />
                     <p className="text-xs font-medium leading-snug text-foreground group-hover:text-[#5B2D8E] line-clamp-2">
                       {getLocalized(p, "title", lang)}

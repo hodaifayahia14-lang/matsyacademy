@@ -114,7 +114,9 @@ export default function BlogDetail() {
       {/* Cover Image */}
       {post.cover_image && (
         <div className="container max-w-4xl -mt-0">
-          <img src={post.cover_image} alt={title} className="w-full rounded-b-xl object-cover" style={{ maxHeight: 400 }} />
+          <img src={post.cover_image} alt={title} className="w-full rounded-b-xl object-cover bg-muted" style={{ maxHeight: 400 }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            referrerPolicy="no-referrer" />
         </div>
       )}
 
@@ -141,7 +143,8 @@ export default function BlogDetail() {
                     <img
                       src={p.cover_image || "/placeholder.svg"}
                       alt=""
-                      className="h-12 w-16 shrink-0 rounded-lg object-cover"
+                      className="h-12 w-16 shrink-0 rounded-lg object-cover bg-muted"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                     />
                     <p className="text-xs font-medium leading-snug text-foreground group-hover:text-[#5B2D8E] line-clamp-2">
                       {getLocalized(p, "title", lang)}
