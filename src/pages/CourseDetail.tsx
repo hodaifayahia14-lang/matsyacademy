@@ -516,9 +516,9 @@ export default function CourseDetail() {
           SECTION 2 — TABS + CONTENT
           ═══════════════════════════════════════════════════════ */}
       <div className="container py-8 lg:py-12">
-        <div className="grid gap-8 lg:grid-cols-5">
+        <div>
           {/* Main content area */}
-          <div className="lg:col-span-3">
+          <div>
             {/* Tab bar */}
             <div className="relative mb-8 flex gap-1 border-b border-border overflow-x-auto scrollbar-none">
               {tabs.map((tab) => (
@@ -731,29 +731,6 @@ export default function CourseDetail() {
             </AnimatePresence>
           </div>
 
-          {/* Purchase card — desktop sticky sidebar */}
-          <div className="hidden lg:block lg:col-span-2">
-            <div className="sticky top-20">
-              <PurchaseCard
-                course={course} price={price} oldPrice={oldPrice} discountPercent={discountPercent}
-                priceText={priceText} lang={lang} title={title}
-                onBuy={() => setShowOrderModal(true)} onShare={handleShare}
-                wishlisted={wishlisted} onWishlist={() => setWishlisted(!wishlisted)}
-                totalHours={totalHours} totalLessons={totalLessons}
-              />
-            </div>
-          </div>
-
-          {/* Mobile purchase card (inline, visible on mobile) */}
-          <div className="lg:hidden">
-            <PurchaseCard
-              course={course} price={price} oldPrice={oldPrice} discountPercent={discountPercent}
-              priceText={priceText} lang={lang} title={title}
-              onBuy={() => setShowOrderModal(true)} onShare={handleShare}
-              wishlisted={wishlisted} onWishlist={() => setWishlisted(!wishlisted)}
-              totalHours={totalHours} totalLessons={totalLessons}
-            />
-          </div>
         </div>
       </div>
 
