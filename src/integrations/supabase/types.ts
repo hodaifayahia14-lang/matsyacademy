@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_badges: {
+        Row: {
+          agent_id: string
+          earned_at: string
+          id: string
+          metadata: Json | null
+          milestone_rule_id: string
+        }
+        Insert: {
+          agent_id: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          milestone_rule_id: string
+        }
+        Update: {
+          agent_id?: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          milestone_rule_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_badges_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_badges_milestone_rule_id_fkey"
+            columns: ["milestone_rule_id"]
+            isOneToOne: false
+            referencedRelation: "milestone_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_compensation: {
         Row: {
           agent_id: string
@@ -45,6 +84,48 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_points: {
+        Row: {
+          agent_id: string
+          created_at: string
+          id: string
+          milestone_rule_id: string | null
+          points: number
+          source: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          id?: string
+          milestone_rule_id?: string | null
+          points?: number
+          source?: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          id?: string
+          milestone_rule_id?: string | null
+          points?: number
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_points_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_points_milestone_rule_id_fkey"
+            columns: ["milestone_rule_id"]
+            isOneToOne: false
+            referencedRelation: "milestone_rules"
             referencedColumns: ["id"]
           },
         ]
@@ -87,6 +168,54 @@ export type Database = {
             columns: ["awarded_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_titles: {
+        Row: {
+          agent_id: string
+          granted_at: string
+          id: string
+          is_active: boolean
+          milestone_rule_id: string | null
+          title_ar: string
+          title_en: string
+          title_fr: string
+        }
+        Insert: {
+          agent_id: string
+          granted_at?: string
+          id?: string
+          is_active?: boolean
+          milestone_rule_id?: string | null
+          title_ar?: string
+          title_en?: string
+          title_fr?: string
+        }
+        Update: {
+          agent_id?: string
+          granted_at?: string
+          id?: string
+          is_active?: boolean
+          milestone_rule_id?: string | null
+          title_ar?: string
+          title_en?: string
+          title_fr?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_titles_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_titles_milestone_rule_id_fkey"
+            columns: ["milestone_rule_id"]
+            isOneToOne: false
+            referencedRelation: "milestone_rules"
             referencedColumns: ["id"]
           },
         ]
@@ -504,6 +633,51 @@ export type Database = {
           },
         ]
       }
+      gamification_settings: {
+        Row: {
+          base_points_per_confirmation: number
+          created_at: string
+          enabled: boolean
+          id: string
+          leaderboard_formula: string
+          points_reset_period: string
+          rate_bonus_multiplier: number
+          streak_bonus_points: number
+          updated_at: string
+          weight_confirmations: number
+          weight_points: number
+          weight_rate: number
+        }
+        Insert: {
+          base_points_per_confirmation?: number
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          leaderboard_formula?: string
+          points_reset_period?: string
+          rate_bonus_multiplier?: number
+          streak_bonus_points?: number
+          updated_at?: string
+          weight_confirmations?: number
+          weight_points?: number
+          weight_rate?: number
+        }
+        Update: {
+          base_points_per_confirmation?: number
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          leaderboard_formula?: string
+          points_reset_period?: string
+          rate_bonus_multiplier?: number
+          streak_bonus_points?: number
+          updated_at?: string
+          weight_confirmations?: number
+          weight_points?: number
+          weight_rate?: number
+        }
+        Relationships: []
+      }
       instruction_progress: {
         Row: {
           completed: boolean
@@ -658,6 +832,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      milestone_rules: {
+        Row: {
+          color: string
+          created_at: string
+          icon: string
+          id: string
+          is_active: boolean
+          is_repeatable: boolean
+          milestone_type: string
+          name_ar: string
+          name_en: string
+          name_fr: string
+          repeat_period: string | null
+          reward_config: Json
+          show_on_agent_dashboard: boolean
+          show_on_leaderboard: boolean
+          sort_order: number
+          target_value: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          is_repeatable?: boolean
+          milestone_type?: string
+          name_ar?: string
+          name_en?: string
+          name_fr?: string
+          repeat_period?: string | null
+          reward_config?: Json
+          show_on_agent_dashboard?: boolean
+          show_on_leaderboard?: boolean
+          sort_order?: number
+          target_value?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          is_repeatable?: boolean
+          milestone_type?: string
+          name_ar?: string
+          name_en?: string
+          name_fr?: string
+          repeat_period?: string | null
+          reward_config?: Json
+          show_on_agent_dashboard?: boolean
+          show_on_leaderboard?: boolean
+          sort_order?: number
+          target_value?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       notifications: {
         Row: {
@@ -1094,6 +1328,48 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_distribution_log: {
+        Row: {
+          agent_id: string
+          created_at: string
+          delivery_status: string
+          id: string
+          milestone_rule_id: string
+          reward_type: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          delivery_status?: string
+          id?: string
+          milestone_rule_id: string
+          reward_type?: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          delivery_status?: string
+          id?: string
+          milestone_rule_id?: string
+          reward_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_distribution_log_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_distribution_log_milestone_rule_id_fkey"
+            columns: ["milestone_rule_id"]
+            isOneToOne: false
+            referencedRelation: "milestone_rules"
             referencedColumns: ["id"]
           },
         ]

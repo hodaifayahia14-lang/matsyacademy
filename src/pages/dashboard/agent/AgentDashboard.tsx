@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ClipboardList, BarChart3, Gift, Trophy, LayoutDashboard } from "lucide-react";
+import { ClipboardList, BarChart3, Gift, Trophy, LayoutDashboard, Medal } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import AgentOrders from "./AgentOrders";
 import AgentStats from "./AgentStats";
 import AgentRewards from "./AgentRewards";
 import Leaderboard from "@/pages/dashboard/admin/Leaderboard";
+import AgentAchievements from "@/components/gamification/AgentAchievements";
 
 export default function AgentDashboard() {
   const { i18n } = useTranslation();
@@ -17,6 +18,7 @@ export default function AgentDashboard() {
     { title: t("إحصائياتي", "Mes stats", "My Stats"), url: "/dashboard/agent/stats", icon: BarChart3 },
     { title: t("لوحة المتصدرين", "Classement", "Leaderboard"), url: "/dashboard/agent/leaderboard", icon: Trophy },
     { title: t("مكافآتي", "Mes récompenses", "My Rewards"), url: "/dashboard/agent/rewards", icon: Gift },
+    { title: t("إنجازاتي", "Mes Réalisations", "My Achievements"), url: "/dashboard/agent/achievements", icon: Medal },
   ];
 
   return (
@@ -26,6 +28,7 @@ export default function AgentDashboard() {
         <Route path="stats" element={<AgentStats />} />
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="rewards" element={<AgentRewards />} />
+        <Route path="achievements" element={<AgentAchievements />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard/agent" replace />} />
     </Routes>

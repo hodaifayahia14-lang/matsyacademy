@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LayoutDashboard, Users, BookOpen, Grid3X3, Ticket, Settings, MessageSquare, FileText, Info, ClipboardList, Trophy, Mail, HeadphonesIcon } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, Grid3X3, Ticket, Settings, MessageSquare, FileText, Info, ClipboardList, Trophy, Mail, HeadphonesIcon, Gamepad2 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import AdminOverview from "./AdminOverview";
 import UsersManagement from "./UsersManagement";
@@ -17,6 +17,7 @@ import CourseDetailAdmin from "./CourseDetailAdmin";
 import MessagesManagement from "./MessagesManagement";
 import ConfirmationManagement from "./ConfirmationManagement";
 import CreateCourse from "./CreateCourse";
+import GamificationSettings from "./GamificationSettings";
 
 export default function AdminDashboard() {
   const { i18n } = useTranslation();
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
     { title: t("الرسائل", "Messages", "Messages"), url: "/dashboard/admin/messages", icon: Mail },
     { title: t("المدونة", "Blog", "Blog"), url: "/dashboard/admin/blogs", icon: FileText },
     { title: t("الإعدادات", "Paramètres", "Settings"), url: "/dashboard/admin/settings", icon: Settings },
+    { title: t("🏆 التلعيب", "🏆 Gamification", "🏆 Gamification"), url: "/dashboard/admin/settings/gamification", icon: Gamepad2 },
   ];
 
   return (
@@ -55,6 +57,7 @@ export default function AdminDashboard() {
         <Route path="blogs" element={<BlogManagement />} />
         <Route path="about" element={<AboutManagement />} />
         <Route path="settings" element={<PlatformSettings />} />
+        <Route path="settings/gamification" element={<GamificationSettings />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard/admin" replace />} />
     </Routes>
