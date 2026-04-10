@@ -58,12 +58,17 @@ export default function Blog() {
     <div className="min-h-screen bg-[#f5f0eb]" dir={isRtl ? "rtl" : "ltr"}>
       {/* Featured Hero */}
       {featured && (
-        <div className="relative h-[380px] overflow-hidden">
-          <img
-            src={featured.cover_image || "/placeholder.svg"}
-            alt={getLocalized(featured, "title", lang)}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+        <div className="relative h-[380px] overflow-hidden bg-gradient-to-br from-[#5B2D8E] to-[#3a1d5e]">
+          {featured.cover_image && (
+            <img
+              src={featured.cover_image}
+              alt={getLocalized(featured, "title", lang)}
+              className="absolute inset-0 h-full w-full object-cover"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              loading="eager"
+              crossOrigin="anonymous"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           <div className="container relative flex h-full flex-col items-center justify-end pb-10 text-center text-white">
             <h1 className="mb-3 max-w-3xl font-display text-3xl font-bold md:text-4xl" style={{ color: "#C9971C" }}>
