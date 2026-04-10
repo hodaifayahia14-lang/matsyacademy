@@ -490,8 +490,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave separator */}
+      <div className="relative -mb-px">
+        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 0V24C480 48 960 0 1440 24V0H0Z" className="fill-secondary/30" />
+        </svg>
+      </div>
+
       {/* ═══════════════════ WHY CHOOSE US ═══════════════════ */}
-      <section className="py-16 lg:py-24">
+      <section className="py-16 lg:py-24 bg-background">
         <div className="container">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
             className="mb-14 text-center">
