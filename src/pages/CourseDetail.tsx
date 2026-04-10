@@ -497,17 +497,6 @@ export default function CourseDetail() {
               </p>
             </motion.div>
 
-            {/* Right: Purchase card (2 cols) — hidden on mobile, shown below */}
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
-              className="hidden lg:block lg:col-span-2">
-              <PurchaseCard
-                course={course} price={price} oldPrice={oldPrice} discountPercent={discountPercent}
-                priceText={priceText} lang={lang} title={title}
-                onBuy={() => setShowOrderModal(true)} onShare={handleShare}
-                wishlisted={wishlisted} onWishlist={() => setWishlisted(!wishlisted)}
-                totalHours={totalHours} totalLessons={totalLessons}
-              />
-            </motion.div>
           </div>
         </div>
       </section>
