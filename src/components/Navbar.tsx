@@ -99,20 +99,7 @@ export default function Navbar() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link to="/login">
-                <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/5 rounded-lg">
-                  {t("navbar.login")}
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button size="sm" className="gradient-gold text-accent-foreground font-semibold hover:opacity-90 rounded-lg">
-                  {t("navbar.signUp")}
-                </Button>
-              </Link>
-            </div>
-          )}
+          ) : null}
         </div>
 
         {/* Mobile Toggle */}
@@ -147,16 +134,6 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="my-2 border-t border-border" />
-              {!user && (
-                <div className="flex gap-2">
-                  <Link to="/login" className="flex-1">
-                    <Button variant="outline" className="w-full border-primary text-primary">{t("navbar.login")}</Button>
-                  </Link>
-                  <Link to="/register" className="flex-1">
-                    <Button className="w-full gradient-gold text-accent-foreground font-semibold">{t("navbar.signUp")}</Button>
-                  </Link>
-                </div>
-              )}
               {user && (
                 <Button variant="ghost" className="justify-start text-destructive" onClick={handleSignOut}>
                   <LogOut className="me-2 h-4 w-4" /> {t("navbar.signOut")}
