@@ -149,7 +149,7 @@ export default function Navbar() {
                 </Link>
               )}
               {user && (
-                <Button variant="ghost" className="justify-start text-red-300" onClick={handleSignOut}>
+                <Button variant="ghost" className="justify-start text-destructive" onClick={handleSignOut}>
                   <LogOut className="me-2 h-4 w-4" /> {t("navbar.signOut")}
                 </Button>
               )}
