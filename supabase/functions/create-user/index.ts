@@ -28,6 +28,8 @@ Deno.serve(async (req) => {
 
     const { email, password, name, role } = await req.json();
     if (!email || !password || !name) throw new Error("Missing required fields");
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) throw new Error("Invalid email format");
 
     // Create user via admin API
     const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
