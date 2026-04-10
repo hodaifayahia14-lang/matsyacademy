@@ -132,7 +132,7 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-white/10 bg-purple-deep lg:hidden">
+            className="overflow-hidden border-t border-white/10 gradient-purple lg:hidden">
             <div className="container flex flex-col gap-1 py-4">
               {navLinks.map(({ labelKey, to }) => (
                 <Link key={to} to={to}
