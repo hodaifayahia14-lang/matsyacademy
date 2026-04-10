@@ -11,10 +11,8 @@ import Footer from "@/components/Footer";
 import HomePage from "@/pages/HomePage";
 import CourseCatalog from "@/pages/CourseCatalog";
 import CourseDetail from "@/pages/CourseDetail";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import ForgotPassword from "@/pages/ForgotPassword";
-import ResetPassword from "@/pages/ResetPassword";
+import AdminLogin from "@/pages/AdminLogin";
+import OrderForm from "@/pages/OrderForm";
 import About from "@/pages/About";
 import QA from "@/pages/QA";
 import Instructions from "@/pages/Instructions";
@@ -25,12 +23,8 @@ import Contact from "@/pages/Contact";
 import BlogDetail from "@/pages/BlogDetail";
 import Terms from "@/pages/Terms";
 import CoursePlayer from "@/pages/CoursePlayer";
-import Cart from "@/pages/Cart";
-import Checkout from "@/pages/Checkout";
-import ThankYou from "@/pages/ThankYou";
-import StudentDashboard from "@/pages/dashboard/student/StudentDashboard";
-import InstructorDashboard from "@/pages/dashboard/instructor/InstructorDashboard";
 import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard";
+import AgentDashboard from "@/pages/dashboard/agent/AgentDashboard";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -47,15 +41,15 @@ const App = () => (
               {/* Course Player — full-screen, no Navbar/Footer */}
               <Route path="/learn/:courseId/:lessonId" element={<CoursePlayer />} />
 
+              {/* Staff login — no Navbar/Footer */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+
               {/* Dashboard routes — no global Navbar/Footer */}
-              <Route path="/dashboard/student/*" element={
-                <ProtectedRoute requiredRole="student"><StudentDashboard /></ProtectedRoute>
-              } />
-              <Route path="/dashboard/instructor/*" element={
-                <ProtectedRoute requiredRole="instructor"><InstructorDashboard /></ProtectedRoute>
-              } />
               <Route path="/dashboard/admin/*" element={
                 <ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>
+              } />
+              <Route path="/dashboard/agent/*" element={
+                <ProtectedRoute requiredRole="confirmation_agent"><AgentDashboard /></ProtectedRoute>
               } />
 
               {/* Public routes with Navbar/Footer */}
@@ -67,10 +61,7 @@ const App = () => (
                       <Route path="/" element={<HomePage />} />
                       <Route path="/courses" element={<CourseCatalog />} />
                       <Route path="/courses/:id" element={<CourseDetail />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/forgot-password" element={<ForgotPassword />} />
-                      <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/order/:courseId" element={<OrderForm />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/qa" element={<QA />} />
                       <Route path="/instructions" element={<Instructions />} />
@@ -80,9 +71,6 @@ const App = () => (
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/blog/:id" element={<BlogDetail />} />
                       <Route path="/terms" element={<Terms />} />
-                      <Route path="/cart" element={<Cart />} />
-                      <Route path="/checkout" element={<Checkout />} />
-                      <Route path="/thank-you" element={<ThankYou />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>
