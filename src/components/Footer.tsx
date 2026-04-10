@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Facebook, Twitter, Youtube, Instagram, Phone, MapPin, Mail } from "lucide-react";
-import maisyLogo from "@/assets/maisy-logo.png";
+import maisyLogo from "@/assets/maisy-logo-v2.png";
 
 export default function Footer() {
   const { t, i18n } = useTranslation();

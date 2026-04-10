@@ -10,7 +10,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import maisyLogo from "@/assets/maisy-logo.png";
+import maisyLogo from "@/assets/maisy-logo-v2.png";
 
 const navLinks = [
   { labelKey: "navbar.home", to: "/" },

@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Bell, Home, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import maisyLogo from "@/assets/maisy-logo.png";
+import maisyLogo from "@/assets/maisy-logo-v2.png";
 import type { LucideIcon } from "lucide-react";
 
 function useIsRTL() {

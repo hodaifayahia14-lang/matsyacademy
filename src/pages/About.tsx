@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Users, BookOpen, Award, Target, Eye, Shield, CheckCircle, GraduationCap, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import maisyLogo from "@/assets/maisy-logo.png";
+import maisyLogo from "@/assets/maisy-logo-v2.png";
 
 const team = [
   { name: "Dr. Ahmed Maisy", role_en: "Founder & CEO", role_fr: "Fondateur & PDG", role_ar: "المؤسس والرئيس التنفيذي", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
