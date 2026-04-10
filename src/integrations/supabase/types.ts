@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_compensation: {
+        Row: {
+          agent_id: string
+          amount: number
+          created_at: string
+          id: string
+          pay_type: string
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          amount?: number
+          created_at?: string
+          id?: string
+          pay_type?: string
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          amount?: number
+          created_at?: string
+          id?: string
+          pay_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_compensation_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_rewards: {
         Row: {
           agent_id: string
