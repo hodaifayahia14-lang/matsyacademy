@@ -376,11 +376,11 @@ export default function CourseDetail() {
   const totalHours = Math.floor(totalMinutes / 60);
 
   const tabs = ["overview", "curriculum", "instructor", "reviews"] as const;
-  const tabLabels: Record<string, string> = {
-    overview: T(lang, "نظرة عامة", "Aperçu", "Overview"),
-    curriculum: T(lang, "المقرر الدراسي", "Programme", "Curriculum"),
-    instructor: T(lang, "المدرب", "Formateur", "Instructor"),
-    reviews: T(lang, "التقييمات", "Avis", "Reviews"),
+  const tabConfig: Record<string, { label: string; icon: React.ReactNode }> = {
+    overview: { label: T(lang, "نظرة عامة", "Aperçu", "Overview"), icon: <Star className="h-4 w-4" /> },
+    curriculum: { label: T(lang, "المقرر الدراسي", "Programme", "Curriculum"), icon: <BookOpen className="h-4 w-4" /> },
+    instructor: { label: T(lang, "المدرب", "Formateur", "Instructor"), icon: <Users className="h-4 w-4" /> },
+    reviews: { label: T(lang, "التقييمات", "Avis", "Reviews"), icon: <Shield className="h-4 w-4" /> },
   };
 
   const learningOutcomes = course.learning_outcomes || [];
@@ -507,20 +507,23 @@ export default function CourseDetail() {
         <div className="grid gap-8 lg:grid-cols-5">
           {/* Main content area */}
           <div className="lg:col-span-3">
-            {/* Tab bar */}
-            <div className="relative mb-8 flex gap-1 border-b border-border overflow-x-auto scrollbar-none">
-              {tabs.map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)}
-                  className={`relative whitespace-nowrap px-5 py-3.5 text-sm font-semibold transition-colors ${
-                    activeTab === tab ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                  }`}>
-                  {tabLabels[tab]}
-                  {activeTab === tab && (
-                    <motion.div layoutId="activeTab" className="absolute bottom-0 start-0 end-0 h-[3px] rounded-full"
-                      style={{ background: "#F5A623" }} />
-                  )}
-                </button>
-              ))}
+            {/* Tab bar with icons */}
+            <div className="relative mb-8 rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+              <div className="flex">
+                {tabs.map((tab) => (
+                  <button key={tab} onClick={() => setActiveTab(tab)}
+                    className={`relative flex-1 flex flex-col items-center gap-1.5 px-4 py-4 text-sm font-semibold transition-colors ${
+                      activeTab === tab ? "text-accent" : "text-muted-foreground hover:text-foreground"
+                    }`}>
+                    <span className={activeTab === tab ? "text-accent" : "text-muted-foreground"}>{tabConfig[tab].icon}</span>
+                    <span className="hidden sm:inline">{tabConfig[tab].label}</span>
+                    {activeTab === tab && (
+                      <motion.div layoutId="activeTab" className="absolute bottom-0 start-0 end-0 h-[3px] rounded-full"
+                        style={{ background: "hsl(var(--accent))" }} />
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <AnimatePresence mode="wait">

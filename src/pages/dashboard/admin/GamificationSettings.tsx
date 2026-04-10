@@ -64,7 +64,7 @@ export default function GamificationSettings() {
     mutationFn: async (enabled: boolean) => {
       await supabase.from("gamification_settings").update({ enabled }).eq("id", settings!.id);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success("Updated"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success(t("تم التحديث", "Mis à jour", "Updated")); },
   });
 
   // Save settings
@@ -73,7 +73,7 @@ export default function GamificationSettings() {
       const { id, created_at, updated_at, ...rest } = localSettings;
       await supabase.from("gamification_settings").update(rest).eq("id", id);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success("Settings saved"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["gamification-settings"] }); toast.success(t("تم حفظ الإعدادات", "Paramètres enregistrés", "Settings saved")); },
   });
 
   // Save rule
@@ -91,9 +91,9 @@ export default function GamificationSettings() {
       qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] });
       setDrawerOpen(false);
       setEditingRule(null);
-      toast.success("Milestone saved");
+      toast.success(t("تم حفظ الإنجاز", "Jalon enregistré", "Milestone saved"));
     },
-    onError: (e) => toast.error("Error: " + e.message),
+    onError: (e) => toast.error(t("خطأ: ", "Erreur: ", "Error: ") + e.message),
   });
 
   // Toggle rule active
@@ -109,7 +109,7 @@ export default function GamificationSettings() {
     mutationFn: async (id: string) => {
       await supabase.from("milestone_rules").delete().eq("id", id);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success("Deleted"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success(t("تم الحذف", "Supprimé", "Deleted")); },
   });
 
   // Duplicate
@@ -139,7 +139,7 @@ export default function GamificationSettings() {
         await supabase.from("milestone_rules").insert({ ...defaultMilestones[i], sort_order: i } as any);
       }
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success("Default milestones created"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success(t("تم إنشاء الإنجازات الافتراضية", "Jalons par défaut créés", "Default milestones created")); },
   });
 
   if (settingsLoading || rulesLoading) return <div className="space-y-4"><Skeleton className="h-12" /><Skeleton className="h-60" /><Skeleton className="h-40" /></div>;
@@ -181,7 +181,7 @@ export default function GamificationSettings() {
           <div className="flex gap-2">
             {rules.length === 0 && (
               <Button variant="outline" size="sm" onClick={() => seedDefaults.mutate()} disabled={seedDefaults.isPending}>
-                Seed Defaults
+                {t("إنشاء افتراضي", "Créer par défaut", "Seed Defaults")}
               </Button>
             )}
             <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80" onClick={() => { setEditingRule(null); setDrawerOpen(true); }}>
@@ -223,14 +223,15 @@ export default function GamificationSettings() {
           onChange={setLocalSettings}
           onSave={() => saveSettings.mutate()}
           saving={saveSettings.isPending}
+          lang={lang}
         />
       )}
 
       {/* Badge Gallery */}
-      <BadgeGallery rules={rules} />
+      <BadgeGallery rules={rules} lang={lang} />
 
       {/* Reward Log */}
-      <RewardHistoryLog rules={rules} />
+      <RewardHistoryLog rules={rules} lang={lang} />
 
       {/* Form Drawer */}
       <MilestoneFormDrawer
@@ -238,6 +239,7 @@ export default function GamificationSettings() {
         onClose={() => { setDrawerOpen(false); setEditingRule(null); }}
         onSave={(rule) => saveRule.mutate(rule)}
         editingRule={editingRule}
+        lang={lang}
       />
     </div>
   );
