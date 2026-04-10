@@ -16,7 +16,7 @@ import Leaderboard from "./Leaderboard";
 import CourseDetailAdmin from "./CourseDetailAdmin";
 import MessagesManagement from "./MessagesManagement";
 import ConfirmationManagement from "./ConfirmationManagement";
-import CreateCourse from "@/pages/dashboard/instructor/CreateCourse";
+import CreateCourse from "./CreateCourse";
 
 export default function AdminDashboard() {
   const { i18n } = useTranslation();
