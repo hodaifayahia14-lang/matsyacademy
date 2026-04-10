@@ -662,6 +662,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave separator */}
+      <div className="relative -mb-px">
+        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 48V24C360 0 720 48 1080 24C1260 12 1380 6 1440 24V48H0Z" className="fill-primary/5" />
+        </svg>
+      </div>
+
       {/* ═══════════════════ NEWSLETTER SIGNUP ═══════════════════ */}
       <section className="py-16 lg:py-20 bg-gradient-to-br from-primary/5 via-accent/5 to-purple-deep/5 relative overflow-hidden">
         <div className="absolute inset-0">
