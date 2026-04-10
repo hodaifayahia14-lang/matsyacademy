@@ -86,6 +86,11 @@ export default function ConfirmationManagement() {
       toast.error(t("جميع الحقول مطلوبة", "Tous les champs requis", "All fields required"));
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      toast.error(t("بريد إلكتروني غير صالح", "Email invalide", "Invalid email format"));
+      return;
+    }
     if (newPassword.length < 6) {
       toast.error(t("كلمة المرور 6 أحرف على الأقل", "Mot de passe min 6 caractères", "Password min 6 chars"));
       return;
