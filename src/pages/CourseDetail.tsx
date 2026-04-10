@@ -430,10 +430,10 @@ export default function CourseDetail() {
         <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(135deg, #5B2D8E 0%, #3A1D6E 40%, #0D0D1A 100%)" }} />
 
         <div className="container relative z-10 py-10 lg:py-16">
-          <div className="grid gap-8 lg:grid-cols-5 items-start">
-            {/* Left: course info (3 cols) */}
+          <div>
+            {/* Course info */}
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-              className="lg:col-span-3 space-y-5">
+              className="space-y-5">
               {/* Category badge */}
               {categoryName && (
                 <span className="inline-block rounded-full px-4 py-1.5 text-xs font-bold"
@@ -497,17 +497,6 @@ export default function CourseDetail() {
               </p>
             </motion.div>
 
-            {/* Right: Purchase card (2 cols) — hidden on mobile, shown below */}
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
-              className="hidden lg:block lg:col-span-2">
-              <PurchaseCard
-                course={course} price={price} oldPrice={oldPrice} discountPercent={discountPercent}
-                priceText={priceText} lang={lang} title={title}
-                onBuy={() => setShowOrderModal(true)} onShare={handleShare}
-                wishlisted={wishlisted} onWishlist={() => setWishlisted(!wishlisted)}
-                totalHours={totalHours} totalLessons={totalLessons}
-              />
-            </motion.div>
           </div>
         </div>
       </section>
@@ -516,9 +505,9 @@ export default function CourseDetail() {
           SECTION 2 — TABS + CONTENT
           ═══════════════════════════════════════════════════════ */}
       <div className="container py-8 lg:py-12">
-        <div className="grid gap-8 lg:grid-cols-5">
+        <div>
           {/* Main content area */}
-          <div className="lg:col-span-3">
+          <div>
             {/* Tab bar */}
             <div className="relative mb-8 flex gap-1 border-b border-border overflow-x-auto scrollbar-none">
               {tabs.map((tab) => (
@@ -731,29 +720,6 @@ export default function CourseDetail() {
             </AnimatePresence>
           </div>
 
-          {/* Purchase card — desktop sticky sidebar */}
-          <div className="hidden lg:block lg:col-span-2">
-            <div className="sticky top-20">
-              <PurchaseCard
-                course={course} price={price} oldPrice={oldPrice} discountPercent={discountPercent}
-                priceText={priceText} lang={lang} title={title}
-                onBuy={() => setShowOrderModal(true)} onShare={handleShare}
-                wishlisted={wishlisted} onWishlist={() => setWishlisted(!wishlisted)}
-                totalHours={totalHours} totalLessons={totalLessons}
-              />
-            </div>
-          </div>
-
-          {/* Mobile purchase card (inline, visible on mobile) */}
-          <div className="lg:hidden">
-            <PurchaseCard
-              course={course} price={price} oldPrice={oldPrice} discountPercent={discountPercent}
-              priceText={priceText} lang={lang} title={title}
-              onBuy={() => setShowOrderModal(true)} onShare={handleShare}
-              wishlisted={wishlisted} onWishlist={() => setWishlisted(!wishlisted)}
-              totalHours={totalHours} totalLessons={totalLessons}
-            />
-          </div>
         </div>
       </div>
 
@@ -800,111 +766,3 @@ export default function CourseDetail() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   PURCHASE CARD COMPONENT
-   ═══════════════════════════════════════════════════════════════ */
-function PurchaseCard({
-  course, price, oldPrice, discountPercent, priceText, lang, title,
-  onBuy, onShare, wishlisted, onWishlist, totalHours, totalLessons,
-}: {
-  course: any; price: number; oldPrice: number; discountPercent: number;
-  priceText: string; lang: string; title: string;
-  onBuy: () => void; onShare: (p: string) => void;
-  wishlisted: boolean; onWishlist: () => void;
-  totalHours: number; totalLessons: number;
-}) {
-  return (
-    <div className="rounded-2xl border border-border bg-card shadow-lg overflow-hidden">
-      {/* Video preview */}
-      <div className="relative aspect-video cursor-pointer group">
-        <img src={course.cover_image || "/placeholder.svg"} alt={title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition-colors">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-foreground/90 shadow-lg">
-            <Play className="h-7 w-7 text-primary ms-1" />
-          </motion.div>
-        </div>
-        <span className="absolute bottom-3 end-3 rounded-md bg-black/70 px-2 py-1 text-xs text-primary-foreground">
-          {T(lang, "معاينة الدورة", "Aperçu", "Preview")}
-        </span>
-      </div>
-
-      <div className="p-5 space-y-5">
-        {/* Price */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="font-display text-3xl font-bold text-foreground">{priceText}</span>
-          {price > 0 && (
-            <>
-              <span className="text-lg text-muted-foreground line-through">{oldPrice.toLocaleString()} DZD</span>
-              <span className="rounded-full bg-destructive/10 text-destructive px-3 py-1 text-xs font-bold">
-                {T(lang, `خصم ${discountPercent}%`, `${discountPercent}% de réduction`, `Save ${discountPercent}%`)}
-              </span>
-            </>
-          )}
-        </div>
-
-        {/* CTA */}
-        <motion.div initial={{ scale: 1 }} animate={{ scale: [1, 1.02, 1] }}
-          transition={{ repeat: 2, duration: 0.6, delay: 1 }}>
-          <Button onClick={onBuy} size="lg"
-            className="w-full font-bold text-base rounded-xl h-14 text-primary-foreground shadow-lg hover:shadow-xl transition-shadow"
-            style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}>
-            {T(lang, "اشترِ الآن", "Acheter maintenant", "Buy Now")}
-          </Button>
-        </motion.div>
-
-        {/* Wishlist */}
-        <Button onClick={onWishlist} variant="outline" size="lg"
-          className="w-full rounded-xl h-12 font-semibold text-sm">
-          <Heart className={`h-4 w-4 me-2 ${wishlisted ? "fill-destructive text-destructive" : ""}`} />
-          {wishlisted
-            ? T(lang, "في قائمة الرغبات", "Dans les favoris", "In Wishlist")
-            : T(lang, "أضف إلى قائمة الرغبات", "Ajouter aux favoris", "Add to Wishlist")}
-        </Button>
-
-        <div className="h-px bg-border" />
-
-        {/* Course includes */}
-        <div>
-          <h4 className="text-sm font-bold text-foreground mb-3">
-            {T(lang, "تشمل هذه الدورة", "Ce cours comprend", "This course includes")}
-          </h4>
-          <ul className="space-y-3">
-            {[
-              { icon: <Video className="h-4 w-4 text-primary" />, text: `${totalHours}+ ${T(lang, "ساعات فيديو", "heures de vidéo", "hours of video")}` },
-              { icon: <FileText className="h-4 w-4 text-primary" />, text: `${totalLessons} ${T(lang, "درس", "leçons", "lessons")}` },
-              { icon: <Smartphone className="h-4 w-4 text-primary" />, text: T(lang, "وصول عبر الهاتف والحاسوب", "Accès mobile & desktop", "Access on mobile & desktop") },
-              { icon: <Trophy className="h-4 w-4 text-primary" />, text: T(lang, "شهادة إتمام", "Certificat de réussite", "Certificate of completion") },
-              { icon: <Infinity className="h-4 w-4 text-primary" />, text: T(lang, "دخول مدى الحياة", "Accès à vie", "Lifetime access") },
-            ].map((item, i) => (
-              <li key={i} className="flex items-center gap-3 text-sm text-foreground">
-                {item.icon} {item.text}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="h-px bg-border" />
-
-        {/* Share */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-foreground">
-            {T(lang, "شارك هذه الدورة", "Partager ce cours", "Share this course")}
-          </span>
-          <div className="flex items-center gap-2">
-            <button onClick={() => onShare("facebook")} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-              <Facebook className="h-4 w-4" />
-            </button>
-            <button onClick={() => onShare("whatsapp")} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-green-600 hover:text-primary-foreground transition-colors">
-              <MessageCircle className="h-4 w-4" />
-            </button>
-            <button onClick={() => onShare("copy")} className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-              <Copy className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
