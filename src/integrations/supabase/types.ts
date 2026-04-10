@@ -629,6 +629,7 @@ export type Database = {
       orders: {
         Row: {
           assigned_agent_id: string | null
+          baladiya: string
           confirmed_at: string | null
           confirmed_by: string | null
           course_id: string | null
@@ -644,6 +645,7 @@ export type Database = {
         }
         Insert: {
           assigned_agent_id?: string | null
+          baladiya?: string
           confirmed_at?: string | null
           confirmed_by?: string | null
           course_id?: string | null
@@ -659,6 +661,7 @@ export type Database = {
         }
         Update: {
           assigned_agent_id?: string | null
+          baladiya?: string
           confirmed_at?: string | null
           confirmed_by?: string | null
           course_id?: string | null
