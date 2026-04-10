@@ -203,7 +203,7 @@ function OrderModal({
                         <SelectTrigger className="rounded-xl border-border/60 h-12">
                           <SelectValue placeholder={T(lang, "اختر الولاية", "Choisir la wilaya", "Select Wilaya")} />
                         </SelectTrigger>
-                        <SelectContent className="max-h-60">
+                        <SelectContent className="max-h-60 z-[200]" position="popper" sideOffset={4}>
                           {algerianWilayas.map(w => (
                             <SelectItem key={w.code} value={String(w.code)}>
                               {String(w.code).padStart(2, "0")} - {w.name}
