@@ -65,7 +65,7 @@ function DashboardSidebar({ items, groupLabel, collapsed, setCollapsed, mobileOp
       {!collapsed && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-b border-white/10 px-4 py-3">
           <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 ring-2" style={{ ringColor: "hsl(42, 72%, 45%)" }}>
+            <Avatar className="h-10 w-10 ring-2 ring-accent">
               <AvatarImage src={profile?.avatar_url || undefined} />
               <AvatarFallback className="text-xs font-bold" style={{ background: "hsl(42, 72%, 45%)", color: "#1A0A3C" }}>{initials}</AvatarFallback>
             </Avatar>
