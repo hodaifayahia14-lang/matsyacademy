@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight, Users, BookOpen, Award, Shield, Star, Search,
   GraduationCap, Clock, Headphones, BadgeCheck, Briefcase,
   Globe, Play, ChevronRight, Sparkles, TrendingUp, Zap,
+  Mail, CheckCircle, Heart, Target, Lightbulb, Trophy,
+  Calendar, MapPin, Phone, MessageCircle, Instagram, Facebook, Twitter,
+} from "lucide-react";
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import CourseCard from "@/components/CourseCard";
@@ -67,6 +70,11 @@ export default function HomePage() {
   const { courses: dbCourses } = useCourses();
   const dbCategories = useCategories();
 
+  // Parallax scroll effect
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 1000], [0, -200]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.8]);
+
   const student = useCounter(5000, true);
   const course = useCounter(120, true);
   const instructor = useCounter(35, true);
@@ -93,9 +101,30 @@ export default function HomePage() {
   ];
 
   const testimonials = [
-    { name: lang === "ar" ? "أحمد بن علي" : "Ahmed B.", role: lang === "ar" ? "مطور ويب" : "Web Developer", text: lang === "ar" ? "أفضل منصة تعليمية عربية، المحتوى ممتاز والدعم رائع!" : "Best Arab learning platform, excellent content and amazing support!", rating: 5 },
-    { name: lang === "ar" ? "فاطمة الزهراء" : "Fatima Z.", role: lang === "ar" ? "مصممة جرافيك" : "Graphic Designer", text: lang === "ar" ? "حصلت على شهادة معتمدة وتحسنت مهاراتي بشكل كبير." : "Got a certified diploma and my skills improved significantly.", rating: 5 },
-    { name: lang === "ar" ? "محمد كريم" : "Mohamed K.", role: lang === "ar" ? "طالب جامعي" : "University Student", text: lang === "ar" ? "الدورات عملية ومفيدة جداً، أنصح بها الجميع!" : "The courses are practical and very useful, I recommend them to everyone!", rating: 5 },
+    {
+      name: lang === "ar" ? "أحمد بن علي" : "Ahmed B.",
+      role: lang === "ar" ? "مطور ويب" : "Web Developer",
+      text: lang === "ar" ? "أفضل منصة تعليمية عربية، المحتوى ممتاز والدعم رائع!" : "Best Arab learning platform, excellent content and amazing support!",
+      rating: 5,
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      course: lang === "ar" ? "تطوير الويب" : "Web Development"
+    },
+    {
+      name: lang === "ar" ? "فاطمة الزهراء" : "Fatima Z.",
+      role: lang === "ar" ? "مصممة جرافيك" : "Graphic Designer",
+      text: lang === "ar" ? "حصلت على شهادة معتمدة وتحسنت مهاراتي بشكل كبير." : "Got a certified diploma and my skills improved significantly.",
+      rating: 5,
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
+      course: lang === "ar" ? "التصميم الجرافيكي" : "Graphic Design"
+    },
+    {
+      name: lang === "ar" ? "محمد كريم" : "Mohamed K.",
+      role: lang === "ar" ? "طالب جامعي" : "University Student",
+      text: lang === "ar" ? "الدورات عملية ومفيدة جداً، أنصح بها الجميع!" : "The courses are practical and very useful, I recommend them to everyone!",
+      rating: 5,
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+      course: lang === "ar" ? "برمجة Python" : "Python Programming"
+    },
   ];
 
   return (
@@ -134,11 +163,35 @@ export default function HomePage() {
               <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }}
                 className="mb-6 font-display text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold leading-[1.15] text-white">
                 {lang === "ar" ? (
-                  <>ابدأ <span className="text-gradient-gold">رحلتك التعليمية</span> اليوم مع أفضل المدربين</>
+                  <>ابدأ <span className="text-gradient-gold relative">
+                    رحلتك التعليمية
+                    <motion.div
+                      className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-accent/50 to-accent/30 rounded-full"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ delay: 1, duration: 0.8 }}
+                    />
+                  </span> اليوم مع أفضل المدربين</>
                 ) : lang === "fr" ? (
-                  <>Commencez Votre <span className="text-gradient-gold">Parcours Éducatif</span> Aujourd'hui</>
+                  <>Commencez Votre <span className="text-gradient-gold relative">
+                    Parcours Éducatif
+                    <motion.div
+                      className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-accent/50 to-accent/30 rounded-full"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ delay: 1, duration: 0.8 }}
+                    />
+                  </span> Aujourd'hui</>
                 ) : (
-                  <>Start Your <span className="text-gradient-gold">Learning Journey</span> Today with the Best</>
+                  <>Start Your <span className="text-gradient-gold relative">
+                    Learning Journey
+                    <motion.div
+                      className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-accent/50 to-accent/30 rounded-full"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ delay: 1, duration: 0.8 }}
+                    />
+                  </span> Today with the Best</>
                 )}
               </motion.h1>
 
@@ -247,11 +300,27 @@ export default function HomePage() {
                   <motion.div key={cat.id} variants={scaleIn} initial="hidden" whileInView="visible" custom={i}
                     viewport={{ once: true }}>
                     <Link to={`/courses?category=${cat.slug}`}
-                      className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl group-hover:bg-primary/20 transition-colors">
+                      className="group relative flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-2 overflow-hidden"
+                    >
+                      {/* Background gradient on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                      {/* Icon with enhanced animation */}
+                      <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-2xl group-hover:bg-primary/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
                         {cat.icon || "📚"}
+                        <div className="absolute inset-0 rounded-2xl bg-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
                       </div>
-                      <span className="text-sm font-semibold text-foreground text-center">{name}</span>
+
+                      {/* Title with underline animation */}
+                      <span className="relative text-sm font-semibold text-foreground text-center group-hover:text-primary transition-colors">
+                        {name}
+                        <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-accent group-hover:w-full group-hover:left-0 transition-all duration-300" />
+                      </span>
+
+                      {/* Subtle sparkle effect */}
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Sparkles className="h-3 w-3 text-accent animate-pulse" />
+                      </div>
                     </Link>
                   </motion.div>
                 );
@@ -352,21 +421,42 @@ export default function HomePage() {
             {testimonials.map((t, i) => (
               <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" custom={i}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                className="group relative rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-2 cursor-pointer"
+              >
+                {/* Quote icon */}
+                <div className="absolute -top-3 -left-3 w-8 h-8 bg-accent rounded-full flex items-center justify-center shadow-lg">
+                  <MessageCircle className="h-4 w-4 text-white" />
+                </div>
+
+                {/* Rating */}
                 <div className="mb-4 flex gap-1">
                   {[...Array(t.rating)].map((_, j) => (
                     <Star key={j} className="h-4 w-4 fill-accent text-accent" />
                   ))}
                 </div>
+
+                {/* Testimonial text */}
                 <p className="mb-6 text-sm text-muted-foreground leading-relaxed italic">"{t.text}"</p>
+
+                {/* Course badge */}
+                <div className="mb-4">
+                  <span className="inline-flex items-center gap-1.5 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                    <BookOpen className="h-3 w-3" />
+                    {t.course}
+                  </span>
+                </div>
+
+                {/* User info */}
                 <div className="flex items-center gap-3 border-t border-border pt-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">
-                    {t.name.charAt(0)}
+                  <div className="relative">
+                    <img src={t.avatar} alt={t.name} className="w-10 h-10 rounded-full object-cover border-2 border-primary/20" />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-white" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm font-semibold text-foreground">{t.name}</p>
                     <p className="text-xs text-muted-foreground">{t.role}</p>
                   </div>
+                  <Heart className="h-4 w-4 text-muted-foreground/40 group-hover:text-accent transition-colors" />
                 </div>
               </motion.div>
             ))}
@@ -431,35 +521,124 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════ PARTNER CTA ═══════════════════ */}
-      <section className="relative py-20 overflow-hidden">
+      {/* ═══════════════════ NEWSLETTER SIGNUP ═══════════════════ */}
+      <section className="py-16 lg:py-20 bg-gradient-to-br from-primary/5 via-accent/5 to-purple-deep/5 relative overflow-hidden">
         <div className="absolute inset-0">
-          <img src={patternBg} alt="" className="h-full w-full object-cover" loading="lazy" width={1920} height={600} />
-          <div className="absolute inset-0 bg-[hsl(270,60%,15%)]/70" />
+          {/* Animated background elements */}
+          <div className="absolute top-10 left-10 w-20 h-20 bg-accent/10 rounded-full blur-xl animate-float" style={{ animationDelay: '0s' }} />
+          <div className="absolute top-32 right-20 w-16 h-16 bg-primary/10 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }} />
+          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-purple-deep/10 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
         </div>
-        <div className="container relative z-10 text-center">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}>
-            <h2 className="mb-4 font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-              {lang === "ar" ? (
-                <>كن <span className="text-gradient-gold">شريكاً</span> لنا</>
-              ) : lang === "fr" ? (
-                <>Devenez Notre <span className="text-gradient-gold">Partenaire</span></>
-              ) : (
-                <>Become Our <span className="text-gradient-gold">Partner</span></>
-              )}
+
+        <div className="container relative z-10">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
+            className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 border border-accent/20 px-4 py-2 text-accent text-sm font-semibold mb-6">
+              <Mail className="h-4 w-4" />
+              {lang === "ar" ? "ابق على اطلاع" : "Stay Updated"}
+            </div>
+
+            <h2 className="mb-4 font-display text-2xl sm:text-3xl lg:text-4xl font-bold">
+              <span className="text-gradient-purple">
+                {lang === "ar" ? "اشترك في نشرتنا الإخبارية" : lang === "fr" ? "Abonnez-vous à Notre Newsletter" : "Subscribe to Our Newsletter"}
+              </span>
             </h2>
-            <p className="mb-8 text-white/60 max-w-xl mx-auto text-sm leading-relaxed">
+
+            <p className="mb-8 text-muted-foreground text-sm max-w-2xl mx-auto leading-relaxed">
               {lang === "ar"
-                ? "انضم إلى شبكة شركائنا المتنامية وساهم في بناء مستقبل التعليم في العالم العربي."
+                ? "احصل على آخر التحديثات حول الدورات الجديدة، النصائح التعليمية، والعروض الحصرية مباشرة في بريدك الإلكتروني."
                 : lang === "fr"
-                ? "Rejoignez notre réseau de partenaires et contribuez à bâtir l'avenir de l'éducation dans le monde arabe."
-                : "Join our growing partner network and help build the future of education in the Arab world."}
+                ? "Recevez les dernières mises à jour sur les nouveaux cours, conseils pédagogiques et offres exclusives directement dans votre boîte mail."
+                : "Get the latest updates on new courses, learning tips, and exclusive offers delivered straight to your inbox."}
             </p>
-            <Button size="lg" className="gradient-gold text-accent-foreground font-bold px-10 py-6 hover:opacity-90 rounded-xl shadow-lg shadow-accent/20">
-              {lang === "ar" ? "تواصل معنا" : lang === "fr" ? "Contactez-nous" : "Contact Us"}
-              <ArrowRight className="h-4 w-4 ms-2" />
-            </Button>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+              className="max-w-md mx-auto mb-6">
+              <div className="flex items-center bg-white/80 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden shadow-lg transition-all focus-within:shadow-xl focus-within:border-accent/40">
+                <div className="flex-1 flex items-center px-4 py-3">
+                  <Mail className="h-5 w-5 text-muted-foreground mr-3" />
+                  <input type="email"
+                    placeholder={lang === "ar" ? "أدخل بريدك الإلكتروني" : lang === "fr" ? "Entrez votre email" : "Enter your email"}
+                    className="flex-1 text-sm focus:outline-none bg-transparent placeholder:text-muted-foreground/60" />
+                </div>
+                <Button className="gradient-purple text-white font-semibold px-6 py-3 rounded-xl m-1 hover:opacity-90 transition-all">
+                  {lang === "ar" ? "اشتراك" : lang === "fr" ? "S'abonner" : "Subscribe"}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.5 }}
+              className="flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-success" />
+                {lang === "ar" ? "محتوى مجاني" : "Free Content"}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-success" />
+                {lang === "ar" ? "إلغاء في أي وقت" : "Cancel Anytime"}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle className="h-4 w-4 text-success" />
+                {lang === "ar" ? "لا سبام" : "No Spam"}
+              </span>
+            </motion.div>
           </motion.div>
+        </div>
+      {/* ═══════════════════ FOOTER PREVIEW ═══════════════════ */}
+      <section className="py-12 bg-secondary/30 border-t border-border">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
+              className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white font-bold text-lg">
+                M
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-foreground">Maisy Academy</h3>
+                <p className="text-sm text-muted-foreground">{lang === "ar" ? "منصة التعليم العربية الأولى" : "Leading Arab Learning Platform"}</p>
+              </div>
+            </motion.div>
+
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={1} viewport={{ once: true }}
+              className="flex items-center gap-6">
+              <span className="text-sm text-muted-foreground">
+                {lang === "ar" ? "تابعنا على" : "Follow us on"}:
+              </span>
+              <div className="flex items-center gap-3">
+                {[
+                  { icon: Facebook, href: "#", color: "hover:text-blue-600" },
+                  { icon: Twitter, href: "#", color: "hover:text-blue-400" },
+                  { icon: Instagram, href: "#", color: "hover:text-pink-600" },
+                  { icon: MessageCircle, href: "#", color: "hover:text-green-600" },
+                ].map(({ icon: Icon, href, color }, i) => (
+                  <motion.a key={i} href={href}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-primary hover:text-white ${color}`}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </motion.a>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={2} viewport={{ once: true }}
+              className="flex items-center gap-4 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" />
+                {lang === "ar" ? "الجزائر" : "Algeria"}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Phone className="h-4 w-4" />
+                +213 XX XX XX XX
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Mail className="h-4 w-4" />
+                contact@matsyacademy.com
+              </span>
+            </motion.div>
+          </div>
         </div>
       </section>
     </div>
