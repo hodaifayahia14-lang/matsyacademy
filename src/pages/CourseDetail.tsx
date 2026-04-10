@@ -507,20 +507,23 @@ export default function CourseDetail() {
         <div className="grid gap-8 lg:grid-cols-5">
           {/* Main content area */}
           <div className="lg:col-span-3">
-            {/* Tab bar */}
-            <div className="relative mb-8 flex gap-1 border-b border-border overflow-x-auto scrollbar-none">
-              {tabs.map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)}
-                  className={`relative whitespace-nowrap px-5 py-3.5 text-sm font-semibold transition-colors ${
-                    activeTab === tab ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                  }`}>
-                  {tabLabels[tab]}
-                  {activeTab === tab && (
-                    <motion.div layoutId="activeTab" className="absolute bottom-0 start-0 end-0 h-[3px] rounded-full"
-                      style={{ background: "#F5A623" }} />
-                  )}
-                </button>
-              ))}
+            {/* Tab bar with icons */}
+            <div className="relative mb-8 rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+              <div className="flex">
+                {tabs.map((tab) => (
+                  <button key={tab} onClick={() => setActiveTab(tab)}
+                    className={`relative flex-1 flex flex-col items-center gap-1.5 px-4 py-4 text-sm font-semibold transition-colors ${
+                      activeTab === tab ? "text-accent" : "text-muted-foreground hover:text-foreground"
+                    }`}>
+                    <span className={activeTab === tab ? "text-accent" : "text-muted-foreground"}>{tabConfig[tab].icon}</span>
+                    <span className="hidden sm:inline">{tabConfig[tab].label}</span>
+                    {activeTab === tab && (
+                      <motion.div layoutId="activeTab" className="absolute bottom-0 start-0 end-0 h-[3px] rounded-full"
+                        style={{ background: "hsl(var(--accent))" }} />
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <AnimatePresence mode="wait">
