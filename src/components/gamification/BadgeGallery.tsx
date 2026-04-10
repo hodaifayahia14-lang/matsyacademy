@@ -7,7 +7,10 @@ import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { MilestoneRule } from "./MilestoneRuleCard";
 
-export default function BadgeGallery({ rules }: { rules: MilestoneRule[] }) {
+const t = (lang: string, ar: string, fr: string, en: string) =>
+  lang === "ar" ? ar : lang === "fr" ? fr : en;
+
+export default function BadgeGallery({ rules, lang = "en" }: { rules: MilestoneRule[]; lang?: string }) {
   const [filter, setFilter] = useState<"all" | "earned" | "disabled">("all");
 
   const { data: badgeCounts, isLoading } = useQuery({
@@ -26,15 +29,27 @@ export default function BadgeGallery({ rules }: { rules: MilestoneRule[] }) {
     return true;
   });
 
+  const getName = (r: MilestoneRule) => lang === "ar" ? r.name_ar : lang === "fr" ? r.name_fr : r.name_en;
+
+  const filterLabels: Record<string, string> = {
+    all: t(lang, "الكل", "Tous", "All"),
+    earned: t(lang, "مكتسبة", "Obtenu", "Earned"),
+    disabled: t(lang, "معطلة", "Désactivé", "Disabled"),
+  };
+
   if (isLoading) return <Skeleton className="h-40" />;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">🏅 All Badges Overview</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          🏅 {t(lang, "نظرة عامة على الشارات", "Aperçu des Badges", "All Badges Overview")}
+        </CardTitle>
         <div className="flex gap-2 mt-2">
           {(["all", "earned", "disabled"] as const).map(f => (
-            <Badge key={f} variant={filter === f ? "default" : "outline"} className="cursor-pointer capitalize" onClick={() => setFilter(f)}>{f}</Badge>
+            <Badge key={f} variant={filter === f ? "default" : "outline"} className="cursor-pointer capitalize" onClick={() => setFilter(f)}>
+              {filterLabels[f]}
+            </Badge>
           ))}
         </div>
       </CardHeader>
@@ -46,20 +61,26 @@ export default function BadgeGallery({ rules }: { rules: MilestoneRule[] }) {
                 <TooltipTrigger asChild>
                   <div className={`flex flex-col items-center gap-1 rounded-xl p-3 transition hover:bg-muted ${!r.is_active ? "opacity-40" : ""}`}>
                     <div className="flex h-12 w-12 items-center justify-center rounded-full text-2xl" style={{ backgroundColor: r.color + "22" }}>{r.icon}</div>
-                    <span className="text-[10px] text-center text-muted-foreground truncate w-full">{r.name_en}</span>
-                    <span className="text-[10px] font-semibold">{badgeCounts?.[r.id] || 0} earned</span>
+                    <span className="text-[10px] text-center text-muted-foreground truncate w-full">{getName(r) || r.name_en}</span>
+                    <span className="text-[10px] font-semibold">
+                      {badgeCounts?.[r.id] || 0} {t(lang, "مكتسبة", "obtenu", "earned")}
+                    </span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p className="font-semibold">{r.name_en}</p>
-                  <p className="text-xs">Target: {r.target_value} · {r.milestone_type}</p>
-                  <p className="text-xs">{badgeCounts?.[r.id] || 0} agents earned</p>
+                  <p className="font-semibold">{getName(r) || r.name_en}</p>
+                  <p className="text-xs">{t(lang, "الهدف:", "Cible:", "Target:")} {r.target_value} · {r.milestone_type}</p>
+                  <p className="text-xs">{badgeCounts?.[r.id] || 0} {t(lang, "وكيل حصل عليها", "agents l'ont obtenu", "agents earned")}</p>
                 </TooltipContent>
               </Tooltip>
             ))}
           </div>
         </TooltipProvider>
-        {filtered.length === 0 && <p className="py-8 text-center text-muted-foreground">No badges match this filter</p>}
+        {filtered.length === 0 && (
+          <p className="py-8 text-center text-muted-foreground">
+            {t(lang, "لا توجد شارات مطابقة لهذا الفلتر", "Aucun badge ne correspond à ce filtre", "No badges match this filter")}
+          </p>
+        )}
       </CardContent>
     </Card>
   );
