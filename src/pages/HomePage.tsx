@@ -174,7 +174,7 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Link to="/register">
-                  <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 font-semibold text-sm px-8 py-6 rounded-xl backdrop-blur-sm">
+                  <Button size="lg" className="bg-white text-primary font-bold text-sm px-8 py-6 rounded-xl shadow-lg hover:bg-white/90 transition-all">
                     <Play className="h-4 w-4 me-2" />
                     {lang === "ar" ? "شاهد الفيديو" : lang === "fr" ? "Voir la Vidéo" : "Watch Video"}
                   </Button>
