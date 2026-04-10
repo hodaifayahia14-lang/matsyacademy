@@ -106,8 +106,9 @@ export default function Blog() {
                         <img
                           src={post.cover_image || "/placeholder.svg"}
                           alt={title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 bg-muted"
                           loading="lazy"
+                          onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                         />
                       </div>
                       <div className="p-4">
