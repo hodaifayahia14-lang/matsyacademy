@@ -38,7 +38,7 @@ export default function CourseDetail() {
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderSubmitting, setOrderSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ full_name: "", phone: "", wilaya_code: "", status_label: "" });
+  const [formData, setFormData] = useState({ full_name: "", phone: "", wilaya_code: "", baladiya: "", status_label: "" });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => { window.scrollTo(0, 0); }, [id]);
@@ -118,6 +118,7 @@ export default function CourseDetail() {
       phone: formData.phone,
       wilaya_code: Number(formData.wilaya_code),
       wilaya_name: wilaya?.name || "",
+      baladiya: formData.baladiya.trim(),
       status_label: formData.status_label,
       order_status: "pending",
     });
@@ -360,6 +361,18 @@ export default function CourseDetail() {
                             </SelectContent>
                           </Select>
                           {formErrors.wilaya_code && <p className="text-xs text-destructive mt-1">{formErrors.wilaya_code}</p>}
+                        </div>
+                        <div>
+                          <div className="relative">
+                            <MapPin className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder={lang === "ar" ? "البلدية" : lang === "fr" ? "Commune" : "Municipality"}
+                              className="ps-10"
+                              value={formData.baladiya}
+                              onChange={e => setFormData(p => ({ ...p, baladiya: e.target.value }))}
+                            />
+                          </div>
+                          {formErrors.baladiya && <p className="text-xs text-destructive mt-1">{formErrors.baladiya}</p>}
                         </div>
                         <div>
                           <Select onValueChange={val => setFormData(p => ({ ...p, status_label: val }))} value={formData.status_label}>

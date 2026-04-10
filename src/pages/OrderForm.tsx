@@ -18,6 +18,7 @@ const schema = z.object({
   full_name: z.string().trim().min(3, "الاسم مطلوب (3 أحرف على الأقل)"),
   phone: z.string().regex(/^0[567]\d{8}$/, "رقم هاتف جزائري غير صحيح (05/06/07xxxxxxxx)"),
   wilaya_code: z.string().min(1, "الولاية مطلوبة"),
+  baladiya: z.string().trim().min(2, "البلدية مطلوبة"),
   status_label: z.string().min(1, "الحالة مطلوبة"),
 });
 
@@ -39,7 +40,7 @@ export default function OrderForm() {
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { full_name: "", phone: "", wilaya_code: "", status_label: "" },
+    defaultValues: { full_name: "", phone: "", wilaya_code: "", baladiya: "", status_label: "" },
   });
 
   const onSubmit = async (data: FormData) => {
@@ -52,6 +53,7 @@ export default function OrderForm() {
       phone: data.phone,
       wilaya_code: Number(data.wilaya_code),
       wilaya_name: wilaya?.name || "",
+      baladiya: data.baladiya.trim(),
       status_label: data.status_label,
       order_status: "pending",
     });
@@ -136,6 +138,13 @@ export default function OrderForm() {
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="baladiya" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{lang === "ar" ? "البلدية" : lang === "fr" ? "Commune" : "Municipality"}</FormLabel>
+                  <FormControl><Input placeholder={lang === "ar" ? "أدخل اسم البلدية" : lang === "fr" ? "Entrez la commune" : "Enter municipality"} {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
