@@ -14,6 +14,9 @@
     "signOut": "Sign Out",
     "contactUs": "Contact Us",
     "instructions": "Instructions",
+    "becomeInstructor": "Become Instructor",
+    "partnerships": "Partnerships",
+    "startLearning": "Start Learning",
     "cat": { "bodyCare": "Body Care", "earlyChildhood": "Early Childhood", "hse": "HSE Safety", "religious": "Religious Guidance" }
   },
   "hero": {
@@ -35,7 +38,11 @@
     "quality": "Quality Content",
     "qualityDesc": "Expert-curated content updated regularly.",
     "accredited": "Government Accredited",
-    "accreditedDesc": "Recognized by the Ministry of Professional Training."
+    "accreditedDesc": "Recognized by the Ministry of Professional Training.",
+    "practical": "Practical Application",
+    "practicalDesc": "Courses combining theory with hands-on practice.",
+    "multilingual": "Multilingual Support",
+    "multilingualDesc": "Content available in Arabic, French, and English."
   },
   "howItWorks": { "title": "Learn With 200+ World Class Institutions And Educators", "subtitle": "Learning made simple in three steps", "where": "Where I Want", "whereDesc": "Learn from anywhere in the world.", "when": "When I Want", "whenDesc": "Access your courses 24/7.", "pace": "At My Own Pace", "paceDesc": "No pressure. Progress at your speed." },
   "learningFocused": { "title": "Learning Focused on Your Goals", "subtitle": "Learn from top educators with in-person classes & bonus access to online learning" },
@@ -44,7 +51,7 @@
   "mentors": { "title": "Meet our Highly Skilled Mentors", "subtitle": "Learn from industry experts with years of experience.", "classCompleted": "Class completed", "satisfaction": "Satisfaction rate" },
   "testimonials": { "title": "What Our Students Say", "subtitle": "Our students praise the transformative learning experience we provide." },
   "newsletter": { "title": "Stay Updated", "subtitle": "Subscribe to our newsletter for the latest courses and learning tips.", "placeholder": "Enter your email", "subscribe": "Subscribe" },
-  "footer": { "platform": "Platform", "support": "Support", "becomeInstructor": "Become Instructor", "instructions": "Instructions", "terms": "Terms of Service", "description": "Maisy Academy — The leading online learning platform for training and professional development.", "contact": "Contact Us" },
+  "footer": { "platform": "Platform", "support": "Support", "becomeInstructor": "Become Instructor", "instructions": "Instructions", "terms": "Terms of Service", "description": "Maisy Academy — The leading online learning platform for training and professional development.", "contact": "Contact Us", "partnerships": "Partnerships" },
   "about": { "title": "About Maisy Academy", "subtitle": "Empowering learners worldwide through quality education.", "mission": "Our Mission", "missionText": "To democratize education by providing accessible, high-quality courses.", "vision": "Our Vision", "visionText": "To become the leading platform for professional training in the Arab world.", "team": "Our Team" },
   "qa": { "title": "Questions & Answers", "subtitle": "Ask questions and get answers from the community", "recent": "Recent", "popular": "Popular", "unanswered": "Unanswered", "askQuestion": "Ask Question", "titlePlaceholder": "Question title...", "bodyPlaceholder": "Describe your question in detail...", "submit": "Submit", "questionPosted": "Question posted!", "noQuestions": "No questions yet", "answered": "Answered" },
   "instructions": { "title": "Platform Instructions", "subtitle": "Learn how to use Maisy Academy step by step", "noInstructions": "No instructions available yet", "markComplete": "Mark as Completed", "completed": "Completed" },
