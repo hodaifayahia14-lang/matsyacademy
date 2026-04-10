@@ -181,7 +181,7 @@ export default function GamificationSettings() {
           <div className="flex gap-2">
             {rules.length === 0 && (
               <Button variant="outline" size="sm" onClick={() => seedDefaults.mutate()} disabled={seedDefaults.isPending}>
-                Seed Defaults
+                {t("إنشاء افتراضي", "Créer par défaut", "Seed Defaults")}
               </Button>
             )}
             <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80" onClick={() => { setEditingRule(null); setDrawerOpen(true); }}>
