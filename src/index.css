@@ -7,22 +7,22 @@
 @layer base {
   :root {
     --background: 0 0% 98%;
-    --foreground: 0 0% 10%;
+    --foreground: 260 20% 16%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 260 20% 16%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 260 20% 16%;
 
-    --primary: 350 70% 36%;
+    --primary: 270 52% 34%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 260 10% 95%;
+    --secondary-foreground: 260 20% 16%;
 
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 260 10% 93%;
+    --muted-foreground: 260 8% 48%;
 
     --accent: 42 72% 45%;
     --accent-foreground: 0 0% 8%;
@@ -30,9 +30,9 @@
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 42 72% 45%;
+    --border: 260 10% 90%;
+    --input: 260 10% 90%;
+    --ring: 270 52% 34%;
 
     --radius: 0.625rem;
 
@@ -48,18 +48,23 @@
     --crimson: 350 70% 36%;
     --crimson-foreground: 0 0% 100%;
 
-    --bg-light: 0 0% 96%;
-    --bg-light-foreground: 0 0% 10%;
+    --purple-deep: 270 60% 22%;
+    --purple-deep-foreground: 0 0% 100%;
+    --purple-medium: 270 52% 34%;
+    --purple-light: 270 40% 94%;
 
-    --header-shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.08);
+    --bg-light: 260 10% 96%;
+    --bg-light-foreground: 260 20% 16%;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 350 70% 36%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 90%;
+    --header-shadow: 0 2px 8px 0 hsl(270 52% 34% / 0.08);
+
+    --sidebar-background: 270 60% 22%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 42 72% 45%;
+    --sidebar-primary-foreground: 0 0% 8%;
+    --sidebar-accent: 270 50% 30%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 270 40% 28%;
     --sidebar-ring: 42 72% 45%;
   }
 }
@@ -96,6 +101,18 @@
   .bg-matsy-light {
     background-color: hsl(var(--bg-light));
     color: hsl(var(--bg-light-foreground));
+  }
+
+  .gradient-purple {
+    background: linear-gradient(135deg, hsl(270 60% 22%), hsl(270 52% 34%), hsl(280 45% 40%));
+  }
+
+  .gradient-purple-gold {
+    background: linear-gradient(135deg, hsl(270 60% 22%), hsl(270 52% 34%) 60%, hsl(42 72% 45%));
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(42 72% 45%), hsl(40 76% 60%));
   }
 }
 
