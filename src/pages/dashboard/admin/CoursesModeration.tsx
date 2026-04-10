@@ -134,11 +134,8 @@ export default function CoursesModeration() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6">
         <h1 className="font-display text-2xl font-bold">{t("dashboard.admin.courses")}</h1>
-        <Button onClick={() => navigate("/dashboard/admin/courses/create")}>
-          <Plus className="me-1 h-4 w-4" /> {t("dashboard.instructor.createCourse")}
-        </Button>
       </div>
 
       <div className="relative mb-4">

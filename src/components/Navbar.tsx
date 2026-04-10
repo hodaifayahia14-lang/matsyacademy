@@ -134,54 +134,7 @@ export default function Navbar() {
             <Phone className="h-4 w-4" />
             <span className="hidden xl:inline">+213 554 275 994</span>
           </a>
-          <Link to="/cart" className="relative">
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <ShoppingCart className="h-4 w-4" />
-              {cartCount > 0 && (
-                <span className="absolute -end-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
-                  {cartCount}
-                </span>
-              )}
-            </Button>
-          </Link>
           <LanguageSwitcher />
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9 ring-2 ring-accent/30">
-                    <AvatarImage src={profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">{initials}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium">{profile?.name || "User"}</p>
-                  <p className="text-xs text-muted-foreground">{profile?.email}</p>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate(dashboardPath)}>
-                  <User className="me-2 h-4 w-4" /> {t("navbar.dashboard")}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                  <LogOut className="me-2 h-4 w-4" /> {t("navbar.signOut")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link to="/login">
-                <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-accent">{t("navbar.login")}</Button>
-              </Link>
-              <Link to="/register">
-                <Button size="sm" className="gap-1 bg-primary hover:bg-primary/90 shadow-sm">
-                  {t("navbar.signUp")} <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </div>
-          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -204,17 +157,6 @@ export default function Navbar() {
               <Link to="/qa" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.qa")}</Link>
               <Link to="/contact" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.contactUs")}</Link>
               <LanguageSwitcher />
-              {user ? (
-                <>
-                  <Link to={dashboardPath} className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.dashboard")}</Link>
-                  <button onClick={handleSignOut} className="rounded-md px-3 py-2 text-start text-sm text-destructive hover:bg-secondary">{t("navbar.signOut")}</button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login" className="rounded-md px-3 py-2 text-sm hover:bg-secondary hover:text-accent">{t("navbar.login")}</Link>
-                  <Link to="/register"><Button className="w-full" size="sm">{t("navbar.signUp")}</Button></Link>
-                </>
-              )}
             </div>
           </motion.div>
         )}

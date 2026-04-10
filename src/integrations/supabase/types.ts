@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_rewards: {
+        Row: {
+          agent_id: string
+          awarded_at: string
+          awarded_by: string | null
+          description: string | null
+          gift_name: string
+          id: string
+        }
+        Insert: {
+          agent_id: string
+          awarded_at?: string
+          awarded_by?: string | null
+          description?: string | null
+          gift_name: string
+          id?: string
+        }
+        Update: {
+          agent_id?: string
+          awarded_at?: string
+          awarded_by?: string | null
+          description?: string | null
+          gift_name?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_rewards_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_rewards_awarded_by_fkey"
+            columns: ["awarded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           author_id: string | null
@@ -584,6 +626,76 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          assigned_agent_id: string | null
+          confirmed_at: string | null
+          confirmed_by: string | null
+          course_id: string | null
+          created_at: string
+          full_name: string
+          id: string
+          notes: string | null
+          order_status: string
+          phone: string
+          status_label: string
+          wilaya_code: number
+          wilaya_name: string
+        }
+        Insert: {
+          assigned_agent_id?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          course_id?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+          notes?: string | null
+          order_status?: string
+          phone: string
+          status_label?: string
+          wilaya_code: number
+          wilaya_name: string
+        }
+        Update: {
+          assigned_agent_id?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          course_id?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          notes?: string | null
+          order_status?: string
+          phone?: string
+          status_label?: string
+          wilaya_code?: number
+          wilaya_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_assigned_agent_id_fkey"
+            columns: ["assigned_agent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -1073,7 +1185,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "student" | "instructor" | "admin"
+      app_role: "student" | "instructor" | "admin" | "confirmation_agent"
       course_level: "beginner" | "intermediate" | "advanced"
       course_status: "draft" | "pending" | "published"
       discount_type: "percentage" | "fixed"
@@ -1206,7 +1318,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "instructor", "admin"],
+      app_role: ["student", "instructor", "admin", "confirmation_agent"],
       course_level: ["beginner", "intermediate", "advanced"],
       course_status: ["draft", "pending", "published"],
       discount_type: ["percentage", "fixed"],

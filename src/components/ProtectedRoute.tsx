@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface Props {
   children: React.ReactNode;
-  requiredRole?: "student" | "instructor" | "admin";
+  requiredRole?: "student" | "instructor" | "admin" | "confirmation_agent";
 }
 
 export default function ProtectedRoute({ children, requiredRole }: Props) {
@@ -19,7 +19,7 @@ export default function ProtectedRoute({ children, requiredRole }: Props) {
   }
 
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
 
   if (requiredRole && !roles.includes(requiredRole)) {

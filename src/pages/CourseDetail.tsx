@@ -90,19 +90,7 @@ export default function CourseDetail() {
     : (lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now");
 
   const handleEnroll = () => {
-    if (!user) { navigate("/login"); return; }
-    if (isBook) {
-      addToCart(course.id);
-      navigate("/cart");
-      return;
-    }
-    const firstLesson = sections[0]?.lessons?.[0];
-    if (firstLesson) {
-      navigate(`/learn/${id}/${firstLesson.id}`);
-    } else {
-      addToCart(course.id);
-      navigate("/cart");
-    }
+    navigate(`/order/${id}`);
   };
 
   const toggleSection = (sectionId: string) => {
@@ -271,14 +259,6 @@ export default function CourseDetail() {
                 </div>
                 <Button className="mb-2 w-full gap-2" size="lg" onClick={handleEnroll}>
                   {enrollText}
-                </Button>
-                <Button variant={isInCart(course.id) ? "secondary" : "outline"} className="mb-3 w-full gap-2" size="lg"
-                  onClick={() => { if (!user) navigate("/login"); else addToCart(course.id); }}
-                  disabled={isInCart(course.id)}>
-                  <ShoppingCart className="h-4 w-4" />
-                  {isInCart(course.id)
-                    ? (lang === "ar" ? "في السلة" : "In Cart")
-                    : (lang === "ar" ? "أضف للسلة" : lang === "fr" ? "Ajouter au panier" : "Add to Cart")}
                 </Button>
                 <p className="mb-4 text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
                 <div className="space-y-3 border-t pt-4">
