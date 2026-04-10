@@ -84,12 +84,12 @@
 
   [lang="ar"] body,
   [lang="ar"] * {
-    font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+    font-family: 'Cairo', 'Poppins', system-ui, sans-serif;
   }
 
   [lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3,
   [lang="ar"] h4, [lang="ar"] h5, [lang="ar"] h6 {
-    font-family: 'Cairo', 'Playfair Display', serif;
+    font-family: 'Cairo', 'Poppins', sans-serif;
   }
 }
 
