@@ -9,7 +9,6 @@ import {
   Mail, CheckCircle, Heart, Target, Lightbulb, Trophy,
   Calendar, MapPin, Phone, MessageCircle, Instagram, Facebook, Twitter,
 } from "lucide-react";
-} from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import CourseCard from "@/components/CourseCard";
 import { useCourses, useCategories } from "@/hooks/useCourses";
