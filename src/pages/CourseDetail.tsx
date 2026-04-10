@@ -35,6 +35,11 @@ export default function CourseDetail() {
   const [sections, setSections] = useState<SectionData[]>([]);
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+  const [showOrderForm, setShowOrderForm] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderSubmitting, setOrderSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ full_name: "", phone: "", wilaya_code: "", status_label: "" });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => { window.scrollTo(0, 0); }, [id]);
 
