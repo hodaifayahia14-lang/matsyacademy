@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
-import { Plus, X, ChevronRight, ChevronLeft, Check, Image, Video, GripVertical, BookOpen, DollarSign, Eye, GraduationCap, FileText } from "lucide-react";
+import { Plus, X, ChevronRight, ChevronLeft, Check, Image, Video, GripVertical, BookOpen, DollarSign, Eye, GraduationCap, FileText, Upload, Star, Trash2, Loader2 } from "lucide-react";
 
 const stepNames = [
   { key: "basic", icon: BookOpen },
@@ -54,6 +54,10 @@ export default function CreateCourse() {
   // Step 2 — Media
   const [coverImage, setCoverImage] = useState("");
   const [promoVideo, setPromoVideo] = useState("");
+  const [courseImages, setCourseImages] = useState<{ url: string; name: string }[]>([]);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Step 3 — Description
   const [description, setDescription] = useState("");
@@ -92,6 +96,53 @@ export default function CreateCourse() {
     if (step === 2) return description.trim().length >= 10;
     if (step === 3 && productType === "course") return sections.some((s) => s.title && s.lessons.some((l) => l.title));
     return true;
+  };
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || !user) return;
+    setUploading(true);
+    const newImages: { url: string; name: string }[] = [];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) continue;
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage.from("course-images").upload(path, file);
+      if (error) {
+        toast.error(`Failed to upload ${file.name}`);
+        continue;
+      }
+      const { data: urlData } = supabase.storage.from("course-images").getPublicUrl(path);
+      newImages.push({ url: urlData.publicUrl, name: file.name });
+    }
+    setCourseImages(prev => {
+      const updated = [...prev, ...newImages];
+      // If no main image set yet, use the first uploaded
+      if (prev.length === 0 && updated.length > 0) {
+        setCoverImage(updated[0].url);
+        setMainImageIndex(0);
+      }
+      return updated;
+    });
+    setUploading(false);
+    if (newImages.length > 0) toast.success(`${newImages.length} image(s) uploaded`);
+  };
+
+  const removeImage = (index: number) => {
+    setCourseImages(prev => {
+      const updated = prev.filter((_, i) => i !== index);
+      if (index === mainImageIndex) {
+        setMainImageIndex(0);
+        setCoverImage(updated[0]?.url || "");
+      } else if (index < mainImageIndex) {
+        setMainImageIndex(mainImageIndex - 1);
+      }
+      return updated;
+    });
+  };
+
+  const setAsMainImage = (index: number) => {
+    setMainImageIndex(index);
+    setCoverImage(courseImages[index].url);
   };
 
   const handleSubmit = async (asDraft: boolean) => {
@@ -269,15 +320,107 @@ export default function CreateCourse() {
           {/* Step 2 — Media */}
           {step === 1 && (
             <>
+              {/* Photo Upload Area */}
               <div>
-                <Label>{t("dashboard.instructor.coverImage")}</Label>
-                <Input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} placeholder="https://..." />
-                {coverImage && (
-                  <div className="mt-3 aspect-video overflow-hidden rounded-lg border bg-secondary">
-                    <img src={coverImage} alt="Preview" className="h-full w-full object-cover" onError={(e) => (e.currentTarget.style.display = "none")} />
+                <Label className="mb-2 block">{lang === "ar" ? "صور المنتج" : lang === "fr" ? "Photos du produit" : "Product Photos"}</Label>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  {lang === "ar" ? "ارفع صورة واحدة أو أكثر، واختر الصورة الرئيسية التي ستظهر في الواجهة" : "Upload one or more photos, then select the main one to display on the front page"}
+                </p>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleImageUpload(e.target.files)}
+                />
+
+                {/* Upload dropzone */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="mb-4 flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 px-6 py-8 transition-colors hover:border-primary/50 hover:bg-primary/10 disabled:opacity-50"
+                >
+                  {uploading ? (
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  ) : (
+                    <Upload className="h-8 w-8 text-primary/60" />
+                  )}
+                  <div className="text-center">
+                    <p className="font-medium text-foreground">
+                      {uploading ? (lang === "ar" ? "جاري الرفع..." : "Uploading...") : (lang === "ar" ? "اضغط لرفع الصور" : "Click to upload photos")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">PNG, JPG, WEBP</p>
+                  </div>
+                </button>
+
+                {/* Image gallery */}
+                {courseImages.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {courseImages.map((img, i) => (
+                      <div
+                        key={i}
+                        className={`group relative aspect-square overflow-hidden rounded-xl border-2 transition-all ${
+                          i === mainImageIndex
+                            ? "border-primary ring-2 ring-primary/20 shadow-md"
+                            : "border-border hover:border-primary/40"
+                        }`}
+                      >
+                        <img src={img.url} alt={img.name} className="h-full w-full object-cover" />
+
+                        {/* Main badge */}
+                        {i === mainImageIndex && (
+                          <div className="absolute start-2 top-2 flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow">
+                            <Star className="h-3 w-3" />
+                            {lang === "ar" ? "الرئيسية" : "Main"}
+                          </div>
+                        )}
+
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                          {i !== mainImageIndex && (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="h-8 gap-1 text-xs"
+                              onClick={() => setAsMainImage(i)}
+                            >
+                              <Star className="h-3 w-3" />
+                              {lang === "ar" ? "اجعلها رئيسية" : "Set as main"}
+                            </Button>
+                          )}
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            className="h-8 w-8"
+                            onClick={() => removeImage(i)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Add more button */}
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                    >
+                      <Plus className="h-6 w-6" />
+                    </button>
                   </div>
                 )}
               </div>
+
+              {/* Manual URL fallback */}
+              <div>
+                <Label>{lang === "ar" ? "أو أدخل رابط الصورة يدوياً" : "Or enter image URL manually"}</Label>
+                <Input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} placeholder="https://..." />
+              </div>
+
               {productType === "course" && (
                 <div>
                   <Label>{t("dashboard.instructor.promoVideo")}</Label>
