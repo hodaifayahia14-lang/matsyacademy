@@ -1,13 +1,17 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart } from "lucide-react";
+import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart, CheckCircle, User, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useState, useEffect } from "react";
 import { useCourseDetail } from "@/hooks/useCourses";
 import { supabase } from "@/integrations/supabase/client";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "@/components/ui/sonner";
+import { algerianWilayas, statusOptions } from "@/data/algerianWilayas";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
@@ -31,6 +35,11 @@ export default function CourseDetail() {
   const [sections, setSections] = useState<SectionData[]>([]);
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "instructor" | "reviews">("overview");
   const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+  const [showOrderForm, setShowOrderForm] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderSubmitting, setOrderSubmitting] = useState(false);
+  const [formData, setFormData] = useState({ full_name: "", phone: "", wilaya_code: "", status_label: "" });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => { window.scrollTo(0, 0); }, [id]);
 
@@ -89,8 +98,39 @@ export default function CourseDetail() {
     ? (lang === "ar" ? "اشترِ الآن" : lang === "fr" ? "Acheter" : "Buy Now")
     : (lang === "ar" ? "سجّل الآن" : lang === "fr" ? "S'inscrire" : "Enroll Now");
 
+  const validateOrderForm = () => {
+    const errors: Record<string, string> = {};
+    if (!formData.full_name.trim() || formData.full_name.trim().length < 3) errors.full_name = lang === "ar" ? "الاسم مطلوب (3 أحرف على الأقل)" : "Name required (min 3 chars)";
+    if (!/^0[567]\d{8}$/.test(formData.phone)) errors.phone = lang === "ar" ? "رقم هاتف غير صحيح" : "Invalid phone (05/06/07xxxxxxxx)";
+    if (!formData.wilaya_code) errors.wilaya_code = lang === "ar" ? "اختر الولاية" : "Select wilaya";
+    if (!formData.status_label) errors.status_label = lang === "ar" ? "اختر الحالة" : "Select status";
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleOrderSubmit = async () => {
+    if (!validateOrderForm() || !id) return;
+    setOrderSubmitting(true);
+    const wilaya = algerianWilayas.find(w => w.code === Number(formData.wilaya_code));
+    const { error } = await supabase.from("orders").insert({
+      course_id: id,
+      full_name: formData.full_name.trim(),
+      phone: formData.phone,
+      wilaya_code: Number(formData.wilaya_code),
+      wilaya_name: wilaya?.name || "",
+      status_label: formData.status_label,
+      order_status: "pending",
+    });
+    setOrderSubmitting(false);
+    if (error) {
+      toast.error(lang === "ar" ? "حدث خطأ، حاول مجدداً" : "Error, please try again");
+    } else {
+      setOrderSuccess(true);
+    }
+  };
+
   const handleEnroll = () => {
-    navigate(`/order/${id}`);
+    setShowOrderForm(true);
   };
 
   const toggleSection = (sectionId: string) => {
@@ -253,27 +293,124 @@ export default function CourseDetail() {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
-              <div className="rounded-xl border bg-card p-4 shadow-sm sm:p-6">
-                <div className="mb-4 text-center">
+              <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+                {/* Price header */}
+                <div className="bg-primary/5 px-4 py-5 text-center sm:px-6">
                   <p className="font-display text-3xl font-bold text-primary">{priceText}</p>
                 </div>
-                <Button className="mb-2 w-full gap-2" size="lg" onClick={handleEnroll}>
-                  {enrollText}
-                </Button>
-                <p className="mb-4 text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
-                <div className="space-y-3 border-t pt-4">
-                  {[
-                    ...(isBook && course.page_count ? [{ icon: BookOpen, label: `${course.page_count} ${lang === "ar" ? "صفحة" : "pages"}` }] : []),
-                    ...(!isBook ? [{ icon: BookOpen, label: `${totalLessons} ${t("catalog.lessons")}` }] : []),
-                    { icon: Globe, label: course.language },
-                    { icon: Shield, label: t("courseDetail.certificate") },
-                  ].map(({ icon: Icon, label }) => (
-                    <div key={label} className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <Icon className="h-4 w-4 text-primary" />{label}
-                    </div>
-                  ))}
+
+                <div className="p-4 sm:p-6">
+                  <AnimatePresence mode="wait">
+                    {orderSuccess ? (
+                      <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="py-6 text-center space-y-3">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                          <CheckCircle className="h-8 w-8 text-green-600" />
+                        </div>
+                        <h3 className="font-display text-lg font-bold">
+                          {lang === "ar" ? "تم إرسال طلبك!" : "Order Submitted!"}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {lang === "ar" ? "سيتم التواصل معك قريباً" : "We'll contact you soon"}
+                        </p>
+                      </motion.div>
+                    ) : showOrderForm ? (
+                      <motion.div key="form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+                        <h3 className="font-display text-base font-bold text-center mb-1">
+                          {lang === "ar" ? "أكمل طلبك" : lang === "fr" ? "Complétez votre commande" : "Complete Your Order"}
+                        </h3>
+                        <div>
+                          <div className="relative">
+                            <User className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder={lang === "ar" ? "الاسم الكامل" : "Full Name"}
+                              className="ps-10"
+                              value={formData.full_name}
+                              onChange={e => setFormData(p => ({ ...p, full_name: e.target.value }))}
+                            />
+                          </div>
+                          {formErrors.full_name && <p className="text-xs text-destructive mt-1">{formErrors.full_name}</p>}
+                        </div>
+                        <div>
+                          <div className="relative">
+                            <Phone className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="05xxxxxxxx"
+                              dir="ltr"
+                              className="ps-10"
+                              value={formData.phone}
+                              onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                            />
+                          </div>
+                          {formErrors.phone && <p className="text-xs text-destructive mt-1">{formErrors.phone}</p>}
+                        </div>
+                        <div>
+                          <Select onValueChange={val => setFormData(p => ({ ...p, wilaya_code: val }))} value={formData.wilaya_code}>
+                            <SelectTrigger>
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-muted-foreground" />
+                                <SelectValue placeholder={lang === "ar" ? "اختر الولاية" : "Select Wilaya"} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent className="max-h-60">
+                              {algerianWilayas.map(w => (
+                                <SelectItem key={w.code} value={String(w.code)}>
+                                  {String(w.code).padStart(2, "0")} - {w.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {formErrors.wilaya_code && <p className="text-xs text-destructive mt-1">{formErrors.wilaya_code}</p>}
+                        </div>
+                        <div>
+                          <Select onValueChange={val => setFormData(p => ({ ...p, status_label: val }))} value={formData.status_label}>
+                            <SelectTrigger>
+                              <SelectValue placeholder={lang === "ar" ? "الحالة المهنية" : "Professional Status"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {statusOptions.map(s => (
+                                <SelectItem key={s.value} value={s.value}>
+                                  {lang === "ar" ? s.labelAr : lang === "fr" ? s.labelFr : s.labelEn}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {formErrors.status_label && <p className="text-xs text-destructive mt-1">{formErrors.status_label}</p>}
+                        </div>
+                        <Button className="w-full gap-2" size="lg" onClick={handleOrderSubmit} disabled={orderSubmitting}>
+                          {orderSubmitting
+                            ? (lang === "ar" ? "جاري الإرسال..." : "Submitting...")
+                            : (lang === "ar" ? "تأكيد الطلب" : lang === "fr" ? "Confirmer la commande" : "Confirm Order")}
+                        </Button>
+                        <button onClick={() => setShowOrderForm(false)} className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors">
+                          {lang === "ar" ? "رجوع" : "Back"}
+                        </button>
+                      </motion.div>
+                    ) : (
+                      <motion.div key="cta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+                        <Button className="w-full gap-2" size="lg" onClick={handleEnroll}>
+                          {enrollText}
+                        </Button>
+                        <p className="text-center text-xs text-muted-foreground">{t("courseDetail.moneyBack")}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Course info */}
+                  <div className="space-y-3 border-t pt-4 mt-4">
+                    {[
+                      ...(isBook && course.page_count ? [{ icon: BookOpen, label: `${course.page_count} ${lang === "ar" ? "صفحة" : "pages"}` }] : []),
+                      ...(!isBook ? [{ icon: BookOpen, label: `${totalLessons} ${t("catalog.lessons")}` }] : []),
+                      { icon: Globe, label: course.language },
+                      { icon: Shield, label: t("courseDetail.certificate") },
+                    ].map(({ icon: Icon, label }) => (
+                      <div key={label} className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <Icon className="h-4 w-4 text-primary" />{label}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+
               <div className="rounded-xl border bg-card p-5">
                 <div className="flex items-center gap-3">
                   {course.instructor_avatar && <img src={course.instructor_avatar} alt="" className="h-12 w-12 rounded-full" />}
