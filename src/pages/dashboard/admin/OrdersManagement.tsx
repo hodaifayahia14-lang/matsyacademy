@@ -5,15 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/sonner";
-import { motion } from "framer-motion";
-import { Search, Eye, UserPlus, X, FileText, Download } from "lucide-react";
+import { Search, Eye, FileText, Plus } from "lucide-react";
+import { algerianWilayas } from "@/data/algerianWilayas";
 
 export default function OrdersManagement() {
   const { i18n } = useTranslation();
@@ -24,6 +26,11 @@ export default function OrdersManagement() {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [noteText, setNoteText] = useState("");
 
+  // Add order state
+  const [addOpen, setAddOpen] = useState(false);
+  const [newOrder, setNewOrder] = useState({ full_name: "", phone: "", wilaya_code: 0, wilaya_name: "", baladiya: "", course_id: "", order_status: "pending" });
+  const [addingOrder, setAddingOrder] = useState(false);
+
   const { data: orders, isLoading } = useQuery({
     queryKey: ["admin-orders"],
     queryFn: async () => {
@@ -32,6 +39,14 @@ export default function OrdersManagement() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
+    },
+  });
+
+  const { data: courses } = useQuery({
+    queryKey: ["all-courses-list"],
+    queryFn: async () => {
+      const { data } = await supabase.from("courses").select("id, title").order("title");
+      return data || [];
     },
   });
 
@@ -70,6 +85,34 @@ export default function OrdersManagement() {
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-orders"] }); toast.success(t("تم حفظ الملاحظة", "Note enregistrée", "Note saved")); },
   });
+
+  const handleAddOrder = async () => {
+    if (!newOrder.full_name || !newOrder.phone || !newOrder.wilaya_code) {
+      toast.error(t("الاسم والهاتف والولاية مطلوبة", "Nom, téléphone et wilaya requis", "Name, phone and wilaya required"));
+      return;
+    }
+    setAddingOrder(true);
+    try {
+      const { error } = await supabase.from("orders").insert({
+        full_name: newOrder.full_name,
+        phone: newOrder.phone,
+        wilaya_code: newOrder.wilaya_code,
+        wilaya_name: newOrder.wilaya_name,
+        baladiya: newOrder.baladiya,
+        course_id: newOrder.course_id || null,
+        order_status: newOrder.order_status,
+      });
+      if (error) throw error;
+      toast.success(t("تم إنشاء الطلب ✅", "Commande créée ✅", "Order created ✅"));
+      setAddOpen(false);
+      setNewOrder({ full_name: "", phone: "", wilaya_code: 0, wilaya_name: "", baladiya: "", course_id: "", order_status: "pending" });
+      qc.invalidateQueries({ queryKey: ["admin-orders"] });
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setAddingOrder(false);
+    }
+  };
 
   if (isLoading) return <div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-16 rounded-2xl" />)}</div>;
 
@@ -139,6 +182,68 @@ export default function OrdersManagement() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold">{t("إدارة الطلبات", "Gestion des commandes", "Orders Management")}</h1>
+        <Dialog open={addOpen} onOpenChange={setAddOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2 bg-gradient-to-r from-[#5B2D8E] to-[#F5A623] text-white">
+              <Plus className="h-4 w-4" />
+              {t("إضافة طلب", "Ajouter une commande", "Add Order")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>{t("إنشاء طلب يدوياً", "Créer une commande", "Create Order Manually")}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-2">
+              <div>
+                <Label>{t("الاسم الكامل", "Nom complet", "Full Name")} *</Label>
+                <Input value={newOrder.full_name} onChange={e => setNewOrder(p => ({ ...p, full_name: e.target.value }))} />
+              </div>
+              <div>
+                <Label>{t("رقم الهاتف", "Téléphone", "Phone")} *</Label>
+                <Input dir="ltr" value={newOrder.phone} onChange={e => setNewOrder(p => ({ ...p, phone: e.target.value }))} placeholder="05XXXXXXXX" />
+              </div>
+              <div>
+                <Label>{t("الولاية", "Wilaya", "Wilaya")} *</Label>
+                <Select onValueChange={val => {
+                  const w = algerianWilayas.find(w => w.code === Number(val));
+                  setNewOrder(p => ({ ...p, wilaya_code: Number(val), wilaya_name: w?.name || "" }));
+                }}>
+                  <SelectTrigger><SelectValue placeholder={t("اختر الولاية", "Choisir la wilaya", "Select Wilaya")} /></SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {algerianWilayas.map(w => <SelectItem key={w.code} value={String(w.code)}>{w.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>{t("البلدية", "Commune", "Baladiya")}</Label>
+                <Input value={newOrder.baladiya} onChange={e => setNewOrder(p => ({ ...p, baladiya: e.target.value }))} />
+              </div>
+              <div>
+                <Label>{t("الدورة", "Cours", "Course")}</Label>
+                <Select onValueChange={val => setNewOrder(p => ({ ...p, course_id: val }))}>
+                  <SelectTrigger><SelectValue placeholder={t("اختر الدورة", "Choisir le cours", "Select Course")} /></SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {courses?.map(c => <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>{t("الحالة", "Statut", "Status")}</Label>
+                <Select value={newOrder.order_status} onValueChange={val => setNewOrder(p => ({ ...p, order_status: val }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">{t("قيد الانتظار", "En attente", "Pending")}</SelectItem>
+                    <SelectItem value="called">{t("تم الاتصال", "Appelé", "Called")}</SelectItem>
+                    <SelectItem value="confirmed">{t("مؤكد", "Confirmé", "Confirmed")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button className="w-full bg-gradient-to-r from-[#5B2D8E] to-[#F5A623] text-white" onClick={handleAddOrder} disabled={addingOrder}>
+                {addingOrder ? t("جارٍ الإنشاء...", "Création...", "Creating...") : t("إنشاء الطلب", "Créer la commande", "Create Order")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="relative">
@@ -185,7 +290,7 @@ export default function OrdersManagement() {
 
               <div>
                 <p className="text-sm font-medium mb-2">{t("تغيير الحالة", "Changer le statut", "Change Status")}</p>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {["pending", "called", "confirmed", "cancelled"].map(s => (
                     <Button key={s} size="sm" variant={selectedOrder.order_status === s ? "default" : "outline"}
                       className="text-xs capitalize" onClick={() => { updateStatus.mutate({ orderId: selectedOrder.id, status: s }); setSelectedOrder({ ...selectedOrder, order_status: s }); }}>
