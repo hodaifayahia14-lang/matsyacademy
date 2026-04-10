@@ -154,7 +154,8 @@ export default function Blog() {
                     <img
                       src={p.cover_image || "/placeholder.svg"}
                       alt=""
-                      className="h-12 w-16 shrink-0 rounded-lg object-cover"
+                      className="h-12 w-16 shrink-0 rounded-lg object-cover bg-muted"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                     />
                     <p className="text-xs font-medium leading-snug text-foreground group-hover:text-[#5B2D8E] line-clamp-2">
                       {getLocalized(p, "title", lang)}
