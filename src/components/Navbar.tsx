@@ -15,6 +15,7 @@ import maisyLogo from "@/assets/maisy-logo-v2.png";
 const navLinks = [
   { labelKey: "navbar.home", to: "/" },
   { labelKey: "navbar.courses", to: "/courses" },
+  { labelKey: "navbar.blog", to: "/blog" },
   { labelKey: "navbar.about", to: "/about" },
   { labelKey: "navbar.contactUs", to: "/contact" },
 ];
