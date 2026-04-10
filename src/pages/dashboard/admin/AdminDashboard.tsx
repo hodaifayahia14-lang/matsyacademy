@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LayoutDashboard, Users, BookOpen, Grid3X3, Ticket, Settings, MessageSquare, FileText, Info, ClipboardList, Trophy, Mail } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, Grid3X3, Ticket, Settings, MessageSquare, FileText, Info, ClipboardList, Trophy, Mail, HeadphonesIcon } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import AdminOverview from "./AdminOverview";
 import UsersManagement from "./UsersManagement";
@@ -15,6 +15,7 @@ import OrdersManagement from "./OrdersManagement";
 import Leaderboard from "./Leaderboard";
 import CourseDetailAdmin from "./CourseDetailAdmin";
 import MessagesManagement from "./MessagesManagement";
+import ConfirmationManagement from "./ConfirmationManagement";
 import CreateCourse from "@/pages/dashboard/instructor/CreateCourse";
 
 export default function AdminDashboard() {
@@ -27,6 +28,7 @@ export default function AdminDashboard() {
     { title: t("الطلبات", "Commandes", "Orders"), url: "/dashboard/admin/orders", icon: ClipboardList },
     { title: t("لوحة المتصدرين", "Classement", "Leaderboard"), url: "/dashboard/admin/leaderboard", icon: Trophy },
     { title: t("المستخدمون", "Utilisateurs", "Users"), url: "/dashboard/admin/users", icon: Users },
+    { title: t("التأكيد", "Confirmation", "Confirmation"), url: "/dashboard/admin/confirmation", icon: HeadphonesIcon },
     { title: t("الدورات", "Cours", "Courses"), url: "/dashboard/admin/courses", icon: BookOpen },
     { title: t("الفئات", "Catégories", "Categories"), url: "/dashboard/admin/categories", icon: Grid3X3 },
     { title: t("القسائم", "Coupons", "Coupons"), url: "/dashboard/admin/coupons", icon: Ticket },
@@ -42,6 +44,7 @@ export default function AdminDashboard() {
         <Route path="orders" element={<OrdersManagement />} />
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="users" element={<UsersManagement />} />
+        <Route path="confirmation" element={<ConfirmationManagement />} />
         <Route path="courses" element={<CoursesModeration />} />
         <Route path="courses/create" element={<CreateCourse />} />
         <Route path="courses/:courseId" element={<CourseDetailAdmin />} />
