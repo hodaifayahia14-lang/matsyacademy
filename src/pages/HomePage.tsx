@@ -53,19 +53,18 @@ export default function HomePage() {
   const { courses: dbCourses } = useCourses();
   const dbCategories = useCategories();
 
-  const statsRef = useRef<HTMLDivElement>(null);
-  const statsInView = useInView(statsRef, { once: true });
+  const student = useCounter(5000);
+  const course = useCounter(120);
+  const instructor = useCounter(35);
+  const cert = useCounter(2800);
 
-  const studentCount = useCounter(5000, statsInView);
-  const courseCount = useCounter(120, statsInView);
-  const instructorCount = useCounter(35, statsInView);
-  const certCount = useCounter(2800, statsInView);
+  const statsRef = student.ref;
 
   const stats = [
-    { value: `${studentCount.toLocaleString()}+`, label: lang === "ar" ? "طالب نشط" : lang === "fr" ? "Étudiants Actifs" : "Active Students", icon: Users, color: "from-[hsl(270,52%,34%)] to-[hsl(280,45%,50%)]" },
-    { value: `${courseCount}+`, label: lang === "ar" ? "دورة تدريبية" : lang === "fr" ? "Cours Disponibles" : "Courses Available", icon: BookOpen, color: "from-[hsl(42,72%,45%)] to-[hsl(40,76%,55%)]" },
-    { value: `${instructorCount}+`, label: lang === "ar" ? "مدرب محترف" : lang === "fr" ? "Formateurs Experts" : "Expert Instructors", icon: GraduationCap, color: "from-[hsl(153,62%,30%)] to-[hsl(153,62%,40%)]" },
-    { value: `${certCount.toLocaleString()}+`, label: lang === "ar" ? "شهادة ممنوحة" : lang === "fr" ? "Certificats Délivrés" : "Certificates Issued", icon: Award, color: "from-[hsl(350,70%,36%)] to-[hsl(350,70%,50%)]" },
+    { value: `${student.count.toLocaleString()}+`, label: lang === "ar" ? "طالب نشط" : lang === "fr" ? "Étudiants Actifs" : "Active Students", icon: Users, color: "from-[hsl(270,52%,34%)] to-[hsl(280,45%,50%)]", ref: student.ref },
+    { value: `${course.count}+`, label: lang === "ar" ? "دورة تدريبية" : lang === "fr" ? "Cours Disponibles" : "Courses Available", icon: BookOpen, color: "from-[hsl(42,72%,45%)] to-[hsl(40,76%,55%)]", ref: course.ref },
+    { value: `${instructor.count}+`, label: lang === "ar" ? "مدرب محترف" : lang === "fr" ? "Formateurs Experts" : "Expert Instructors", icon: GraduationCap, color: "from-[hsl(153,62%,30%)] to-[hsl(153,62%,40%)]", ref: instructor.ref },
+    { value: `${cert.count.toLocaleString()}+`, label: lang === "ar" ? "شهادة ممنوحة" : lang === "fr" ? "Certificats Délivrés" : "Certificates Issued", icon: Award, color: "from-[hsl(350,70%,36%)] to-[hsl(350,70%,50%)]", ref: cert.ref },
   ];
 
   const whyChooseUs = [
