@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LayoutDashboard, Users, BookOpen, Grid3X3, Ticket, Settings, MessageSquare, FileText, Info, ClipboardList, Trophy } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, Grid3X3, Ticket, Settings, MessageSquare, FileText, Info, ClipboardList, Trophy, Mail } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import AdminOverview from "./AdminOverview";
 import UsersManagement from "./UsersManagement";
@@ -14,28 +14,30 @@ import AboutManagement from "./AboutManagement";
 import OrdersManagement from "./OrdersManagement";
 import Leaderboard from "./Leaderboard";
 import CourseDetailAdmin from "./CourseDetailAdmin";
+import MessagesManagement from "./MessagesManagement";
 import CreateCourse from "@/pages/dashboard/instructor/CreateCourse";
 
 export default function AdminDashboard() {
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const lang = i18n.language;
+  const t = (ar: string, fr: string, en: string) => lang === "ar" ? ar : lang === "fr" ? fr : en;
 
   const items = [
-    { title: t("dashboard.admin.overview"), url: "/dashboard/admin", icon: LayoutDashboard },
-    { title: "Orders", url: "/dashboard/admin/orders", icon: ClipboardList },
-    { title: "Leaderboard", url: "/dashboard/admin/leaderboard", icon: Trophy },
-    { title: t("dashboard.admin.users"), url: "/dashboard/admin/users", icon: Users },
-    { title: t("dashboard.admin.courses"), url: "/dashboard/admin/courses", icon: BookOpen },
-    { title: t("dashboard.admin.categories"), url: "/dashboard/admin/categories", icon: Grid3X3 },
-    { title: t("dashboard.admin.coupons"), url: "/dashboard/admin/coupons", icon: Ticket },
-    { title: t("dashboard.admin.qa"), url: "/dashboard/admin/qa", icon: MessageSquare },
-    { title: t("dashboard.admin.blogs"), url: "/dashboard/admin/blogs", icon: FileText },
-    { title: t("dashboard.admin.about"), url: "/dashboard/admin/about", icon: Info },
-    { title: t("dashboard.admin.settings"), url: "/dashboard/admin/settings", icon: Settings },
+    { title: t("نظرة عامة", "Vue d'ensemble", "Overview"), url: "/dashboard/admin", icon: LayoutDashboard },
+    { title: t("الطلبات", "Commandes", "Orders"), url: "/dashboard/admin/orders", icon: ClipboardList },
+    { title: t("لوحة المتصدرين", "Classement", "Leaderboard"), url: "/dashboard/admin/leaderboard", icon: Trophy },
+    { title: t("المستخدمون", "Utilisateurs", "Users"), url: "/dashboard/admin/users", icon: Users },
+    { title: t("الدورات", "Cours", "Courses"), url: "/dashboard/admin/courses", icon: BookOpen },
+    { title: t("الفئات", "Catégories", "Categories"), url: "/dashboard/admin/categories", icon: Grid3X3 },
+    { title: t("القسائم", "Coupons", "Coupons"), url: "/dashboard/admin/coupons", icon: Ticket },
+    { title: t("الرسائل", "Messages", "Messages"), url: "/dashboard/admin/messages", icon: Mail },
+    { title: t("المدونة", "Blog", "Blog"), url: "/dashboard/admin/blogs", icon: FileText },
+    { title: t("الإعدادات", "Paramètres", "Settings"), url: "/dashboard/admin/settings", icon: Settings },
   ];
 
   return (
     <Routes>
-      <Route element={<DashboardLayout items={items} groupLabel={t("dashboard.admin.title")} />}>
+      <Route element={<DashboardLayout items={items} groupLabel={t("لوحة تحكم المسؤول", "Admin", "Admin Dashboard")} />}>
         <Route index element={<AdminOverview />} />
         <Route path="orders" element={<OrdersManagement />} />
         <Route path="leaderboard" element={<Leaderboard />} />
@@ -45,6 +47,7 @@ export default function AdminDashboard() {
         <Route path="courses/:courseId" element={<CourseDetailAdmin />} />
         <Route path="categories" element={<CategoriesManagement />} />
         <Route path="coupons" element={<CouponsManagement />} />
+        <Route path="messages" element={<MessagesManagement />} />
         <Route path="qa" element={<QAModeration />} />
         <Route path="blogs" element={<BlogManagement />} />
         <Route path="about" element={<AboutManagement />} />
