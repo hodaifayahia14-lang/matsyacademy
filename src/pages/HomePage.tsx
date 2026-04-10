@@ -49,7 +49,7 @@ export default function HomePage() {
   const dbCategories = useCategories();
 
   const statsRef = useRef<HTMLDivElement>(null);
-  const statsInView = useInView(statsRef, { once: true, margin: "-50px" });
+  const statsInView = useInView(statsRef, { once: true });
 
   const studentCount = useCounter(5000, statsInView);
   const courseCount = useCounter(120, statsInView);
