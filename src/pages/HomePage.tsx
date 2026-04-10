@@ -14,10 +14,15 @@ import heroStudents from "@/assets/hero-students.jpg";
 import instructorImg from "@/assets/instructor-woman.jpg";
 import patternBg from "@/assets/pattern-bg.jpg";
 
-function useCounter(target: number, inView: boolean) {
+function useCounter(target: number) {
   const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true });
+
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || started) return;
+    setStarted(true);
     let start = 0;
     const duration = 1800;
     const step = (timestamp: number) => {
@@ -28,8 +33,8 @@ function useCounter(target: number, inView: boolean) {
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
-  }, [inView, target]);
-  return count;
+  }, [inView, started, target]);
+  return { count, ref };
 }
 
 const fadeUp = {
