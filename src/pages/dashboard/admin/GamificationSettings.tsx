@@ -91,9 +91,9 @@ export default function GamificationSettings() {
       qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] });
       setDrawerOpen(false);
       setEditingRule(null);
-      toast.success("Milestone saved");
+      toast.success(t("تم حفظ الإنجاز", "Jalon enregistré", "Milestone saved"));
     },
-    onError: (e) => toast.error("Error: " + e.message),
+    onError: (e) => toast.error(t("خطأ: ", "Erreur: ", "Error: ") + e.message),
   });
 
   // Toggle rule active
@@ -109,7 +109,7 @@ export default function GamificationSettings() {
     mutationFn: async (id: string) => {
       await supabase.from("milestone_rules").delete().eq("id", id);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success("Deleted"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success(t("تم الحذف", "Supprimé", "Deleted")); },
   });
 
   // Duplicate
@@ -139,7 +139,7 @@ export default function GamificationSettings() {
         await supabase.from("milestone_rules").insert({ ...defaultMilestones[i], sort_order: i } as any);
       }
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success("Default milestones created"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["milestone-rules-admin"] }); toast.success(t("تم إنشاء الإنجازات الافتراضية", "Jalons par défaut créés", "Default milestones created")); },
   });
 
   if (settingsLoading || rulesLoading) return <div className="space-y-4"><Skeleton className="h-12" /><Skeleton className="h-60" /><Skeleton className="h-40" /></div>;
