@@ -175,8 +175,8 @@ export default function HomePage() {
                 <div className="absolute -top-4 -end-4 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
                 <div className="absolute -bottom-6 -start-6 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
                 <div className="grid grid-cols-2 gap-6 relative z-10">
-                  {stats.map(({ value, label, icon: Icon }, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                  {stats.map(({ value, label, icon: Icon, ref }, i) => (
+                    <motion.div key={i} ref={ref} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 + i * 0.12 }}
                       className="text-center p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors">
                       <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/20">
