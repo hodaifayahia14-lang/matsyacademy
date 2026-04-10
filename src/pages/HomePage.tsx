@@ -490,28 +490,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Wave separator */}
+      {/* Top wave into dark section */}
       <div className="relative -mb-px">
-        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
-          <path d="M0 0V24C480 48 960 0 1440 24V0H0Z" className="fill-secondary/30" />
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 80V30C240 60 480 0 720 30C960 60 1200 0 1440 30V80H0Z" fill="hsl(270,52%,16%)" />
         </svg>
       </div>
 
       {/* ═══════════════════ WHY CHOOSE US ═══════════════════ */}
-      <section className="py-16 lg:py-24 bg-background">
-        <div className="container">
+      <section className="relative py-16 lg:py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(270,60%,8%) 0%, hsl(270,52%,16%) 50%, hsl(280,45%,28%) 100%)' }}>
+        {/* Floating orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div className="absolute w-[400px] h-[400px] rounded-full bg-accent/[0.06] blur-[100px] -top-20 -end-20"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.div className="absolute w-[300px] h-[300px] rounded-full bg-primary/[0.08] blur-[80px] bottom-0 -start-10"
+            animate={{ scale: [1.1, 1, 1.1], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
+        </div>
+
+        <div className="container relative z-10">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
             className="mb-14 text-center">
             <span className="inline-flex items-center gap-1.5 text-accent text-sm font-semibold mb-2">
               <Zap className="h-4 w-4" />
               {lang === "ar" ? "مميزاتنا" : "Our Features"}
             </span>
-            <h2 className="mb-3 font-display text-2xl sm:text-3xl lg:text-4xl font-bold">
-              <span className="text-gradient-purple">
-                {lang === "ar" ? "لماذا تختار أكاديمية مايسي؟" : lang === "fr" ? "Pourquoi Choisir Maisy Academy ?" : "Why Choose Maisy Academy?"}
-              </span>
+            <h2 className="mb-3 font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+              {lang === "ar" ? "لماذا تختار أكاديمية مايسي؟" : lang === "fr" ? "Pourquoi Choisir Maisy Academy ?" : "Why Choose Maisy Academy?"}
             </h2>
-            <p className="text-muted-foreground text-sm max-w-lg mx-auto">
+            <p className="text-white/50 text-sm max-w-lg mx-auto">
               {lang === "ar" ? "نقدم لك تجربة تعليمية متكاملة ومميزة" : "We provide a complete and exceptional learning experience"}
             </p>
           </motion.div>
@@ -520,18 +528,25 @@ export default function HomePage() {
             {whyChooseUs.map(({ icon: Icon, titleKey, descKey, gradient }, i) => (
               <motion.div key={i} variants={scaleIn} initial="hidden" whileInView="visible" custom={i}
                 viewport={{ once: true }}
-                className="group relative text-center p-6 rounded-2xl border border-border bg-card transition-all duration-300 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
+                className="group relative text-center p-6 rounded-2xl border border-white/[0.1] bg-white/[0.05] backdrop-blur-sm transition-all duration-300 hover:border-accent/30 hover:bg-white/[0.1] hover:shadow-xl hover:shadow-accent/5 hover:-translate-y-1"
               >
                 <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} shadow-lg transition-transform group-hover:scale-110`}>
                   <Icon className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="mb-2 font-display text-base font-bold text-foreground">{t(titleKey)}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{t(descKey)}</p>
+                <h3 className="mb-2 font-display text-base font-bold text-white">{t(titleKey)}</h3>
+                <p className="text-xs text-white/50 leading-relaxed">{t(descKey)}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Bottom wave out of dark section */}
+      <div className="relative -mt-px">
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 0V50C360 80 720 10 1080 50C1260 70 1380 30 1440 50V0H0Z" fill="hsl(270,52%,16%)" />
+        </svg>
+      </div>
 
       {/* Wave separator */}
       <div className="relative -mb-px">
