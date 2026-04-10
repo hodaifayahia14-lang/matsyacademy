@@ -1,13 +1,17 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart } from "lucide-react";
+import { Star, Clock, Users, BookOpen, Globe, Calendar, Play, FileText, HelpCircle, ChevronDown, ChevronUp, Check, Shield, Award, ShoppingCart, CheckCircle, User, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useState, useEffect } from "react";
 import { useCourseDetail } from "@/hooks/useCourses";
 import { supabase } from "@/integrations/supabase/client";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "@/components/ui/sonner";
+import { algerianWilayas, statusOptions } from "@/data/algerianWilayas";
 
 function getLocalized(obj: any, field: string, lang: string): string {
   return obj[`${field}_${lang}`] || obj[`${field}_en`] || obj[field] || "";
