@@ -86,7 +86,7 @@ export default function ConfirmationManagement() {
       toast.error(t("جميع الحقول مطلوبة", "Tous les champs requis", "All fields required"));
       return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(newEmail)) {
       toast.error(t("بريد إلكتروني غير صالح", "Email invalide", "Invalid email format"));
       return;
