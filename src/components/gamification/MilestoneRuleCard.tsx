@@ -24,6 +24,9 @@ export interface MilestoneRule {
   repeat_period: string | null;
 }
 
+const t = (lang: string, ar: string, fr: string, en: string) =>
+  lang === "ar" ? ar : lang === "fr" ? fr : en;
+
 interface Props {
   rule: MilestoneRule;
   lang: string;
@@ -40,12 +43,12 @@ export default function MilestoneRuleCard({ rule, lang, onEdit, onDuplicate, onD
   const name = lang === "ar" ? rule.name_ar : lang === "fr" ? rule.name_fr : rule.name_en;
 
   const typeLabels: Record<string, string> = {
-    total_confirmations: "Total Confirmations",
-    monthly_confirmations: "Monthly",
-    weekly_confirmations: "Weekly",
-    confirmation_rate: "Rate %",
-    streak: "Streak",
-    speed: "Speed",
+    total_confirmations: t(lang, "إجمالي التأكيدات", "Total Confirmations", "Total Confirmations"),
+    monthly_confirmations: t(lang, "شهري", "Mensuel", "Monthly"),
+    weekly_confirmations: t(lang, "أسبوعي", "Hebdomadaire", "Weekly"),
+    confirmation_rate: t(lang, "النسبة %", "Taux %", "Rate %"),
+    streak: t(lang, "سلسلة", "Série", "Streak"),
+    speed: t(lang, "السرعة", "Vitesse", "Speed"),
   };
 
   return (
@@ -62,7 +65,7 @@ export default function MilestoneRuleCard({ rule, lang, onEdit, onDuplicate, onD
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold">{name || rule.name_en}</p>
           <p className="text-xs text-muted-foreground">
-            {typeLabels[rule.milestone_type] || rule.milestone_type} · Target: {rule.target_value}
+            {typeLabels[rule.milestone_type] || rule.milestone_type} · {t(lang, "الهدف:", "Cible:", "Target:")} {rule.target_value}
           </p>
         </div>
 
