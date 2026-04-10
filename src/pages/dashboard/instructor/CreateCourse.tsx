@@ -98,6 +98,53 @@ export default function CreateCourse() {
     return true;
   };
 
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || !user) return;
+    setUploading(true);
+    const newImages: { url: string; name: string }[] = [];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) continue;
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage.from("course-images").upload(path, file);
+      if (error) {
+        toast.error(`Failed to upload ${file.name}`);
+        continue;
+      }
+      const { data: urlData } = supabase.storage.from("course-images").getPublicUrl(path);
+      newImages.push({ url: urlData.publicUrl, name: file.name });
+    }
+    setCourseImages(prev => {
+      const updated = [...prev, ...newImages];
+      // If no main image set yet, use the first uploaded
+      if (prev.length === 0 && updated.length > 0) {
+        setCoverImage(updated[0].url);
+        setMainImageIndex(0);
+      }
+      return updated;
+    });
+    setUploading(false);
+    if (newImages.length > 0) toast.success(`${newImages.length} image(s) uploaded`);
+  };
+
+  const removeImage = (index: number) => {
+    setCourseImages(prev => {
+      const updated = prev.filter((_, i) => i !== index);
+      if (index === mainImageIndex) {
+        setMainImageIndex(0);
+        setCoverImage(updated[0]?.url || "");
+      } else if (index < mainImageIndex) {
+        setMainImageIndex(mainImageIndex - 1);
+      }
+      return updated;
+    });
+  };
+
+  const setAsMainImage = (index: number) => {
+    setMainImageIndex(index);
+    setCoverImage(courseImages[index].url);
+  };
+
   const handleSubmit = async (asDraft: boolean) => {
     if (!user) return;
     setSubmitting(true);
