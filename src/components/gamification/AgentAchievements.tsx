@@ -114,7 +114,7 @@ export default function AgentAchievements() {
               <p className="font-semibold text-lg">{getName(nextMilestone) || nextMilestone.name_en}</p>
               <div className="flex items-center gap-2 mt-1">
                 <div className="h-10 w-10 flex items-center justify-center rounded-full text-xl" style={{ backgroundColor: nextMilestone.color + "22" }}>{nextMilestone.icon}</div>
-                <span className="text-sm text-muted-foreground">{nextMilestone.reward_config?.badge_name}</span>
+                <span className="text-sm text-muted-foreground">{(nextMilestone.reward_config as any)?.badge_name}</span>
               </div>
               <p className="mt-3 text-sm">{motivational}</p>
             </div>
