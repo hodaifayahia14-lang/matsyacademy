@@ -14,6 +14,7 @@ import AboutManagement from "./AboutManagement";
 import OrdersManagement from "./OrdersManagement";
 import Leaderboard from "./Leaderboard";
 import CourseDetailAdmin from "./CourseDetailAdmin";
+import CreateCourse from "@/pages/dashboard/instructor/CreateCourse";
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="users" element={<UsersManagement />} />
         <Route path="courses" element={<CoursesModeration />} />
+        <Route path="courses/create" element={<CreateCourse />} />
         <Route path="courses/:courseId" element={<CourseDetailAdmin />} />
         <Route path="categories" element={<CategoriesManagement />} />
         <Route path="coupons" element={<CouponsManagement />} />
