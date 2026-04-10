@@ -146,7 +146,6 @@ export default function UsersManagement() {
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="student">{t("طالب", "Étudiant", "Student")}</SelectItem>
-                    <SelectItem value="confirmation_agent">{t("وكيل تأكيد", "Agent de confirmation", "Confirmation Agent")}</SelectItem>
                     <SelectItem value="admin">{t("مسؤول", "Administrateur", "Admin")}</SelectItem>
                   </SelectContent>
                 </Select>
@@ -164,12 +163,11 @@ export default function UsersManagement() {
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder={t("بحث بالاسم أو البريد...", "Rechercher par nom ou email...", "Search by name or email...")} className="ps-10" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <Select value={roleFilter} onValueChange={setRoleFilter}>
+         <Select value={roleFilter} onValueChange={setRoleFilter}>
           <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("جميع الأدوار", "Tous les rôles", "All Roles")}</SelectItem>
             <SelectItem value="student">{t("طالب", "Étudiant", "Student")}</SelectItem>
-            <SelectItem value="confirmation_agent">{t("وكيل تأكيد", "Agent", "Agent")}</SelectItem>
             <SelectItem value="admin">{t("مسؤول", "Admin", "Admin")}</SelectItem>
           </SelectContent>
         </Select>
@@ -215,12 +213,12 @@ export default function UsersManagement() {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-1 flex-wrap">
-                    {["confirmation_agent", "admin"].map((role) => (
+                    {["admin"].map((role) => (
                       <Button key={role} size="sm" variant={u.roles.includes(role) ? "default" : "outline"}
                         className="text-xs capitalize h-7 px-2"
                         onClick={() => assignRole.mutate({ userId: u.id, role })}>
                         {u.roles.includes(role) ? <ShieldX className="me-1 h-3 w-3" /> : <ShieldCheck className="me-1 h-3 w-3" />}
-                        {role === "confirmation_agent" ? t("وكيل", "Agent", "Agent") : t("مسؤول", "Admin", "Admin")}
+                        {t("مسؤول", "Admin", "Admin")}
                       </Button>
                     ))}
                   </div>
