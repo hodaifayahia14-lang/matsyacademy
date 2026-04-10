@@ -365,7 +365,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════════ CATEGORIES ═══════════════════ */}
-      <section className="py-16 lg:py-20">
+      <section className="py-16 lg:py-20 bg-background">
         <div className="container">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
             className="mb-10 text-center">
@@ -443,6 +443,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave separator */}
+      <div className="relative -mb-px">
+        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 48V24C360 0 720 48 1080 24C1260 12 1380 6 1440 24V48H0Z" className="fill-secondary/30" />
+        </svg>
+      </div>
+
       {/* ═══════════════════ FEATURED COURSES ═══════════════════ */}
       <section className="py-16 lg:py-20 bg-secondary/20">
         <div className="container">
@@ -483,8 +490,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave separator */}
+      <div className="relative -mb-px">
+        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 0V24C480 48 960 0 1440 24V0H0Z" className="fill-secondary/30" />
+        </svg>
+      </div>
+
       {/* ═══════════════════ WHY CHOOSE US ═══════════════════ */}
-      <section className="py-16 lg:py-24">
+      <section className="py-16 lg:py-24 bg-background">
         <div className="container">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
             className="mb-14 text-center">
@@ -519,8 +533,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave separator */}
+      <div className="relative -mb-px">
+        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 48V24C360 0 720 48 1080 24C1260 12 1380 6 1440 24V48H0Z" className="fill-secondary/30" />
+        </svg>
+      </div>
+
       {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
-      <section className="py-16 lg:py-20 bg-secondary/20">
+      <section className="py-16 lg:py-20 bg-secondary/30">
         <div className="container">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
             className="mb-12 text-center">
@@ -577,8 +598,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Wave separator */}
+      <div className="relative -mb-px">
+        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 0V24C480 48 960 0 1440 24V0H0Z" className="fill-secondary/30" />
+        </svg>
+      </div>
+
       {/* ═══════════════════ BECOME INSTRUCTOR ═══════════════════ */}
-      <section className="py-16 lg:py-24">
+      <section className="py-16 lg:py-24 bg-background">
         <div className="container">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" custom={0} viewport={{ once: true }}
@@ -633,6 +661,13 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Wave separator */}
+      <div className="relative -mb-px">
+        <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0 48V24C360 0 720 48 1080 24C1260 12 1380 6 1440 24V48H0Z" className="fill-primary/5" />
+        </svg>
+      </div>
 
       {/* ═══════════════════ NEWSLETTER SIGNUP ═══════════════════ */}
       <section className="py-16 lg:py-20 bg-gradient-to-br from-primary/5 via-accent/5 to-purple-deep/5 relative overflow-hidden">
