@@ -10,8 +10,8 @@ export default function Footer() {
   const quickLinks = [
     { label: lang === "ar" ? "الرئيسية" : "Home", to: "/" },
     { label: lang === "ar" ? "الدورات" : "Courses", to: "/courses" },
-    { label: lang === "ar" ? "المدرّبون" : "Instructors", to: "/instructors" },
     { label: lang === "ar" ? "المدونة" : "Blog", to: "/blog" },
+    { label: lang === "ar" ? "تواصل معنا" : "Contact", to: "/contact" },
   ];
 
   const supportLinks = [
