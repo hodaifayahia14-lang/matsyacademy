@@ -430,10 +430,10 @@ export default function CourseDetail() {
         <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(135deg, #5B2D8E 0%, #3A1D6E 40%, #0D0D1A 100%)" }} />
 
         <div className="container relative z-10 py-10 lg:py-16">
-          <div className="grid gap-8 lg:grid-cols-5 items-start">
-            {/* Left: course info (3 cols) */}
+          <div className="max-w-3xl">
+            {/* Left: course info */}
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-              className="lg:col-span-3 space-y-5">
+              className="space-y-5">
               {/* Category badge */}
               {categoryName && (
                 <span className="inline-block rounded-full px-4 py-1.5 text-xs font-bold"
@@ -496,9 +496,7 @@ export default function CourseDetail() {
                 {T(lang, "آخر تحديث:", "Dernière mise à jour:", "Last updated:")} {new Date(course.updated_at).toLocaleDateString()}
               </p>
             </motion.div>
-
           </div>
-        </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════
