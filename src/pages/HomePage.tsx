@@ -83,7 +83,7 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-      <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
+      <section ref={statsRef} className="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
         {/* Background image with overlay */}
         <div className="absolute inset-0">
           <img src={heroStudents} alt="" className="h-full w-full object-cover" width={1920} height={1080} />
